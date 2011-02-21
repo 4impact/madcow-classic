@@ -134,11 +134,11 @@ public class AddressTest extends AbstractTestCase {
         // TODO : TABLE - now select a row in the table (currently hardcoded to ignore the incoming args, but
         // this will be implemented to work correctly soon and some more test logic can be
         // written below
-        searchResults.table.selectRow = ['State' : 'Queensland', 'Address Line 2' : '320 Adelaide St']
+        searchResults.table.selectRow = ['State' : 'Queensland', 'Address Line 1' : '320 Adelaide St']
 
         // able to check either one or many values for the currently selected row
         searchResults.table.currentRow.checkValue = ['State' : 'Queensland']
-        searchResults.table.currentRow.checkValue = ['State' : 'Queensland', 'Address Line 2' : '320 Adelaide St']
+        searchResults.table.currentRow.checkValue = ['State' : 'Queensland', 'Address Line 1' : '320 Adelaide St']
 
         searchResults.table.currentRow.clickLink = "Id"
     }
@@ -167,7 +167,7 @@ public class AddressTest extends AbstractTestCase {
         state.selectField = [text : 'Queensland']
         testsite_search_searchForm.submitForm
         searchResults.table.selectRow = 'first'
-        searchResults.table.currentRow.checkValue = ['lastColumn' : '4005']
+        searchResults.table.currentRow.checkValue = ['lastColumn' : '4000']
     }
 
     void testSearchByStateUsingOptionValue(){
