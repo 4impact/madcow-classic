@@ -1,0 +1,45 @@
+<!--
+  ~ Copyright 2008-2011 4impact Technology Services, Brisbane, Australia
+  ~
+  ~ Licensed to the Apache Software Foundation (ASF) under one
+  ~ or more contributor license agreements.  See the NOTICE file
+  ~ distributed with this work for additional information
+  ~ regarding copyright ownership.  The ASF licenses this file
+  ~ to you under the Apache License, Version 2.0 (the
+  ~ "License"); you may not use this file except in compliance
+  ~ with the License.  You may obtain a copy of the License at
+  ~
+  ~          http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing,
+  ~ software distributed under the License is distributed on an
+  ~ "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+  ~ KIND, either express or implied.  See the License for the
+  ~ specific language governing permissions and limitations
+  ~ under the License.
+  -->
+
+<!--
+Like all files of this folder, this content will be executed in target wt.defineMacros
+and therefore made be available for the tests (here the macro <fillParticipantData .../>)
+-->
+<macrodef name="fillParticipantData" description="fill the conference formular for one person">
+	<attribute name="firstName"/>
+	<attribute name="lastName"/>
+	<attribute name="index" default="1" description="the index in the sequence"/>
+
+	<sequential>
+		<verifyText text="Please enter information for participant @{index}"
+			description="Verify that we are on the right screen"/>
+		<setInputField forLabel="Last name" value="@{lastName}"/>
+		<setInputField forLabel="First name" value="@{firstName}"/>
+		<setInputField forLabel="Street" value="Main street, 123"/>
+		<setInputField forLabel="Zip" value="12345"/>
+		<setInputField forLabel="City" value="Basel"/>
+		<setSelectField forLabel="Country" text="Switzerland"/>
+		<clickButton label="Confirm"/>
+		<not description="verify that we're not on the formular screen for this participant anymore">
+			<verifyText text="Please enter information for participant @{index}"/>
+		</not>
+	</sequential>
+</macrodef>

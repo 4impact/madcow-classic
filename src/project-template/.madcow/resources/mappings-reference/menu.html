@@ -1,0 +1,82 @@
+<!--
+  ~ Copyright 2008-2011 4impact Technology Services, Brisbane, Australia
+  ~
+  ~ Licensed to the Apache Software Foundation (ASF) under one
+  ~ or more contributor license agreements.  See the NOTICE file
+  ~ distributed with this work for additional information
+  ~ regarding copyright ownership.  The ASF licenses this file
+  ~ to you under the Apache License, Version 2.0 (the
+  ~ "License"); you may not use this file except in compliance
+  ~ with the License.  You may obtain a copy of the License at
+  ~
+  ~          http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing,
+  ~ software distributed under the License is distributed on an
+  ~ "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+  ~ KIND, either express or implied.  See the License for the
+  ~ specific language governing permissions and limitations
+  ~ under the License.
+  -->
+
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+<title>Madcow Mappings Menu</title>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+<script type="text/javascript" src="resources/lib/jxlib.js"></script>
+<link rel="stylesheet" href="resources/lib/themes/crispin/jxtheme.css" type="text/css" media="screen" charset="utf-8">
+<script type="text/javascript" charset="utf-8">
+
+window.addEvent('load', function() {
+    var tree = new Jx.Tree({parent: 'mappingsIndex'});
+    
+    var items = {
+        'Mappings': [
+            {'About':'about.html'},
+            $menuItems
+        ]
+    };
+    
+    var makeTreeItem = function(o, tree) {
+        for (var i in o) {
+            var v = o[i];
+            if (v instanceof Array) {
+                var folder = new Jx.TreeFolder({label: i, open: true});
+                for (var j=0; j<v.length; j++) {
+                    makeTreeItem(v[j], folder);
+                }
+                tree.append(folder);
+            } else {
+                var item = new Jx.TreeItem({
+                    label: i,
+                    onClick: function() {
+                        parent.content.location.href=v;
+                        Cookie.write('MadcowMappings.CurrentPage', v);
+                    }
+                });
+                tree.append(item);
+            }
+        }
+    };
+    makeTreeItem(items, tree);
+    
+    var defaultPage = Cookie.read('MadcowMappings.CurrentPage');
+    if (defaultPage) {
+        parent.content.location.href=defaultPage;
+    }
+    if (Browser.Engine.trident4) {
+        new Asset.css('resources/lib/themes/crispin/ie6.css', { rel: 'stylesheet' });
+    }
+    if (Browser.Engine.trident5) {
+        new Asset.css('resources/lib/themes/crispin/ie7.css', { rel: 'stylesheet' });
+    }
+
+});
+</script>
+<link rel="stylesheet" href="resources/css/menu.css" type="text/css" media="screen" title="" charset="utf-8">
+</head>
+<body>
+<div id="mappingsIndex"></div>
+</body>
+</html>

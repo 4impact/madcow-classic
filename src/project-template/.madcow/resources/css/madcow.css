@@ -1,0 +1,70 @@
+body {
+    margin: 10px;
+    font-family: "lucida grande", verdana, sans-serif;
+    font-size: 10pt;
+}
+
+h1, h2 {
+    position: relative;
+    display: block;
+    clear: both;
+    font-weight: normal;
+}
+
+h1 {
+    font-size: 24px;
+    line-height: 30px;
+    color: #006291; /* 4impact blue */
+    padding: 0px 0px 10px 0px;
+    margin: 0px 10px;
+    border-bottom: 3px solid #dceaee;
+}
+
+h2, caption {
+    font-size: 18px;
+    line-height: 24px;
+    color: #74af27; /* 4impact green */
+    margin: 10px 10px;
+    padding: 6px 0px;
+    border-bottom: 1px solid #6da424;
+}
+
+p {
+    font-size: 14px;
+    line-height: 20px;
+    font-weight: normal;
+    color: #333;
+    margin: 10px 10px;
+    clear: both;
+    position: relative;
+}
+
+div#footer {
+    border-top: black 1px solid;
+    margin-top: 20px;
+    padding-top: 5px;
+}
+
+div#reportDetails {
+    float: left;
+}
+
+div#ts4impactlogo {
+    float: right;
+}
+
+th {
+    font-weight: bold;
+	color: #ffffff;
+	background-color: #0080c4; /* 4impact blue */
+}
+
+caption {
+	font-size: 18px;
+    line-height: 24px;
+    color: #74af27;
+    border: 0px;
+	text-align: left;
+	padding: 10px 0px 0px 0px;
+	margin: 2px;
+}

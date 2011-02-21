@@ -1,0 +1,55 @@
+<?xml version="1.0"?>
+<!--
+  ~ Copyright 2008-2011 4impact Technology Services, Brisbane, Australia
+  ~
+  ~ Licensed to the Apache Software Foundation (ASF) under one
+  ~ or more contributor license agreements.  See the NOTICE file
+  ~ distributed with this work for additional information
+  ~ regarding copyright ownership.  The ASF licenses this file
+  ~ to you under the Apache License, Version 2.0 (the
+  ~ "License"); you may not use this file except in compliance
+  ~ with the License.  You may obtain a copy of the License at
+  ~
+  ~          http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing,
+  ~ software distributed under the License is distributed on an
+  ~ "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+  ~ KIND, either express or implied.  See the License for the
+  ~ specific language governing permissions and limitations
+  ~ under the License.
+  -->
+
+<!-- Base Madcow taskdef antlib. -->
+<antlib>
+    <taskdef name="executionError"
+        classname="au.com.ts4impact.madcow.extension.webtest.step.ExecutionError" />
+    <taskdef name="executeEvent"
+        classname="au.com.ts4impact.madcow.extension.webtest.step.ExecuteEvent" />
+    <taskdef name="executeJavascript"
+        classname="au.com.ts4impact.madcow.extension.webtest.step.ExecuteJavascript" />
+    <taskdef name="executeSql"
+        classname="au.com.ts4impact.madcow.extension.webtest.step.ExecuteSql" />
+    <taskdef name="plugin"
+        classname="com.canoo.webtest.steps.control.GroupStep" />
+    <taskdef name="importTemplate"
+        classname="au.com.ts4impact.madcow.extension.webtest.step.ImportTemplate" />
+    <taskdef name="invokeUrl"
+        classname="au.com.ts4impact.madcow.extension.webtest.step.InvokeUrl" />
+    <taskdef name="showOnReport"
+        classname="au.com.ts4impact.madcow.extension.webtest.step.ShowOnReport" />
+    <taskdef name="submitForm"
+        classname="au.com.ts4impact.madcow.extension.webtest.step.SubmitForm" />
+    <taskdef name="verifyDynamicProperty"
+        classname="au.com.ts4impact.madcow.extension.webtest.step.VerifyDynamicProperty" />
+    <taskdef name="verifySelectFieldOptions"
+        classname="au.com.ts4impact.madcow.extension.webtest.step.VerifySelectFieldOptions" />
+    <taskdef name="waitForAttribute"
+        classname="au.com.ts4impact.madcow.extension.webtest.step.WaitForAttribute" />
+    <taskdef name="waitForElement"
+        classname="au.com.ts4impact.madcow.extension.webtest.step.WaitForElement" />
+    <taskdef name="waitSeconds"
+        classname="au.com.ts4impact.madcow.extension.webtest.step.WaitSeconds" />
+    <taskdef name="waitForText"
+        classname="au.com.ts4impact.madcow.extension.webtest.step.WaitForText" />
+</antlib>

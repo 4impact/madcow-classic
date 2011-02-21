@@ -1,0 +1,92 @@
+<?xml version="1.0"?>
+
+<!--
+  ~ Copyright 2008-2011 4impact Technology Services, Brisbane, Australia
+  ~
+  ~ Licensed to the Apache Software Foundation (ASF) under one
+  ~ or more contributor license agreements.  See the NOTICE file
+  ~ distributed with this work for additional information
+  ~ regarding copyright ownership.  The ASF licenses this file
+  ~ to you under the Apache License, Version 2.0 (the
+  ~ "License"); you may not use this file except in compliance
+  ~ with the License.  You may obtain a copy of the License at
+  ~
+  ~          http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing,
+  ~ software distributed under the License is distributed on an
+  ~ "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+  ~ KIND, either express or implied.  See the License for the
+  ~ specific language governing permissions and limitations
+  ~ under the License.
+  -->
+
+<project name="Madcow" basedir="." default="compile">
+	<property environment="env" />
+	<property name="webtest.home" value="${basedir}/src/project-template/.madcow/webtest" />
+	<property name="lib.dir" value="${webtest.home}/lib" />
+	<property name="src.dir" value="${basedir}/src/main/groovy" />
+    <property name="test.dir" value="${basedir}/src/test/groovy" />
+	<property name="build.dir" value="${basedir}/target" />
+	<property name="build.compile.dir" value="${build.dir}/classes" />
+    <property name="build.test.dir" value="${build.dir}/test-classes" />
+    <property name="build.test.result.dir" value="${build.dir}/test-results"/>
+    <property name="runtime_classpath" value="" />
+    <property name="test_classpath" value="" />
+
+	<path id="maven.libs">
+		<pathelement path="${runtime_classpath}" />
+	</path>
+
+	<path id="groovy.classpath">
+		<path refid="maven.libs" />
+		<fileset dir="${webtest.home}/lib" includes="*.jar" />
+	</path>
+
+	<path id="compile.classpath">
+		<pathelement location="${build.compile.dir}" />
+		<path refid="groovy.classpath" />
+	</path>
+
+    <path id="test.classpath">
+        <pathelement location="${build.compile.dir}" />
+        <pathelement location="${build.test.dir}" />
+        <pathelement path="${test_classpath}" />
+        <path refid="groovy.classpath" />
+    </path>
+
+	<taskdef name="groovyc" classname="org.codehaus.groovy.ant.Groovyc" classpathref="groovy.classpath" />
+    <taskdef name="junit" classname="org.apache.tools.ant.taskdefs.optional.junit.JUnitTask" classpathref="test.classpath" />
+
+	<target name="-init">
+        <mkdir dir="${build.compile.dir}" />
+        <mkdir dir="${build.test.result.dir}" />
+	</target>
+
+	<target name="compile" depends="-init">
+		<groovyc srcdir="${src.dir}" destdir="${build.compile.dir}">
+			<classpath refid="compile.classpath" />
+		</groovyc>
+
+        <copy file="${basedir}/LICENSE" todir="${build.compile.dir}" />
+        <copy file="${basedir}/NOTICE" todir="${build.compile.dir}" />
+	</target>
+
+    <target name="test" depends="-init">
+        <groovyc srcdir="${test.dir}" destdir="${build.test.dir}">
+            <classpath refid="test.classpath" />
+        </groovyc>
+
+        <junit printsummary="true" showoutput="true" fork="true" forkmode="once" errorproperty="test.error" failureproperty="test.failure">
+            <classpath refid="test.classpath" />
+            <jvmarg value="-Xmx512m" />
+            <formatter type="xml" />
+            <batchtest todir="${build.test.result.dir}">
+                <fileset dir="${build.test.dir}" includes="**/*Test.class" excludes="**/*$*.class" />
+            </batchtest>
+        </junit>
+
+        <fail if="test.error" message="Unable to execute tests"/>
+        <fail if="test.failure" message="There were test failures"/>
+    </target>
+</project>

@@ -1,0 +1,335 @@
+<?xml version="1.0"?>
+
+<!--
+  ~ Copyright 2008-2011 4impact Technology Services, Brisbane, Australia
+  ~
+  ~ Licensed to the Apache Software Foundation (ASF) under one
+  ~ or more contributor license agreements.  See the NOTICE file
+  ~ distributed with this work for additional information
+  ~ regarding copyright ownership.  The ASF licenses this file
+  ~ to you under the Apache License, Version 2.0 (the
+  ~ "License"); you may not use this file except in compliance
+  ~ with the License.  You may obtain a copy of the License at
+  ~
+  ~          http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing,
+  ~ software distributed under the License is distributed on an
+  ~ "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+  ~ KIND, either express or implied.  See the License for the
+  ~ specific language governing permissions and limitations
+  ~ under the License.
+  -->
+
+<project name="Madcow_internal" default="run-all-tests">
+    <property environment="env" />
+    <property name="runtime_classpath" value="" />
+
+    <property name="madcow.internal.dir" location="${basedir}/.madcow" />
+    <property name="madcow.webtest.home" value="${madcow.internal.dir}/webtest" />
+    <property name="madcow.lib.dir" value="${madcow.webtest.home}/lib" />
+    <property name="madcow.build.dir" value="${basedir}/build" />
+    <property name="madcow.build.test.dir" value="${madcow.build.dir}/test-classes" />
+    <property name="madcow.build.compile.dir" value="${madcow.build.dir}/classes" />
+    <property name="madcow.build.results.dir" value="${madcow.build.dir}" />
+    <property name="madcow.build.logs.dir" value="${madcow.build.dir}/logs" />
+    <property name="madcow.test.resources.dir" value="${basedir}/test" />
+    <property name="madcow.mappings.reference.dir" value="${basedir}/mappings-reference"/>
+    <property name="madcow.conf.dir" location="${basedir}/conf" />
+    <property name="madcow.project.lib.dir" location="${basedir}/lib" />
+    <property name="madcow.internal.lib.dir" location="${madcow.internal.dir}/lib" />
+    <property name="madcow.threads" value="10" />
+    <property name="madcow.database.properties.file" value="" />
+    <property name="madcow.url.properties.file" value="" />
+    <property name="madcow.browser" value="Firefox3" />
+    <property name="madcow.suites.pattern" value="" />
+    <property name="madcow.tests" value="" />
+    <property name="madcow.resources.dir" value="${madcow.internal.dir}/resources" />
+    <property name="madcow.build.results.junit.dir" value="${madcow.build.results.dir}/junit-results"/>
+    <property name="madcow.build.results.report.dir" value="${madcow.build.results.dir}/madcow-results"/>
+    <property name="wt.config.resultpath" location="${madcow.build.results.report.dir}" />
+    <property name="wt.htmlReports.report.title" value="Madcow Test Report" />
+    <property name="wt.htmlReports.xslt" location="${wt.config.resultpath}/resources/WebTestReport.xsl" />
+    <property name="wt.htmlReports.xslt.summary" location="${wt.config.resultpath}/resources/WebTestReportSummaryExtractor.xsl"/>
+    <property name="wt.htmlReports.xslt.overview" location="${wt.config.resultpath}/resources/WebTestReportOverview.xsl"/>
+    <property name="wt.config.timeout" value="60" />
+
+    <import file="${madcow.webtest.home}/webtest.xml" description="Import all functionalities for a full build" />
+
+    <path id="maven.libs">
+        <pathelement path="${runtime_classpath}" />
+    </path>
+
+    <path id="groovy.classpath">
+        <path refid="maven.libs" />
+        <fileset dir="${madcow.internal.lib.dir}" includes="*.jar" />
+        <fileset dir="${madcow.webtest.home}/lib" includes="*.jar" />
+    </path>
+
+    <path id="project.lib.classpath">
+        <fileset dir="${madcow.project.lib.dir}" includes="*.jar" />
+        <fileset dir="${madcow.internal.lib.dir}" includes="*.jar" />
+    </path>
+
+    <path id="test.classpath">
+        <pathelement location="${madcow.build.compile.dir}" />
+        <pathelement location="${madcow.build.test.dir}" />
+        <pathelement location="${basedir}" />
+        <pathelement location="${madcow.conf.dir}" />
+
+        <path refid="project.lib.classpath" />
+        <path refid="groovy.classpath" />
+    </path>
+
+    <path id="wt.defineTasks.classpath.customPrepend">
+        <pathelement location="${madcow.build.compile.dir}" />
+    </path>
+
+    <taskdef name="groovyc" classname="org.codehaus.groovy.ant.Groovyc" classpathref="groovy.classpath" />
+    <taskdef name="madcow" classname="org.apache.tools.ant.taskdefs.optional.junit.JUnitTask" classpathref="test.classpath" />
+
+    <taskdef resource="net/sf/antcontrib/antlib.xml" classpathref="groovy.classpath" />
+
+    <taskdef name="madcowDatabaseLoad" classname="au.com.ts4impact.madcow.database.DatabaseLoadTask" classpathref="test.classpath" />
+
+    <target name="help">
+        <echo message="Simply run 'ant' to run all the tests or run: ant run-tests -Dmadcow.tests='TestOne,TestTwo,TestThreeMadcowTest' to specify individual tests." />
+        <echo message="To emulate a specific browser, add -Dmadcow.browser='{browser}' where {browser} is one of 'Firefox3', 'Firefox2', 'InternetExplorer6', or 'InternetExplorer7'. Default is Firefox3." />
+    </target>
+
+
+    <target name="-init">
+        <delete dir="${madcow.build.dir}" />
+        <mkdir dir="${madcow.build.dir}" />
+        <mkdir dir="${madcow.build.test.dir}" />
+        <mkdir dir="${madcow.build.results.junit.dir}" />
+        <mkdir dir="${madcow.build.logs.dir}" />
+        <mkdir dir="${madcow.build.results.report.dir}" />
+        <antcall target="loadDatabase" />
+    </target>
+
+    <target name="loadDatabase">
+        <madcowDatabaseLoad databaseConfigFileName="${madcow.database.properties.file}">
+            <classpath refid="test.classpath" />
+        </madcowDatabaseLoad>
+    </target>
+
+    <target name="-compile-test" depends="-init">
+        <groovyc srcdir="${madcow.test.resources.dir}" destdir="${madcow.build.test.dir}">
+            <classpath refid="test.classpath" />
+        </groovyc>
+
+        <!-- TODO: do we really need to copy all files to build? -->
+        <copy todir="${madcow.build.test.dir}" description="Copy resource files">
+            <fileset dir="${madcow.test.resources.dir}">
+                <exclude name="**/~*.xls*" />
+            </fileset>
+        </copy>
+    </target>
+
+    <target name="run-tests" depends="-compile-test">
+        <foreach list="${madcow.tests}" target="-run-groovy-tests" param="testname" parallel="true" maxThreads="${madcow.threads}" inheritrefs="true" inheritall="true" />
+        <foreach list="${madcow.tests}" target="-run-properties-tests" param="testname" parallel="true" maxThreads="${madcow.threads}" inheritrefs="true" inheritall="true" />
+        <foreach list="${madcow.tests}" target="-run-csv-tests" param="testname" inheritrefs="true" inheritall="true" />
+        <foreach list="${madcow.tests}" target="-run-spreadsheet-tests" param="testname" inheritrefs="true" inheritall="true" />
+        <antcall target="-complete" />
+    </target>
+
+    <target name="run-all-tests" description="Run Groovy Tests" depends="-compile-test">
+        <foreach target="-run-groovy-tests" param="testname" parallel="true" maxThreads="${madcow.threads}" inheritrefs="true" inheritall="true">
+            <path>
+                <fileset dir="${madcow.build.test.dir}">
+                    <include name="**/${madcow.suites.pattern}/*Test*.class" />
+                    <exclude name="**/${madcow.suites.pattern}/*$*.class" />
+                </fileset>
+            </path>
+        </foreach>
+        <foreach target="-run-properties-tests" param="testname" parallel="true" maxThreads="${madcow.threads}" inheritrefs="true" inheritall="true">
+            <path>
+                <fileset dir="${madcow.build.test.dir}">
+                    <include name="**/${madcow.suites.pattern}/*.properties" />
+                </fileset>
+            </path>
+        </foreach>
+        <foreach target="-run-csv-tests" param="testname" inheritrefs="true" inheritall="true">
+            <path>
+                <fileset dir="${madcow.build.test.dir}">
+                    <include name="**/${madcow.suites.pattern}/*.csv" />
+                </fileset>
+            </path>
+        </foreach>
+        <foreach target="-run-spreadsheet-tests" param="testname" inheritrefs="true" inheritall="true">
+            <path>
+                <fileset dir="${madcow.build.test.dir}">
+                    <include name="**/${madcow.suites.pattern}/*.xls*" />
+                    <exclude name="**/${madcow.suites.pattern}/~*.xls*" />
+                </fileset>
+            </path>
+        </foreach>
+
+        <antcall target="-complete" />
+    </target>
+
+    <macrodef name="runTests">
+        <element name="whatToTest" optional="no" />
+        <element name="jvmargs" optional="yes" />
+        <attribute name="logLevel.webtest" default="debug" />
+        <attribute name="logLevel.htmlunit" default="error" />
+        <sequential>
+            <madcow printsummary="true" showoutput="true" fork="true" forkmode="once" errorproperty="test.error" failureproperty="test.failure">
+                <classpath refid="test.classpath" />
+                <jvmarg value="-Dbasedir=${basedir}" />
+                <jvmarg value="-Dmadcow.webtest.home=${madcow.webtest.home}" />
+                <jvmarg value="-Dwt.config.resultpath=${wt.config.resultpath}" />
+                <jvmarg value="-Dwt.config.timeout=${wt.config.timeout}" />
+                <jvmarg value="-DlogLevel.root=@{logLevel.webtest}" />
+                <jvmarg value="-DlogLevel.htmlunit=@{logLevel.htmlunit}" />
+                <jvmarg value="-Dmadcow.database.properties.file=${madcow.database.properties.file}" />
+                <jvmarg value="-Dmadcow.url.properties.file=${madcow.url.properties.file}" />
+                <jvmarg value="-Dmadcow.browser=${madcow.browser}" />
+                <jvmarg value="-Xmx512m" />
+                <formatter type="xml" />
+                <jvmargs/>
+                <whatToTest/>
+            </madcow>
+            <if>
+                <or>
+                    <equals arg1="${test.failure}" arg2="true"/>
+                    <equals arg1="${test.error}" arg2="true"/>
+                </or>
+                <then>
+                    <touch file="${madcow.build.dir}/failed"/>
+                </then>
+            </if>
+        </sequential>
+    </macrodef>
+
+    <target name="-run-groovy-tests" description="Run a specified set of tests">
+        <runTests>
+            <whatToTest>
+                <batchtest todir="${madcow.build.results.junit.dir}" >
+                    <file basedir="${madcow.build.test.dir}" file="${testname}" />
+                </batchtest>
+                <batchtest todir="${madcow.build.results.junit.dir}">
+                    <fileset dir="${madcow.build.test.dir}" includes="**/${testname}.class" excludes="**/*$*.class" />
+                </batchtest>
+            </whatToTest>
+            <jvmargs/>
+        </runTests>
+    </target>
+
+    <target name="-run-properties-tests">
+        <basename file="${testname}" property="nice.testname" />
+        <runTests>
+            <whatToTest>
+                <test name="au.com.ts4impact.madcow.engine.PropertiesFileTestRunner"
+                      todir="${madcow.build.results.junit.dir}"
+                      outfile="TEST-${nice.testname}" />
+            </whatToTest>
+            <jvmargs>
+                <jvmarg value="-Dmadcow.test.property=${testname}" />
+            </jvmargs>
+        </runTests>
+    </target>
+
+    <target name="-run-csv-tests">
+        <basename file="${testname}" property="nice.testname" />
+        <runTests>
+            <whatToTest>
+                <test name="au.com.ts4impact.madcow.engine.tabular.CsvTestRunner"
+                      todir="${madcow.build.results.junit.dir}"
+                      outfile="TEST-${nice.testname}" />
+            </whatToTest>
+            <jvmargs>
+                <jvmarg value="-Dmadcow.test.csv=${testname}" />
+                <jvmarg value="-Dmadcow.threads=${madcow.threads}" />
+            </jvmargs>
+        </runTests>
+    </target>
+
+    <target name="-run-spreadsheet-tests">
+        <basename file="${testname}" property="nice.testname" />
+        <runTests>
+            <whatToTest>
+                <test name="au.com.ts4impact.madcow.engine.tabular.SpreadsheetTestRunner"
+                      todir="${madcow.build.results.junit.dir}"
+                      outfile="TEST-${nice.testname}" />
+            </whatToTest>
+            <jvmargs>
+                <jvmarg value="-Dmadcow.test.spreadsheet=${testname}" />
+                <jvmarg value="-Dmadcow.threads=${madcow.threads}" />
+            </jvmargs>
+        </runTests>
+    </target>
+
+    <target name="-complete">
+        <antcall target="-madcow-report"/>
+
+        <fail message="There were test failures">
+            <condition>
+                <resourcecount count="1">
+                    <fileset dir="${madcow.build.dir}" includes="failed"/>
+                </resourcecount>
+            </condition>
+        </fail>
+
+    </target>
+
+    <target name="generateMappingsReference">
+
+        <delete dir="${madcow.mappings.reference.dir}" />
+        <mkdir dir="${madcow.mappings.reference.dir}"/>
+        <mkdir dir="${madcow.mappings.reference.dir}/mappings"/>
+        <mkdir dir="${madcow.mappings.reference.dir}/resources/images"/>
+        <mkdir dir="${madcow.mappings.reference.dir}/resources/css"/>
+        <copy todir="${madcow.mappings.reference.dir}">
+            <fileset dir="${madcow.resources.dir}/mappings-reference"/>
+        </copy>
+
+        <copy todir="${madcow.mappings.reference.dir}/resources/css">
+            <fileset dir="${madcow.resources.dir}/css"/>
+        </copy>
+
+        <copy todir="${madcow.mappings.reference.dir}/resources/images">
+            <fileset dir="${madcow.resources.dir}/images"/>
+        </copy>
+
+        <taskdef name="mappingsHtmlReferenceGenerator" classname="au.com.ts4impact.madcow.mappingsreference.MappingsHtmlReferenceTask" classpathref="test.classpath" />
+        <mappingsHtmlReferenceGenerator dir="${madcow.mappings.reference.dir}" >
+            <classpath refid="test.classpath" />
+        </mappingsHtmlReferenceGenerator>
+
+        <echo message="Complete regeneration of Mappings Reference"/>
+            
+    </target>
+
+    <target name="-madcow-report">
+        <mkdir dir="${wt.config.resultpath}/resources"/>
+        <mkdir dir="${wt.config.resultpath}/resources/images"/>
+		<copy todir="${wt.config.resultpath}/resources" description="Copy resource files">
+			<fileset dir="${madcow.resources.dir}/reporting">
+				<include name="*.xsl"/>
+			</fileset>
+		</copy>
+        <copy todir="${wt.config.resultpath}/resources/images" description="Copy resource files">
+			<fileset dir="${madcow.resources.dir}/images">
+				<include name="*.jpg"/>
+			</fileset>
+		</copy>
+        <copy todir="${wt.config.resultpath}/resources">
+            <fileset dir="${madcow.resources.dir}/css"/>
+        </copy>
+
+        <antcall target="wt.htmlReports"/>
+
+        <trycatch>
+            <try>
+                <antcall target="wt.openResultFile"/>
+            </try>
+            <catch>
+                <echo message="Unable to open Madcow Report file"/>
+            </catch>
+        </trycatch>
+    </target>
+</project>
+
