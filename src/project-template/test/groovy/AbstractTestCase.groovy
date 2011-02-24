@@ -19,7 +19,7 @@
  * under the License.
  */
 
-import au.com.ts4impact.madcow.engine.GroovyMadcowTestCase
+import com.projectmadcow.engine.GroovyMadcowTestCase
 import org.junit.Ignore
 
 @Ignore

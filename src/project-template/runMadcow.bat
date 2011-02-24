@@ -15,5 +15,5 @@ for /R ./.madcow/webtest/lib %%a in (*.jar) do (
 
 set CLASSPATH=!CLASSPATH!"
 
-java au.com.ts4impact.madcow.ant.MadcowAntProject %*
+java com.projectmadcow.ant.MadcowAntProject %*
 pause

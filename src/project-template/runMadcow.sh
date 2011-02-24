@@ -5,4 +5,4 @@ if [ -z "$JAVA_HOME" ] ; then
     exit 1
 fi
 
-$JAVA_HOME/bin/java -classpath ./.madcow/*:./.madcow/lib/*:lib/*:./.madcow/webtest/lib/* au.com.ts4impact.madcow.ant.MadcowAntProject $@
+$JAVA_HOME/bin/java -classpath ./.madcow/*:./.madcow/lib/*:lib/*:./.madcow/webtest/lib/* com.projectmadcow.ant.MadcowAntProject $@

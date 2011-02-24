@@ -23,33 +23,33 @@
 <!-- Base Madcow taskdef antlib. -->
 <antlib>
     <taskdef name="executionError"
-        classname="au.com.ts4impact.madcow.extension.webtest.step.ExecutionError" />
+        classname="com.projectmadcow.extension.webtest.step.ExecutionError" />
     <taskdef name="executeEvent"
-        classname="au.com.ts4impact.madcow.extension.webtest.step.ExecuteEvent" />
+        classname="com.projectmadcow.extension.webtest.step.ExecuteEvent" />
     <taskdef name="executeJavascript"
-        classname="au.com.ts4impact.madcow.extension.webtest.step.ExecuteJavascript" />
+        classname="com.projectmadcow.extension.webtest.step.ExecuteJavascript" />
     <taskdef name="executeSql"
-        classname="au.com.ts4impact.madcow.extension.webtest.step.ExecuteSql" />
+        classname="com.projectmadcow.extension.webtest.step.ExecuteSql" />
     <taskdef name="plugin"
         classname="com.canoo.webtest.steps.control.GroupStep" />
     <taskdef name="importTemplate"
-        classname="au.com.ts4impact.madcow.extension.webtest.step.ImportTemplate" />
+        classname="com.projectmadcow.extension.webtest.step.ImportTemplate" />
     <taskdef name="invokeUrl"
-        classname="au.com.ts4impact.madcow.extension.webtest.step.InvokeUrl" />
+        classname="com.projectmadcow.extension.webtest.step.InvokeUrl" />
     <taskdef name="showOnReport"
-        classname="au.com.ts4impact.madcow.extension.webtest.step.ShowOnReport" />
+        classname="com.projectmadcow.extension.webtest.step.ShowOnReport" />
     <taskdef name="submitForm"
-        classname="au.com.ts4impact.madcow.extension.webtest.step.SubmitForm" />
+        classname="com.projectmadcow.extension.webtest.step.SubmitForm" />
     <taskdef name="verifyDynamicProperty"
-        classname="au.com.ts4impact.madcow.extension.webtest.step.VerifyDynamicProperty" />
+        classname="com.projectmadcow.extension.webtest.step.VerifyDynamicProperty" />
     <taskdef name="verifySelectFieldOptions"
-        classname="au.com.ts4impact.madcow.extension.webtest.step.VerifySelectFieldOptions" />
+        classname="com.projectmadcow.extension.webtest.step.VerifySelectFieldOptions" />
     <taskdef name="waitForAttribute"
-        classname="au.com.ts4impact.madcow.extension.webtest.step.WaitForAttribute" />
+        classname="com.projectmadcow.extension.webtest.step.WaitForAttribute" />
     <taskdef name="waitForElement"
-        classname="au.com.ts4impact.madcow.extension.webtest.step.WaitForElement" />
+        classname="com.projectmadcow.extension.webtest.step.WaitForElement" />
     <taskdef name="waitSeconds"
-        classname="au.com.ts4impact.madcow.extension.webtest.step.WaitSeconds" />
+        classname="com.projectmadcow.extension.webtest.step.WaitSeconds" />
     <taskdef name="waitForText"
-        classname="au.com.ts4impact.madcow.extension.webtest.step.WaitForText" />
+        classname="com.projectmadcow.extension.webtest.step.WaitForText" />
 </antlib>

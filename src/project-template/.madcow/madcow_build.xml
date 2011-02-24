@@ -90,7 +90,7 @@
 
     <taskdef resource="net/sf/antcontrib/antlib.xml" classpathref="groovy.classpath" />
 
-    <taskdef name="madcowDatabaseLoad" classname="au.com.ts4impact.madcow.database.DatabaseLoadTask" classpathref="test.classpath" />
+    <taskdef name="madcowDatabaseLoad" classname="com.projectmadcow.database.DatabaseLoadTask" classpathref="test.classpath" />
 
     <target name="help">
         <echo message="Simply run 'ant' to run all the tests or run: ant run-tests -Dmadcow.tests='TestOne,TestTwo,TestThreeMadcowTest' to specify individual tests." />
@@ -222,7 +222,7 @@
         <basename file="${testname}" property="nice.testname" />
         <runTests>
             <whatToTest>
-                <test name="au.com.ts4impact.madcow.engine.PropertiesFileTestRunner"
+                <test name="com.projectmadcow.engine.PropertiesFileTestRunner"
                       todir="${madcow.build.results.junit.dir}"
                       outfile="TEST-${nice.testname}" />
             </whatToTest>
@@ -236,7 +236,7 @@
         <basename file="${testname}" property="nice.testname" />
         <runTests>
             <whatToTest>
-                <test name="au.com.ts4impact.madcow.engine.tabular.CsvTestRunner"
+                <test name="com.projectmadcow.engine.tabular.CsvTestRunner"
                       todir="${madcow.build.results.junit.dir}"
                       outfile="TEST-${nice.testname}" />
             </whatToTest>
@@ -251,7 +251,7 @@
         <basename file="${testname}" property="nice.testname" />
         <runTests>
             <whatToTest>
-                <test name="au.com.ts4impact.madcow.engine.tabular.SpreadsheetTestRunner"
+                <test name="com.projectmadcow.engine.tabular.SpreadsheetTestRunner"
                       todir="${madcow.build.results.junit.dir}"
                       outfile="TEST-${nice.testname}" />
             </whatToTest>
@@ -294,7 +294,7 @@
             <fileset dir="${madcow.resources.dir}/images"/>
         </copy>
 
-        <taskdef name="mappingsHtmlReferenceGenerator" classname="au.com.ts4impact.madcow.mappingsreference.MappingsHtmlReferenceTask" classpathref="test.classpath" />
+        <taskdef name="mappingsHtmlReferenceGenerator" classname="com.projectmadcow.mappingsreference.MappingsHtmlReferenceTask" classpathref="test.classpath" />
         <mappingsHtmlReferenceGenerator dir="${madcow.mappings.reference.dir}" >
             <classpath refid="test.classpath" />
         </mappingsHtmlReferenceGenerator>
