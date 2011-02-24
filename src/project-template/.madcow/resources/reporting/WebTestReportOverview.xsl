@@ -55,6 +55,7 @@ This XSL allows to generate the report overview.
     <xsl:variable name="img.optional" select="concat($resources.dir, '/images/optional.gif')"/>
     <xsl:variable name="img.expandPlus" select="concat($resources.dir, '/images/expandPlus.png')"/>
     <xsl:variable name="img.4impact" select="concat($resources.dir, '/images/4impact.jpg')"/>
+    <xsl:variable name="img.madcow" select="concat($resources.dir, '/images/madcow.jpg')"/>
     <xsl:variable name="img.favicon" select="concat($resources.dir, '/images/favicon.ico')"/>
 
 	<xsl:variable name="webtestVersion" select="/overview/@Implementation-Version"/>
@@ -77,9 +78,15 @@ This XSL allows to generate the report overview.
             <!-- ###################################################################### -->
             <body>
                 <div class="header">
-                    <h1>Madcow Test Results</h1>
-                    <p><xsl:text>Tests started at&space;</xsl:text>
-                    <xsl:value-of select="/overview/folder[1]/summary/@starttime"/></p>
+                    <table>
+                        <tr>
+                            <td><a href="http://projectmadcow.com"><img src="{$img.madcow}" style="display:inline; float:left;" valign="middle"/></a></td>
+                            <td valign="bottom">
+                                <h1 style="font-size: 36px; display:inline; border:0px;" valign="top">Test Results</h1>
+                                <p>Started at <xsl:value-of select="/overview/folder[1]/summary/@starttime"/></p>
+                            </td>
+                        </tr>
+                    </table>
                 </div>
 
                 <!-- Header and summary table -->
@@ -94,7 +101,7 @@ This XSL allows to generate the report overview.
 			<tr>
 			<td valign="top">
                 <xsl:text>Created using&space;</xsl:text>
-                <a href="http://www.4impact.com.au">Madcow</a><xsl:text>&space;&amp;&space;</xsl:text>
+                <a href="http://projectmadcow.com">Madcow</a><xsl:text>&space;&amp;&space;</xsl:text>
                 <a href="http://webtest.canoo.com">
                     <xsl:value-of select="/overview/@Implementation-Title"/>
                 </a>
