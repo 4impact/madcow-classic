@@ -26,14 +26,42 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.projectmadcow</groupId>
     <artifactId>madcow</artifactId>
-    <version>1.6</version>
-
     <name>Madcow</name>
+    <version>1.6</version>
+    <packaging>jar</packaging>
+    <description>Madcow open source test automation tool</description>
+    <url>http://projectmadcow.com</url>
+
+    <licenses>
+        <license>
+            <name>The Apache Software License, Version 2.0</name>
+            <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+            <distribution>repo</distribution>
+        </license>
+    </licenses>
+
+    <scm>
+        <connection>scm:git:git@github.com:4impact/madcow.git</connection>
+        <developerConnection>scm:git:git@github.com:4impact/madcow.git</developerConnection>
+        <url>git@github.com:4impact/madcow.git</url>
+    </scm>
+
+    <developers>
+        <developer>
+            <id>gbunney</id>
+            <name>Gavin Bunney</name>
+            <email>gbunney@4impact.com.au</email>
+        </developer>
+        <developer>
+            <id>mcallon</id>
+            <name>Marcus Callon</name>
+            <email>mcallon@4impact.com.au</email>
+        </developer>
+    </developers>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-        <clover.version>3.0.2</clover.version>
     </properties>
 
     <repositories>
@@ -41,12 +69,6 @@
             <id>fj-repository</id>
             <name>Functional Java Repository</name>
             <url>http://functionaljava.googlecode.com/svn/maven</url>
-            <layout>default</layout>
-        </repository>
-        <repository>
-            <id>atlassian-repository</id>
-            <name>Atlassian Repository</name>
-            <url>http://repository.atlassian.com/maven2/com/atlassian/maven/plugins/maven-clover2-plugin/</url>
             <layout>default</layout>
         </repository>
     </repositories>
@@ -164,23 +186,6 @@
                     </execution>
                 </executions>
             </plugin>
-
-            <plugin>
-                <groupId>com.atlassian.maven.plugins</groupId>
-                <artifactId>maven-clover2-plugin</artifactId>
-                <version>${clover.version}</version>
-                <configuration>
-                    <licenseLocation>./clover.license</licenseLocation>
-                </configuration>
-                <dependencies>
-                    <dependency>
-                        <groupId>org.codehaus.plexus</groupId>
-                        <artifactId>plexus-resources</artifactId>
-                        <version>1.0-alpha-7</version>
-                    </dependency>
-                </dependencies>
-            </plugin>
-
         </plugins>
     </build>
 
