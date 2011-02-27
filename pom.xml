@@ -27,7 +27,7 @@
     <groupId>com.projectmadcow</groupId>
     <artifactId>madcow</artifactId>
     <name>Madcow</name>
-    <version>1.6</version>
+    <version>1.6-SNAPSHOT</version>
     <packaging>jar</packaging>
     <description>Madcow open source test automation tool</description>
     <url>http://projectmadcow.com</url>
