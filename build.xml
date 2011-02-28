@@ -31,6 +31,7 @@
 	<property name="build.compile.dir" value="${build.dir}/classes" />
     <property name="build.test.dir" value="${build.dir}/test-classes" />
     <property name="build.test.result.dir" value="${build.dir}/test-results"/>
+    <property name="build.docs.dir" value="${build.dir}/docs" />
     <property name="runtime_classpath" value="" />
     <property name="test_classpath" value="" />
 
@@ -56,6 +57,7 @@
     </path>
 
 	<taskdef name="groovyc" classname="org.codehaus.groovy.ant.Groovyc" classpathref="groovy.classpath" />
+    <taskdef name="groovydoc" classname="org.codehaus.groovy.ant.Groovydoc" classpathref="groovy.classpath"/>
     <taskdef name="junit" classname="org.apache.tools.ant.taskdefs.optional.junit.JUnitTask" classpathref="test.classpath" />
 
 	<target name="-init">
@@ -71,6 +73,14 @@
         <copy file="${basedir}/LICENSE" todir="${build.compile.dir}" />
         <copy file="${basedir}/NOTICE" todir="${build.compile.dir}" />
 	</target>
+
+    <target name="generate-docs">
+        <delete dir="${build.docs.dir}" />
+        <mkdir dir="${build.docs.dir}" />
+        <groovydoc sourcepath="${src.dir}"
+                   packagenames="**.*"
+                   destdir="${build.docs.dir}"/>
+    </target>
 
     <target name="test" depends="-init">
         <groovyc srcdir="${test.dir}" destdir="${build.test.dir}">

@@ -26,7 +26,7 @@
     <groupId>com.projectmadcow</groupId>
     <artifactId>madcow</artifactId>
     <name>Madcow</name>
-    <version>1.7-SNAPSHOT</version>
+    <version>1.6-SNAPSHOT</version>
     <packaging>jar</packaging>
     <description>Madcow open source test automation tool</description>
     <url>http://projectmadcow.com</url>
@@ -110,6 +110,7 @@
                     <descriptors>
                         <descriptor>src/assembly/assembly-install.xml</descriptor>
                         <descriptor>src/assembly/assembly-upgrade.xml</descriptor>
+                        <descriptor>src/assembly/assembly-javadoc.xml</descriptor>
                     </descriptors>
                 </configuration>
                 <executions>
@@ -147,6 +148,7 @@
                                 <property name="compile_classpath" refid="maven.compile.classpath" />
                                 <property name="runtime_classpath" refid="maven.runtime.classpath" />
                                 <ant antfile="${basedir}/build.xml" />
+                                <ant antfile="${basedir}/build.xml" target="generate-docs" />
                             </tasks>
                         </configuration>
                         <goals>
