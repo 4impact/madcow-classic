@@ -177,6 +177,9 @@
                                 <property environment="myEnv" />
                                 <unzip src="target/madcow-${project.version}-install.zip" dest="target/test-proj" />
 
+                                <property name="madcow.test.resources.dir" value="${basedir}/src/acceptance-test"/>
+                                <ant antfile="build.xml" dir="target/test-proj" target="run-all-tests" />
+
                                 <exec dir="target/test-proj" executable="bash" failonerror="true">
                                     <arg line="runMadcow.sh -m" />
                                 </exec>
