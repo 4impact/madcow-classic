@@ -175,11 +175,15 @@
                         <configuration>
                             <tasks>
                                 <property environment="myEnv" />
-                                <unzip src="target/madcow-${project.version}-install.zip" dest="target/test-proj" />
 
+                                <!-- run the madcow acceptance tests -->
+                                <unzip src="target/madcow-${project.version}-install.zip" dest="target/acceptance-test" />
+                                <delete dir="target/acceptance-test/test"/>
                                 <property name="madcow.test.resources.dir" value="${basedir}/src/acceptance-test"/>
-                                <ant antfile="build.xml" dir="target/test-proj" target="run-all-tests" />
+                                <ant antfile="build.xml" dir="target/acceptance-test" target="run-all-tests" />
 
+                                <!-- test the madcow project distribution zip -->
+                                <unzip src="target/madcow-${project.version}-install.zip" dest="target/test-proj" />
                                 <exec dir="target/test-proj" executable="bash" failonerror="true">
                                     <arg line="runMadcow.sh -m" />
                                 </exec>
