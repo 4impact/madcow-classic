@@ -1,0 +1,94 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <title>Madcow</title>
+    <link href="../css/madcow.css" rel="stylesheet" type="text/css"/>
+</head>
+
+<body>
+<h1>Release Notes - Madcow - Release 1.6</h1>
+
+<h2>Upgrade Instructions from v1.5</h2>
+
+<h3>Closures Removed</h3>
+
+<p>Madcow 1.6 removed closures for properties/spreadsheet files.</p>
+
+<pre>@global.currentDate=${new Date().format('dd/MM/yyyy')})</pre>
+
+<p>Must now be represented using the new Macro syntax for evaluation:</p>
+<pre>@global.currentDate=madcow.eval({ new Date().format('dd/MM/yyyy')})</pre>
+
+Any other closures, whether inline or standalone, must be replaced with the <b>madcow.eval</b> command.
+
+<hr/>
+<h2> Bug
+</h2>
+<ul>
+    <li>[<a href='http://4impact.jira.com/browse/MADCOW-165'>MADCOW-165</a>] - Parser - Closures in Maps and Lists are
+        not evaluated
+    </li>
+    <li>[<a href='http://4impact.jira.com/browse/MADCOW-166'>MADCOW-166</a>] - Parser - Maps with Values which are Lists
+        error
+    </li>
+    <li>[<a href='http://4impact.jira.com/browse/MADCOW-173'>MADCOW-173</a>] - Page Transformer configuration does not
+        allow comment lines
+    </li>
+</ul>
+
+<h2> Improvement
+</h2>
+<ul>
+    <li>[<a href='http://4impact.jira.com/browse/MADCOW-64'>MADCOW-64</a>] - Document use of CSV and spreadsheet tests.
+        Include the BSESkip step.
+    </li>
+    <li>[<a href='http://4impact.jira.com/browse/MADCOW-90'>MADCOW-90</a>] - Class header comments
+    </li>
+</ul>
+
+<h2> New Feature
+</h2>
+<ul>
+    <li>[<a href='http://4impact.jira.com/browse/MADCOW-83'>MADCOW-83</a>] - Develop End-user Documentation Confluence
+        site for external viewing
+    </li>
+    <li>[<a href='http://4impact.jira.com/browse/MADCOW-157'>MADCOW-157</a>] - Unit Test - Framework for Plugins and
+        Steps
+    </li>
+    <li>[<a href='http://4impact.jira.com/browse/MADCOW-158'>MADCOW-158</a>] - Unit Test - Madcow Engine Classes
+    </li>
+    <li>[<a href='http://4impact.jira.com/browse/MADCOW-169'>MADCOW-169</a>] - Create Example Plugin Project
+    </li>
+</ul>
+
+<h2> Task
+</h2>
+<ul>
+    <li>[<a href='http://4impact.jira.com/browse/MADCOW-100'>MADCOW-100</a>] - Move source to GitHub
+    </li>
+    <li>[<a href='http://4impact.jira.com/browse/MADCOW-101'>MADCOW-101</a>] - Sort Domain Name for Madcow
+    </li>
+    <li>[<a href='http://4impact.jira.com/browse/MADCOW-102'>MADCOW-102</a>] - Decide on best tool for issue management
+        and project documentation
+    </li>
+    <li>[<a href='http://4impact.jira.com/browse/MADCOW-108'>MADCOW-108</a>] - Madcow with plain ANT on MAC
+    </li>
+    <li>[<a href='http://4impact.jira.com/browse/MADCOW-123'>MADCOW-123</a>] - Adhere to open-source licence conditions
+    </li>
+    <li>[<a href='http://4impact.jira.com/browse/MADCOW-155'>MADCOW-155</a>] - Build - against the correct and
+        consistent version of WebTest
+    </li>
+    <li>[<a href='http://4impact.jira.com/browse/MADCOW-160'>MADCOW-160</a>] - Bamboo in Amazon building against GitHub
+    </li>
+    <li>[<a href='http://4impact.jira.com/browse/MADCOW-161'>MADCOW-161</a>] - Code Review
+    </li>
+    <li>[<a href='http://4impact.jira.com/browse/MADCOW-163'>MADCOW-163</a>] - Refactoring
+    </li>
+    <li>[<a href='http://4impact.jira.com/browse/MADCOW-177'>MADCOW-177</a>] - Tag and Release the Madcow Version 1.6
+    </li>
+</ul>
+</body>
+</html>
