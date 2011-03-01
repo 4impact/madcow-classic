@@ -179,8 +179,13 @@
                                 <!-- run the madcow acceptance tests -->
                                 <unzip src="target/madcow-${project.version}-install.zip" dest="target/acceptance-test" />
                                 <delete dir="target/acceptance-test/test"/>
-                                <property name="madcow.test.resources.dir" value="${basedir}/src/acceptance-test"/>
-                                <ant antfile="build.xml" dir="target/acceptance-test" target="run-all-tests" />
+                                <delete file="target/acceptance-test/conf/log4j.properties"/>
+                                <copy todir="target/acceptance-test/conf">
+                                    <fileset dir="${basedir}/src/acceptance-test/conf"/>
+                                </copy>
+                                <ant antfile="build.xml" dir="target/acceptance-test" target="run-all-tests">
+                                    <property name="madcow.test.resources.dir" value="${basedir}/src/acceptance-test/test"/>
+                                </ant>
 
                                 <!-- test the madcow project distribution zip -->
                                 <unzip src="target/madcow-${project.version}-install.zip" dest="target/test-proj" />
