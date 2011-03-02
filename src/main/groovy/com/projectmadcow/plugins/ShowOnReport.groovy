@@ -34,7 +34,7 @@ class ShowOnReport extends Plugin {
 
     def invoke(AntBuilder antBuilder, Map pluginParameters) {
 
-        if (!pluginParameters.value){
+        if (!pluginParameters.value) {
             antBuilder.showOnReport(pluginParameters)
             return
         }
@@ -48,6 +48,6 @@ class ShowOnReport extends Plugin {
         antBuilder.showOnReport(description: pluginParameters.description,
                                 xpath: pluginParameters.xpath,
                                 value: pluginParameters.value,
-                                valueFormatString: "${pluginParameters.value}")
+                                valueFormatString: "${pluginParameters.valueFormatString ?: pluginParameters.value}")
    	}
 }

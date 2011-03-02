@@ -86,7 +86,7 @@ public class GrassParserTest extends GroovyTestCase {
 
         unparsedCode = ['clickLink = [xpath : \'//a\',text : "Dr Jones\'"]']
 		parsedCode = grassParser.parseCode(unparsedCode)
-		assert parsedCode == [ 'clickLink=[\'xpath\' : \'//a\', \'text\' : \'Dr Jones\'\', ]']
+		assert parsedCode == [ 'clickLink=[\'xpath\' : \'//a\', \'text\' : \'Dr Jones\\\'\', ]']
 	}
 
 	void testMapsWithClosures() {

@@ -179,6 +179,12 @@
                                 <!-- run the madcow acceptance tests -->
                                 <unzip src="target/madcow-${project.version}-install.zip" dest="target/acceptance-test" />
                                 <delete dir="target/acceptance-test/test"/>
+                                <copy todir="target/acceptance-test/mappings">
+                                    <fileset dir="${basedir}/src/acceptance-test/mappings"/>
+                                </copy>
+                                <copy todir="target/acceptance-test/templates">
+                                    <fileset dir="${basedir}/src/acceptance-test/templates"/>
+                                </copy>
                                 <delete file="target/acceptance-test/conf/log4j.properties"/>
                                 <copy todir="target/acceptance-test/conf">
                                     <fileset dir="${basedir}/src/acceptance-test/conf"/>

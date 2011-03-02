@@ -46,7 +46,7 @@ public class FileFinder {
         }
 
         if (files?.size() == 0) {
-            throw new RuntimeException("property file not found : $propertiesName.properties")
+            throw new RuntimeException("property file not found : ${propertiesName}.properties")
         }
 
         // return the first file

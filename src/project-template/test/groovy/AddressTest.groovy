@@ -1,4 +1,3 @@
-
 /*
  * Copyright 2008-2011 4impact Technology Services, Brisbane, Australia
  *
@@ -19,59 +18,65 @@
  * specific language governing permissions and limitations
  * under the License.
  */
+import com.projectmadcow.engine.GroovyMadcowTestCase
 
-public class AddressTest extends AbstractTestCase {
+/**
+ * Example Groovy test case.
+ */
+public class AddressTest extends GroovyMadcowTestCase {
 
     void testCreateAddress() {
-        testInfo = "Create Address"
-        createAddress([addressLine1 : '320 Adelaide St', addressLine2 : 'Brisbane CBD' + System.currentTimeMillis(), postCode : '4000', wirelessAccessPointDetected : true]){
-            // select radio button
-            testsite_create_postCode4000Brisbane.setRadioButton  // mapped from id = 8154 to postCode400Brisbane
-        }
 
-        testsite_create_addressId.store = 'addressId'
+        testInfo = "Create a new address and check created address results"
+
+        def testData = [addressLine1 : '320 Adelaide St',
+                        addressLine2 : "Brisbane CBD ${System.currentTimeMillis()}",
+                        postcode     : '4000',
+                        suburb : 'BRISBANE',
+                        suburb_id : '8154',
+                        state : 'Queensland']
+
+        // -----------------------------
+        // Create the address
+        // -----------------------------
+        invokeUrl = "TEST_SITE/address/create"
+
+        address_create_addressLine1.value = testData.addressLine1
+        address_create_addressLine2.value = testData.addressLine2
+        address_create_postCode.value = testData.postcode
+
+        // setting the postcode will show a list of radio buttons, we want 8154 - BRISBANE
+        setRadioButton = [xpath : "//input[@id='${testData.suburb_id}']"]
+
+        address_create_wirelessAccessPointDetected.selectCheckbox
+
+        address_create_create.clickButton
+
+        // -----------------------------
+        // Verify created address
+        // -----------------------------
+
+        verifyText = ['text' : '(Address).*?(\\d+).*?(created)', 'regex' : true]
+
+        address_show_addressLine1.checkValue = testData.addressLine1
+        address_show_addressLine2.checkValue = testData.addressLine2
+        address_show_postCode.checkValue = testData.postcode
+        address_show_suburb.checkValue = testData.suburb
+        address_show_state.checkValue = testData.state
+        address_show_wirelessAccessPointDetected.checkValue = 'true'
+
+        // store the id of the address in a runtime parameter named addressId
+        address_show_id.store = 'addressId'
 
         // show the address id on the report
         showOnReport = [xpath: "madcow:numbers-only(//*[@id='addressId']/text())",
                         value: 'CreatedAddressNumber',
-                        valueFormatString: '<a href="http://50.16.241.31:8080/madcow-test-site/address/show/CreatedAddressNumber">View CreatedAddressNumber</a>']
+                        valueFormatString: '<a href="http://test-site.projectmadcow.com:8080/madcow-test-site/address/show/CreatedAddressNumber">View CreatedAddressNumber</a>']
 
         // load the newly created address by id
-        invokeShowAddressUrl('#{addressId}')
+        invokeUrl = "TEST_SITE/address/show/#{addressId}"
 
         // check that the suburb is as expected for postcode 4000
-        suburb.checkValue = 'BRISBANE'
-
-        // show the suburb on the report
-        suburb.showOnReport = 'SelectedSuburb'
-    }
-
-    def createAddress(def addressValues, Closure setSuburb = {} ) {
-        invokeCreateAddressUrl()
-        setValues addressValues, setSuburb
-        create.clickButton
-
-        // verify regular expression text exists on the page
-        verifyText = ['text' : '(Address).*?(\\d+).*?(created)', 'regex' : true]
-        checkValues addressValues
-    }
-
-    def setValues(values, Closure setSuburb = {} ) {
-        // set values using convention of html id to identify the html elements.
-        addressLine1.value = values.addressLine1
-        addressLine2.value = values.addressLine2
-        postCodeEntry.value = values.postCode
-
-        // example of select and unselect checkbox
-        values.wirelessAccessPointDetected ? wirelessAccessPointDetected.selectCheckbox : wirelessAccessPointDetected.unselectCheckbox
-
-        setSuburb()
-    }
-
-    def checkValues(values) {
-        addressLine1.checkValue = values.addressLine1
-        addressLine2.checkValue = values.addressLine2
-        postCode.checkValue = values.postCode
-        wirelessAccessPointDetected.checkValue = "${values.wirelessAccessPointDetected ? true : false}"
+        address_show_id.checkValue = '#{addressId}'
     }
 }

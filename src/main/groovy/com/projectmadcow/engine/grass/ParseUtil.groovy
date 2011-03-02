@@ -40,7 +40,7 @@ class ParseUtil {
 
             String valueString
             if ((value instanceof String) || (value instanceof GString)) {
-                valueString = "'${escapeCharactersIfRequired(unquote(value as String))}'"
+                valueString = "'${escapeCharactersIfRequired(unquote(value as String), true)}'"
             } else if (value instanceof List) {
                 valueString = convertListToString(value as List)
             } else {
@@ -57,7 +57,7 @@ class ParseUtil {
      */
     static String convertListToString(List listToConvert) {
         String quotedList = '';
-        listToConvert.each { String val -> quotedList += "'${escapeCharactersIfRequired(val)}', " }
+        listToConvert.each { String val -> quotedList += "'${escapeCharactersIfRequired(val, true)}', " }
         return "[$quotedList]"
     }
 
@@ -116,7 +116,7 @@ class ParseUtil {
     /**
      * Escape characters which cause the groovy string evaluation to fall over when not escaped.
      */
-    static String escapeCharactersIfRequired(String str) {
-        return str.replaceAll('\'', '\\\'')
+    static String escapeCharactersIfRequired(String str, boolean isMapListValue = false) {
+        return str.replaceAll('\'', "${isMapListValue ? '\\' : ''}\\\'")
     }
 }

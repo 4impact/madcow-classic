@@ -44,8 +44,7 @@ class GrassParser {
 
     protected static final String STORE_PLUGIN_NAME = StringUtils.uncapitalise(StringUtils.substringAfterLast(Store.class.toString(), '.'))
 
-    protected static final Map IMPORT_COMMAND_DIRECTORIES = [ 'import' : 'templates',
-                                                              'importTemplate' : 'templates',
+    protected static final Map IMPORT_COMMAND_DIRECTORIES = [ 'importTemplate' : 'templates',
                                                               'importTest' : 'test']
 
     protected RuntimeContext runtimeContext

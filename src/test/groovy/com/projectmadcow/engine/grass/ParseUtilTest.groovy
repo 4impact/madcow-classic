@@ -31,6 +31,11 @@ class ParseUtilTest extends GroovyTestCase {
         String testMapAsString = ParseUtil.convertMapToString(testMap)
         assert testMapAsString == '[\'htmlId\' : \'addressLine1\', \'value\' : \'Adelaide St\', ]'
         assert Eval.me(testMapAsString) == testMap
+
+        testMap = [text : 'His cow\'s are mad']
+        testMapAsString = ParseUtil.convertMapToString(testMap)
+        assert testMapAsString == '[\'text\' : \'His cow\\\'s are mad\', ]'
+        assert Eval.me(testMapAsString) == testMap
     }
 
     void testConvertMapWithListValueToString() {
