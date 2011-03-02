@@ -39,7 +39,7 @@ public class SpreadsheetTestRunner extends AbstractTabularTestRunner {
     }
 
     protected String getTestFileExtension() {
-        return '.xlsx'
+        return '.xls*'
     }
 
     protected Map parseFile(File file) {
