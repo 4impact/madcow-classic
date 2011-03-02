@@ -72,11 +72,5 @@ public class AddressTest extends GroovyMadcowTestCase {
         showOnReport = [xpath: "madcow:numbers-only(//*[@id='addressId']/text())",
                         value: 'CreatedAddressNumber',
                         valueFormatString: '<a href="http://test-site.projectmadcow.com:8080/madcow-test-site/address/show/CreatedAddressNumber">View CreatedAddressNumber</a>']
-
-        // load the newly created address by id
-        invokeUrl = "TEST_SITE/address/show/#{addressId}"
-
-        // check that the suburb is as expected for postcode 4000
-        address_show_id.checkValue = '#{addressId}'
     }
 }

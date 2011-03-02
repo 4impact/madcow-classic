@@ -110,7 +110,7 @@ class GrassParser {
             IMPORT_COMMAND_DIRECTORIES.each { String key, String value ->
                 if (key == operation) {
                     parsedCode.add("${operation} = [value: '$filename', startOfImport : 'true']")
-                    parsedCode.addAll(parseCode(loadImport(filename, value), false))
+                    parseCode(loadImport(filename, value), false)
                     parsedCode.add("${operation} = [value: '$filename', endOfImport : 'true']")
                 }
             }
