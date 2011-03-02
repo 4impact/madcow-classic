@@ -1,5 +1,6 @@
 target/
 madcow.iws
+junitvmwatcher*.properties
 
 # OS generated files #
 ######################

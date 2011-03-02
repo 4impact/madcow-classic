@@ -118,13 +118,6 @@
         <groovyc srcdir="${madcow.test.resources.dir}" destdir="${madcow.build.test.dir}">
             <classpath refid="test.classpath" />
         </groovyc>
-
-        <!-- TODO: do we really need to copy all files to build? -->
-        <copy todir="${madcow.build.test.dir}" description="Copy resource files">
-            <fileset dir="${madcow.test.resources.dir}">
-                <exclude name="**/~*.xls*" />
-            </fileset>
-        </copy>
     </target>
 
     <target name="run-tests" depends="-compile-test">
@@ -146,21 +139,21 @@
         </foreach>
         <foreach target="-run-properties-tests" param="testname" parallel="true" maxThreads="${madcow.threads}" inheritrefs="true" inheritall="true">
             <path>
-                <fileset dir="${madcow.build.test.dir}">
+                <fileset dir="${madcow.test.resources.dir}">
                     <include name="**/${madcow.suites.pattern}/*.properties" />
                 </fileset>
             </path>
         </foreach>
         <foreach target="-run-csv-tests" param="testname" inheritrefs="true" inheritall="true">
             <path>
-                <fileset dir="${madcow.build.test.dir}">
+                <fileset dir="${madcow.test.resources.dir}">
                     <include name="**/${madcow.suites.pattern}/*.csv" />
                 </fileset>
             </path>
         </foreach>
         <foreach target="-run-spreadsheet-tests" param="testname" inheritrefs="true" inheritall="true">
             <path>
-                <fileset dir="${madcow.build.test.dir}">
+                <fileset dir="${madcow.test.resources.dir}">
                     <include name="**/${madcow.suites.pattern}/*.xls*" />
                     <exclude name="**/${madcow.suites.pattern}/~*.xls*" />
                 </fileset>
