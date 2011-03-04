@@ -26,7 +26,7 @@
     <groupId>com.projectmadcow</groupId>
     <artifactId>madcow</artifactId>
     <name>Madcow</name>
-    <version>1.6.1-SNAPSHOT</version>
+    <version>1.6.1</version>
     <packaging>jar</packaging>
     <description>Madcow open source test automation tool</description>
     <url>http://projectmadcow.com</url>
@@ -178,19 +178,19 @@
 
                                 <!-- run the madcow acceptance tests -->
                                 <unzip src="target/madcow-${project.version}-install.zip" dest="target/acceptance-test" />
-                                <delete dir="target/acceptance-test/test"/>
+                                <delete dir="target/acceptance-test/test" />
                                 <copy todir="target/acceptance-test/mappings">
-                                    <fileset dir="${basedir}/src/acceptance-test/mappings"/>
+                                    <fileset dir="${basedir}/src/acceptance-test/mappings" />
                                 </copy>
                                 <copy todir="target/acceptance-test/templates">
-                                    <fileset dir="${basedir}/src/acceptance-test/templates"/>
+                                    <fileset dir="${basedir}/src/acceptance-test/templates" />
                                 </copy>
-                                <delete file="target/acceptance-test/conf/log4j.properties"/>
+                                <delete file="target/acceptance-test/conf/log4j.properties" />
                                 <copy todir="target/acceptance-test/conf">
-                                    <fileset dir="${basedir}/src/acceptance-test/conf"/>
+                                    <fileset dir="${basedir}/src/acceptance-test/conf" />
                                 </copy>
                                 <ant antfile="build.xml" dir="target/acceptance-test" target="run-all-tests">
-                                    <property name="madcow.test.resources.dir" value="${basedir}/src/acceptance-test/test"/>
+                                    <property name="madcow.test.resources.dir" value="${basedir}/src/acceptance-test/test" />
                                 </ant>
 
                                 <!-- test the madcow project distribution zip -->
