@@ -32,9 +32,8 @@ public class AddressTest extends GroovyMadcowTestCase {
         def testData = [addressLine1 : '320 Adelaide St',
                         addressLine2 : "Brisbane CBD ${System.currentTimeMillis()}",
                         postcode     : '4000',
-                        suburb : 'BRISBANE',
-                        suburb_id : '8154',
-                        state : 'Queensland']
+                        suburb       : 'BRISBANE',
+                        state        : 'Queensland']
 
         // -----------------------------
         // Create the address
@@ -44,10 +43,7 @@ public class AddressTest extends GroovyMadcowTestCase {
         address_create_addressLine1.value = testData.addressLine1
         address_create_addressLine2.value = testData.addressLine2
         address_create_postCode.value = testData.postcode
-
-        // setting the postcode will show a list of radio buttons, we want 8154 - BRISBANE
-        setRadioButton = [xpath : "//input[@id='${testData.suburb_id}']"]
-
+        plugin.testsite.selectSuburb = testData.suburb
         address_create_wirelessAccessPointDetected.selectCheckbox
 
         address_create_create.clickButton
