@@ -44,7 +44,7 @@ public abstract class AbstractTabularTestRunner extends AbstractMadcowTestCase {
 
     abstract protected String getTestNameProperty()
 
-    abstract protected String getTestFileExtension()
+    abstract protected String[] getTestFileExtension()
 
     abstract protected Map parseFile(File file)
 
@@ -54,8 +54,11 @@ public abstract class AbstractTabularTestRunner extends AbstractMadcowTestCase {
     public void runTest() {
         try {
             def numThreads = Integer.parseInt(System.getProperty("madcow.threads", "10"))
-            List<File> loadedFile = FileFinder.loadFilesFromProperty(getTestNameProperty(), getTestFileExtension())
-            loadedFile.each {File file ->
+            List<File> loadedFiles = FileFinder.loadFilesFromProperty(getTestNameProperty(), getTestFileExtension())
+
+            LOG.debug "loadedFiles : $loadedFiles"
+
+            loadedFiles.each {File file ->
                 def testsToRun = parseFile(file)
                 testsToRun = filterOutUnwantedTests(testsToRun)
                 this.name = file.name

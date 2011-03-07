@@ -38,8 +38,8 @@ public class SpreadsheetTestRunner extends AbstractTabularTestRunner {
         return 'madcow.test.spreadsheet'
     }
 
-    protected String getTestFileExtension() {
-        return '.xls*'
+    protected String[] getTestFileExtension() {
+        return ['.xls', '.xlsx']
     }
 
     protected Map parseFile(File file) {

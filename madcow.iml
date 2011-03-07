@@ -12,6 +12,15 @@
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
+    <orderEntry type="module-library" scope="TEST">
+      <library>
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/src/project-template/.madcow/webtest/lib/webtest_T.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
     <orderEntry type="library" name="Maven: org.apache.poi:poi:3.7" level="project" />
     <orderEntry type="library" name="Maven: org.apache.poi:poi-ooxml:3.7" level="project" />
     <orderEntry type="library" name="Maven: org.apache.poi:poi-ooxml-schemas:3.7" level="project" />
@@ -79,15 +88,6 @@
     <orderEntry type="library" scope="TEST" name="Maven: org.jmock:jmock-legacy:2.5.0.1" level="project" />
     <orderEntry type="library" scope="TEST" name="Maven: org.objenesis:objenesis:1.1" level="project" />
     <orderEntry type="library" scope="TEST" name="Maven: junit:junit-dep:4.4" level="project" />
-    <orderEntry type="module-library" scope="TEST">
-      <library>
-        <CLASSES>
-          <root url="jar://$MODULE_DIR$/src/project-template/.madcow/webtest/lib/webtest_T.jar!/" />
-        </CLASSES>
-        <JAVADOC />
-        <SOURCES />
-      </library>
-    </orderEntry>
   </component>
 </module>
 

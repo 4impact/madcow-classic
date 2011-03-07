@@ -32,8 +32,8 @@ public class CsvTestRunner extends AbstractTabularTestRunner {
         return 'madcow.test.csv'
     }
 
-    protected String getTestFileExtension() {
-        return '.csv'
+    protected String[] getTestFileExtension() {
+        return ['.csv']
     }
 
     protected Map parseFile(File file) {

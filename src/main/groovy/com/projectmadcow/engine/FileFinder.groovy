@@ -53,7 +53,16 @@ public class FileFinder {
         return files[0]
     }
 
-    public static List<File> loadFilesFromProperty(def madcowProperty, def fileExtension) {
+    public static List<File> loadFilesFromProperty(def madcowProperty, String[] fileExtensions) {
+        def List<File> files = []
+        fileExtensions.each { fileExtension ->
+            files.addAll(loadFilesFromProperty(madcowProperty, fileExtension))
+        }
+
+        return files.unique()
+    }
+
+    public static List<File> loadFilesFromProperty(def madcowProperty, String fileExtension) {
         final String fileName = System.getProperty(madcowProperty)
         LOG.debug "loadFileFromProperty($madcowProperty, $fileExtension) filename from property : $fileName"
         return loadFilesFromFileName(fileName.split('!')[0], fileExtension)
