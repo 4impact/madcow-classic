@@ -98,7 +98,7 @@ public class TestGenerator {
 	}
 
 	static String sanitiseValue(def value) {
-        value.replaceAll('“|”', '"')
-	}
+        value.replaceAll('“|”', '"').replaceAll('\\r\\n|\\r|\\n', ' ')
+    }
 
 }
