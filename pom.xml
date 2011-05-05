@@ -56,6 +56,16 @@
             <name>Marcus Callon</name>
             <email>mcallon@4impact.com.au</email>
         </developer>
+        <developer>
+            <id>tfarr</id>
+            <name>Tim Farr</name>
+            <email>tfarr@4impact.com.au</email>
+        </developer>
+        <developer>
+            <id>tchorvat</id>
+            <name>Trevor Chorvat</name>
+            <email>tchorvat@4impact.com.au</email>
+        </developer>
     </developers>
 
     <parent>
