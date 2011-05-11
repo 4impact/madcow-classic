@@ -22,6 +22,11 @@
 package com.projectmadcow.plugins
 
 import org.apache.tools.ant.Task
+import javax.xml.parsers.DocumentBuilderFactory
+import javax.xml.xpath.XPathFactory
+import javax.xml.xpath.XPathConstants
+import org.w3c.dom.Element
+import javax.xml.xpath.XPath
 
 /**
  * Test class for the Store plugin.
@@ -30,14 +35,33 @@ public class StoreTest extends AbstractPluginTestCase {
 
     Store storePlugin = new Store()
     final String antTaskName = 'storeXPath'
+    Element htmlAsDocumentElement
+    XPath xpath
 
     void setUp() {
         super.setUp()
 
         final String html = """<html><body>
                                <div id="address" name="address">Adelaide St, Brisbane</div>
+                               <input type="text" name="postCode" id="postCode" value="4000"/>
                                </body></html>"""
         contextStub.setDefaultResponse(html)
+
+        def builder = DocumentBuilderFactory.newInstance().newDocumentBuilder()
+        htmlAsDocumentElement = builder.parse(new ByteArrayInputStream(html.bytes)).documentElement
+        xpath = XPathFactory.newInstance().newXPath()
+    }
+
+    void testXPathToStoreValue() {
+        String xPathToStoreValue =  storePlugin.createXPathToStore("@name='postCode'")
+        String retrievedText = xpath.evaluate(xPathToStoreValue, htmlAsDocumentElement, XPathConstants.STRING)
+        assertEquals(retrievedText, '4000')
+    }
+
+    void testXPathToStoreText() {
+        String xPathToStoreValue =  storePlugin.createXPathToStore("@id='address'")
+        String retrievedText = xpath.evaluate(xPathToStoreValue, htmlAsDocumentElement, XPathConstants.STRING)
+        assertEquals(retrievedText, 'Adelaide St, Brisbane')
     }
 
     void testStoreByHtmlId() {

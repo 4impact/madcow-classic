@@ -32,10 +32,6 @@ import com.projectmadcow.engine.plugin.Plugin
  */
 class Store extends Plugin {
 
-//    def invoke(AntBuilder antBuilder, Map pluginParameters) {
-//        antBuilder.storeXPath(pluginParameters)
-//    }
-    
     def invoke(AntBuilder antBuilder, Map pluginParameters) {
 
         if (!pluginParameters.value){
@@ -43,15 +39,26 @@ class Store extends Plugin {
              return
         }
 
-
-        if (!StringUtils.isEmpty(pluginParameters.htmlId)) {
-            pluginParameters.xpath = "//*[@id='${pluginParameters.htmlId}']//text()"
+         if (!StringUtils.isEmpty(pluginParameters.htmlId)) {
+            pluginParameters.xpath = createXPathToStore("@id='${pluginParameters.htmlId}'")
         } else if (!StringUtils.isEmpty(pluginParameters.name)) {
-            pluginParameters.xpath = "//*[@name='${pluginParameters.name}']//text()"
-        }
+            pluginParameters.xpath = createXPathToStore("@name='${pluginParameters.name}'")
+         }
 
         antBuilder.storeXPath(description: pluginParameters.description,
                               xpath: pluginParameters.xpath,
                               property: pluginParameters.value)
    	}
+
+    /*
+     * If there's a value, and no text, we store value
+     * and if there's text, but no value, we store text
+     * and if there's text and a value, we store text
+     */
+    String createXPathToStore(String xPathToIdentifyNode) {
+        return "//*[${xPathToIdentifyNode} and @value and not(text())]/@value " +
+                 "| //*[${xPathToIdentifyNode} and text() and not(@value)]/text() " +
+                 "| //*[${xPathToIdentifyNode} and text() and @value]/text()"
+
+    }
 }
