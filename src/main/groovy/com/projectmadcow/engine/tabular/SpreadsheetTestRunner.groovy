@@ -34,6 +34,9 @@ public class SpreadsheetTestRunner extends AbstractTabularTestRunner {
 
     private static final Logger LOG = Logger.getLogger(SpreadsheetTestRunner.class);
 
+    private FormulaEvaluator formulaEvaluator;
+    private DataFormatter dataFormatter;
+
     protected String getTestNameProperty() {
         return 'madcow.test.spreadsheet'
     }
@@ -44,6 +47,8 @@ public class SpreadsheetTestRunner extends AbstractTabularTestRunner {
 
     protected Map parseFile(File file) {
         Workbook wb = WorkbookFactory.create(new FileInputStream(file))
+        formulaEvaluator = wb.getCreationHelper().createFormulaEvaluator()
+        dataFormatter = new DataFormatter()
         def sheetsWithLines = (0..(wb.getNumberOfSheets() - 1)).collect({sheetIndex ->
 
             Sheet sheet = wb.getSheetAt(sheetIndex)
@@ -76,13 +81,15 @@ public class SpreadsheetTestRunner extends AbstractTabularTestRunner {
         Cell cell = row.getCell(i)
         if (cell) {
             try {
-                return cell.getStringCellValue()
+                return dataFormatter.formatCellValue(cell, formulaEvaluator)
             } catch (Exception e) {
-                LOG.error "Unable to get string value from cell : $cell [Make sure all cells containing numbers are either preceded with a single quote \"'\" or have a cell format of type TEXT ", e
+                LOG.error "Unable to get string value from cell : $cell. Please check cell format.", e
                 throw e;
             }
         } else {
             return ''
         }
     }
+
+
 }
