@@ -50,15 +50,9 @@ class Store extends Plugin {
                               property: pluginParameters.value)
    	}
 
-    /*
-     * If there's a value, and no text, we store value
-     * and if there's text, but no value, we store text
-     * and if there's text and a value, we store text
-     */
     String createXPathToStore(String xPathToIdentifyNode) {
         return "//*[${xPathToIdentifyNode} and @value and not(text())]/@value " +
-                 "| //*[${xPathToIdentifyNode} and text() and not(@value)]/text() " +
-                 "| //*[${xPathToIdentifyNode} and text() and @value]/text()"
+                "| //*[${xPathToIdentifyNode} and text()]/text() "
 
     }
 }
