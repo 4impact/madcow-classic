@@ -68,3 +68,10 @@ caption {
 	padding: 10px 0px 0px 0px;
 	margin: 2px;
 }
+
+div.warning {
+	font-size: 30px;
+	padding-top: 20px;
+	color: #FF3300;
+	font-weight: bold;
+}

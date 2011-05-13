@@ -315,6 +315,17 @@
 
         <antcall target="wt.htmlReports"/>
 
+        <if description="If no tests have been executed, we need to sub in a dummy report">
+            <resourcecount count="0">
+                <fileset dir="${wt.config.resultpath}" includes="index.html"/>
+            </resourcecount>
+            <then>
+                <copy description="No tests have been executed. Copy a 'no tests found' report file in."
+                      file="${madcow.resources.dir}/reporting/no_tests_found_report.html"
+                      tofile="${wt.config.resultpath}/index.html" />
+            </then>
+        </if>
+
         <trycatch>
             <try>
                 <antcall target="wt.openResultFile"/>
