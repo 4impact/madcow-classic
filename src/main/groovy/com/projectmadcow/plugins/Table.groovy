@@ -58,12 +58,13 @@ public class Table extends Plugin {
      * Returns an xpath expression to get a columns position within the table, with the specific column heading text
      */
     protected def getColumnPositionXPath(def columnHeaderText) {
-
         String xpath = ""
         if (columnHeaderText == "firstColumn")
             xpath = "1"
         else if (columnHeaderText == "lastColumn")
             xpath = "count(${getPrefixXPath()}/thead/tr/th[position() = last()]/preceding-sibling::*)+1"
+        else if (columnHeaderText.toString().toLowerCase() ==~ /column\d*/)
+             xpath = columnHeaderText.toString().substring(6)
         else
             xpath = "count(${getPrefixXPath()}/thead/tr/th[.//text() = '${columnHeaderText}' or .//@value = '${columnHeaderText}']/preceding-sibling::*)+1"
 
@@ -103,10 +104,6 @@ public class Table extends Plugin {
         return getCellXPath(getRowPositionXPath(rowPositionMap), columnHeaderText)
     }
 
-    protected def getFirstRowPositionXPath() {
-        return "1"
-    }
-
     protected def getLastRowPositionXPath() {
         return "count(${getPrefixXPath()}/tbody/tr[position() = last()]/preceding-sibling::*)+1"
     }
@@ -120,9 +117,11 @@ public class Table extends Plugin {
 
         String rowXPositionPath = ""
         if (selectionCriteria == "first")
-            rowXPositionPath = getFirstRowPositionXPath()
+            rowXPositionPath = '1'
         else if (selectionCriteria == "last")
             rowXPositionPath = getLastRowPositionXPath()
+        else if (selectionCriteria.toString().toLowerCase() ==~ /row\d*/)
+             rowXPositionPath = selectionCriteria.toString().substring(3)
         else
             rowXPositionPath = getRowPositionXPath(selectionCriteria)
 

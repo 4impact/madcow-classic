@@ -26,6 +26,7 @@ import javax.xml.xpath.XPath
 import javax.xml.xpath.XPathConstants
 import javax.xml.xpath.XPathFactory
 import org.w3c.dom.Element
+import java.util.regex.Matcher
 
 /**
  * Test class for the Table plugin.
@@ -63,11 +64,19 @@ public class TableTest extends AbstractPluginTestCase {
                                 </tr>
                                 <tr>
                                     <td><a href="/madcow-test-site/address/show/2">2</a></td>
-                                    <td>320 Adelaide St</td>
                                     <td></td>
+                                    <td>320 Adelaide St</td>
                                     <td>BRISBANE</td>
                                     <td>Queensland</td>
                                     <td>4000</td>
+                                </tr>
+                                <tr>
+                                    <td><a href="/madcow-test-site/address/show/2">3</a></td>
+                                    <td>Unit A</td>
+                                    <td>186 Boundary Street</td>
+                                    <td>WEST END</td>
+                                    <td>Queensland</td>
+                                    <td>4101</td>
                                 </tr>
                             </tbody>
                         </table>
@@ -97,6 +106,9 @@ public class TableTest extends AbstractPluginTestCase {
 
         checkPosition.call('firstColumn', '1')
         checkPosition.call('lastColumn', '6')
+
+        checkPosition.call('COLUMN4','4')
+        checkPosition.call('coLumn2','2')
     }
 
     void testRowPositionXPath() {
@@ -114,16 +126,13 @@ public class TableTest extends AbstractPluginTestCase {
 
         checkPosition.call(['firstColumn' : '1'], '1')
         checkPosition.call(['lastColumn' : '4000'], '2')
-    }
 
-    void testRowPositionXPathFirst() {
-        String rowPositionXPath = tablePlugin.getFirstRowPositionXPath()
-        assert xpath.evaluate(rowPositionXPath, htmlAsDocumentElement, XPathConstants.STRING)[0] == '1'
+        checkPosition.call(['coLumn2' :'Unit A'], '3')
     }
 
     void testRowPositionXPathLast() {
         String rowPositionXPath = tablePlugin.getLastRowPositionXPath()
-        assert xpath.evaluate(rowPositionXPath, htmlAsDocumentElement, XPathConstants.STRING)[0] == '2'
+        assert xpath.evaluate(rowPositionXPath, htmlAsDocumentElement, XPathConstants.STRING)[0] == '3'
     }
 
     void testSelectRow() {
@@ -143,6 +152,9 @@ public class TableTest extends AbstractPluginTestCase {
         assert contextStub.webtest.dynamicProperties.get('madcow.table.searchResults') == '1'
 
         tablePlugin.selectRow = 'last'
-        assert contextStub.webtest.dynamicProperties.get('madcow.table.searchResults') == '2'
+        assert contextStub.webtest.dynamicProperties.get('madcow.table.searchResults') == '3'
+
+        tablePlugin.selectRow = 'rOw32'
+        assert contextStub.webtest.dynamicProperties.get('madcow.table.searchResults') == '32'
     }
 }
