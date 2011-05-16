@@ -133,4 +133,17 @@ public class GrassParserTest extends GroovyTestCase {
 		List parsedCode = grassParser.parseCode(unparsedCode)
 		assert parsedCode == [ 'country.verifySelectFieldOptions=[\'Australia\', \'New Zealand\', ]']
 	}
+
+    void testMapInCommand() {
+        List unparsedCode = ["sometable.table.countRows['Address line 1' : 'Unit A'].equals = 1"]
+        List parsedCode = grassParser.parseCode(unparsedCode)
+        assertEquals(["sometable.table.countRows(['Address line 1' : 'Unit A']).equals='1'"], parsedCode)
+    }
+
+    void testMapInUnsupportedCommand() {
+        List unparsedCode = ["sometable.table.currentRow['Address line 1' : 'Unit A'].clickLink = Id"]
+        shouldFail {
+            grassParser.parseCode(unparsedCode)
+        }
+    }
 }

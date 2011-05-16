@@ -47,6 +47,8 @@ class GrassParser {
     protected static final Map IMPORT_COMMAND_DIRECTORIES = [ 'importTemplate' : 'templates',
                                                               'importTest' : 'test']
 
+    protected static final List OPERATIONS_THAT_TAKE_MAP_OR_LIST_PARAMETERS = ['countRows']
+
     protected RuntimeContext runtimeContext
     protected List<String> parsedCode
 
@@ -118,6 +120,8 @@ class GrassParser {
             return
         }
 
+        operation = transformAnyParametersInOperation(operation, line)
+
         // evaluate the expression to expand any embedded closures
         def expressionValue = ParseUtil.evalMe(expression)
 
@@ -150,6 +154,25 @@ class GrassParser {
             line = "$operation=$expression"
             parsedCode.add(line)
         }
+    }
+
+    //If any portion of the operation contains a map or list, we need to convert it into a method parameter
+    private String transformAnyParametersInOperation(String operation, String line) {
+        def splitOperation = operation.split('\\.')
+        splitOperation.eachWithIndex { op, index ->
+            if (op ==~ /\w*\[.*\]/) {
+                def operationName = op.substring(0, op.indexOf(('[')))
+                if (!OPERATIONS_THAT_TAKE_MAP_OR_LIST_PARAMETERS.contains(operationName))
+                    throw new Exception("Unable to parse line: $line, operation '$operationName' doesn't support parameters")
+
+                splitOperation[index] = op.replaceFirst('\\[', '\\(\\[').replaceFirst('\\]', '\\]\\)')
+            }
+        }
+        return splitOperation.join('.')
+    }
+
+    String transformOperation(String operation) {
+
     }
 
     List loadImport(String filename, String basedir) {

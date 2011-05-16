@@ -19,20 +19,18 @@
  * under the License.
  */
 
-package com.projectmadcow.plugins
+package com.projectmadcow.plugins.table
 
+import com.projectmadcow.plugins.AbstractPluginTestCase
 import javax.xml.parsers.DocumentBuilderFactory
 import javax.xml.xpath.XPath
-import javax.xml.xpath.XPathConstants
 import javax.xml.xpath.XPathFactory
 import org.w3c.dom.Element
+import javax.xml.xpath.XPathConstants
 
-/**
- * Test class for the Table plugin.
- */
-public class TableTest extends AbstractPluginTestCase {
+class TableCountRowsWithCriteriaTest  extends AbstractPluginTestCase {
 
-    Table tablePlugin
+
     String html
     Element htmlAsDocumentElement
     XPath xpath
@@ -86,74 +84,31 @@ public class TableTest extends AbstractPluginTestCase {
         htmlAsDocumentElement = builder.parse(new ByteArrayInputStream(html.bytes)).documentElement
         xpath = XPathFactory.newInstance().newXPath()
 
-        tablePlugin = (new Table()).invoke(antBuilder, [htmlId : 'searchResults'])
-        tablePlugin.callingProperty = 'searchResults'
+
     }
 
-    void testColumnPositionXPath() {
-        Closure checkPosition = { String column, String position ->
-            String columnPositionXPath = tablePlugin.getColumnPositionXPath(column)
-            assert xpath.evaluate(columnPositionXPath, htmlAsDocumentElement, XPathConstants.STRING)[0] == position
-        }
+    void testCountRowsXPath() {
+        def parameters = ['State' : 'Queensland']
+        TableCountRowsWithCriteria rowCounter = new TableCountRowsWithCriteria( "//table[@id='searchResults']", antBuilder, '', parameters)
 
-        checkPosition.call('Id', '1')
-        checkPosition.call('Address Line 1', '2')
-        checkPosition.call('Address Line 2', '3')
-        checkPosition.call('Suburb', '4')
-        checkPosition.call('State', '5')
-        checkPosition.call('Postcode', '6')
+        assert xpath.evaluate(rowCounter.buildRowCountXPath('=', '3'), htmlAsDocumentElement, XPathConstants.STRING) == "true"
+        assert xpath.evaluate(rowCounter.buildRowCountXPath('<', '4'), htmlAsDocumentElement, XPathConstants.STRING) == "true"
+        assert xpath.evaluate(rowCounter.buildRowCountXPath('>', '2'), htmlAsDocumentElement, XPathConstants.STRING) == "true"
 
-        checkPosition.call('firstColumn', '1')
-        checkPosition.call('lastColumn', '6')
-
-        checkPosition.call('COLUMN4','4')
-        checkPosition.call('coLumn2','2')
+        assert xpath.evaluate(rowCounter.buildRowCountXPath('=', '8'), htmlAsDocumentElement, XPathConstants.STRING) == "false"
+        assert xpath.evaluate(rowCounter.buildRowCountXPath('<', '2'), htmlAsDocumentElement, XPathConstants.STRING) == "false"
+        assert xpath.evaluate(rowCounter.buildRowCountXPath('>', '4'), htmlAsDocumentElement, XPathConstants.STRING) == "false"
     }
 
-    void testRowPositionXPath() {
-        Closure checkPosition = { Map attributeMap, String position ->
-            String rowPositionXPath = tablePlugin.getRowPositionXPath(attributeMap)
-            assert xpath.evaluate(rowPositionXPath, htmlAsDocumentElement, XPathConstants.STRING)[0] == position
-        }
-
-        checkPosition.call(['Id' : '1'], '1')
-        checkPosition.call(['Id' : '2'], '2')
-        checkPosition.call(['Suburb' : 'BRISBANE'], '2')
-        checkPosition.call(['Postcode' : '4005'], '1')
-
-        checkPosition.call(['State' : 'Queensland', 'Suburb' : 'BRISBANE'], '2')
-
-        checkPosition.call(['firstColumn' : '1'], '1')
-        checkPosition.call(['lastColumn' : '4000'], '2')
-
-        checkPosition.call(['coLumn2' :'Unit A'], '3')
+    void testCountRowsXPathWithMultipleCriterea() {
+        def parameters = ['State' : 'Queensland', 'Suburb' : 'TENERIFFE']
+        TableCountRowsWithCriteria rowCounter = new TableCountRowsWithCriteria( "//table[@id='searchResults']", antBuilder, '', parameters)
+        assert xpath.evaluate(rowCounter.buildRowCountXPath('=', '1'), htmlAsDocumentElement, XPathConstants.STRING) == "true"
     }
 
-    void testRowPositionXPathLast() {
-        String rowPositionXPath = tablePlugin.getLastRowPositionXPath()
-        assert xpath.evaluate(rowPositionXPath, htmlAsDocumentElement, XPathConstants.STRING)[0] == '3'
-    }
-
-    void testSelectRow() {
-        tablePlugin.selectRow = ['Suburb' : 'BRISBANE']
-        assert contextStub.webtest.dynamicProperties.get('madcow.table.searchResults') == '2'
-
-        tablePlugin.selectRow = ['Suburb' : 'BRISBANE', 'State' : 'Queensland']
-        assert contextStub.webtest.dynamicProperties.get('madcow.table.searchResults') == '2'
-
-        tablePlugin.selectRow = ['firstColumn' : '1']
-        assert contextStub.webtest.dynamicProperties.get('madcow.table.searchResults') == '1'
-
-        tablePlugin.selectRow = ['lastColumn' : '4000']
-        assert contextStub.webtest.dynamicProperties.get('madcow.table.searchResults') == '2'
-
-        tablePlugin.selectRow = 'first'
-        assert contextStub.webtest.dynamicProperties.get('madcow.table.searchResults') == '1'
-
-        tablePlugin.selectRow = 'last'
-        assert contextStub.webtest.dynamicProperties.get('madcow.table.searchResults') == '3'
-
-        tablePlugin.selectRow = 'rOw32'
-        assert contextStub.webtest.dynamicProperties.get('madcow.table.searchResults') == '32'
+    void testCountRowsXPathWithSpecialColumnValues() {
+        def parameters = ['firstColumn' : '2', 'column4' : 'BRISBANE', 'lastColumn' : '4000']
+        TableCountRowsWithCriteria rowCounter = new TableCountRowsWithCriteria( "//table[@id='searchResults']", antBuilder, '', parameters)
+        assert xpath.evaluate(rowCounter.buildRowCountXPath('=', '1'), htmlAsDocumentElement, XPathConstants.STRING) == "true"
     }
 }

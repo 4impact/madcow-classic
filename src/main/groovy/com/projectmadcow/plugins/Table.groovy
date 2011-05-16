@@ -28,6 +28,8 @@ import com.projectmadcow.engine.plugin.PluginResolver
 
 import com.projectmadcow.plugins.table.TableCountRows
 import com.projectmadcow.plugins.table.TableHeaderColumnCount
+import com.projectmadcow.plugins.table.TableCountRowsWithCriteria
+import com.projectmadcow.util.XPathHelper
 
 /**
  * Ideally modify this class to dynamically invoke any madcow plugin or webtest step
@@ -54,20 +56,8 @@ public class Table extends Plugin {
         return this
     }
 
-    /**
-     * Returns an xpath expression to get a columns position within the table, with the specific column heading text
-     */
     protected def getColumnPositionXPath(def columnHeaderText) {
-        String xpath = ""
-        if (columnHeaderText == "firstColumn")
-            xpath = "1"
-        else if (columnHeaderText == "lastColumn")
-            xpath = "count(${getPrefixXPath()}/thead/tr/th[position() = last()]/preceding-sibling::*)+1"
-        else if (columnHeaderText.toString().toLowerCase() ==~ /column\d*/)
-             xpath = columnHeaderText.toString().substring(6)
-        else
-            xpath = "count(${getPrefixXPath()}/thead/tr/th[.//text() = '${columnHeaderText}' or .//@value = '${columnHeaderText}']/preceding-sibling::*)+1"
-
+        String xpath = XPathHelper.getColumnPositionXPath(getPrefixXPath(), columnHeaderText)
         LOG.debug("getColumnPositionXPath(${columnHeaderText} = ${xpath}")
         return xpath
     }
@@ -219,6 +209,13 @@ public class Table extends Plugin {
     def getCountRows() {
         return new TableCountRows(getPrefixXPath(), antBuilder, getDescription('countRows', null, false))
     }
+
+    def countRows(def parameters) {
+        def description = getDescription("countRows${parameters}", null, false)
+        return new TableCountRowsWithCriteria(getPrefixXPath(), antBuilder, description, parameters)
+    }
+
+    def
 
     protected String getPrefixXPath() {
         if (attributes.htmlId) {
