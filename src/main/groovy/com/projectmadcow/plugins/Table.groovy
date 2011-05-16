@@ -104,6 +104,10 @@ public class Table extends Plugin {
         return getCellXPath(getRowPositionXPath(rowPositionMap), columnHeaderText)
     }
 
+    protected def getFirstRowPositionXPath() {
+        return "1"
+    }
+
     protected def getLastRowPositionXPath() {
         return "count(${getPrefixXPath()}/tbody/tr[position() = last()]/preceding-sibling::*)+1"
     }
@@ -117,7 +121,7 @@ public class Table extends Plugin {
 
         String rowXPositionPath = ""
         if (selectionCriteria == "first")
-            rowXPositionPath = '1'
+            rowXPositionPath = getFirstRowPositionXPath()
         else if (selectionCriteria == "last")
             rowXPositionPath = getLastRowPositionXPath()
         else if (selectionCriteria.toString().toLowerCase() ==~ /row\d*/)
