@@ -107,12 +107,13 @@ public class GrassParserTest extends GroovyTestCase {
 		assert parsedCode == [ 'verifySelectFieldOptions=[\'htmlId\' : \'country\', \'options\' : [\'Australia\', \'New Zealand\', ], ]']
 	}
 
+    //table.currentRow.checkValue = ['@columnName' : '@columnValue']
 	void testMapsWithDataParameters() {
-		List unparsedCode = ['@xpathValue = //a',
-							 '@criteria = something',
-						     'clickLink = [xpath : \'@xpathValue\']']
+		List unparsedCode = ['@columnName = suburb',
+                             '@columnValue = BRISBANE',
+						     'table.currentRow.checkValue = [\'@columnName\' : \'@columnValue\']']
 		List parsedCode = grassParser.parseCode(unparsedCode)
-		assert parsedCode == [ 'clickLink=[\'xpath\' : \'//a\', ]']
+		assert parsedCode == [ 'table.currentRow.checkValue=[\'suburb\' : \'BRISBANE\', ]']
 	}
 	
 	void testLists() {
