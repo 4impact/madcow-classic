@@ -19,13 +19,9 @@
  * under the License.
  */
 
-/**
- * 
- */
 package com.projectmadcow.extension.webtest.step
 
 import com.projectmadcow.database.DatabaseHelper
-import com.projectmadcow.database.DatabaseLoadTask
 import org.apache.log4j.Logger
 
 /**
@@ -35,9 +31,9 @@ import org.apache.log4j.Logger
  * 06/11/2009 3:02:26 PM
  *
  */
-public class ExecuteSql  extends AbstractMadcowStep {
+public class ExecuteSql extends AbstractMadcowStep {
     
-    private static final Logger LOG = Logger.getLogger(ExecuteJavascript.class);
+    private static final Logger LOG = Logger.getLogger(ExecuteSql.class);
     String sql    
     
     /**
@@ -48,7 +44,7 @@ public class ExecuteSql  extends AbstractMadcowStep {
      */
     
     public void doExecute() {
-         new DatabaseHelper(DatabaseLoadTask.DEFAULT_DATABASE_CONFIG_FILE_NAME).executeSql(sql)        
+        new DatabaseHelper().executeSql(sql)
     }    
     
     protected void verifyParameters() {       

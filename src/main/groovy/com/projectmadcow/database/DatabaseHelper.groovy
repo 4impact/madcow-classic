@@ -41,6 +41,7 @@ import org.springframework.core.io.support.PathMatchingResourcePatternResolver
 import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.jdbc.datasource.DriverManagerDataSource
 import org.xml.sax.InputSource
+import com.projectmadcow.engine.MadcowConfigSlurper
 
 /**
  * DatabaseHelper is the main logic class for the database task.
@@ -51,10 +52,10 @@ public class DatabaseHelper {
 
     static final Logger LOG = Logger.getLogger(DatabaseHelper.class)
 
-    def databaseConfigFileName
+    ConfigObject databaseConfig
 
-    public DatabaseHelper(def databaseConfigFileName) {
-        this.databaseConfigFileName = databaseConfigFileName
+    public DatabaseHelper() {
+        this.databaseConfig = new MadcowConfigSlurper(MadcowConfigSlurper.DATABASE).parse()
     }
 
     /**
@@ -74,7 +75,6 @@ public class DatabaseHelper {
     }
 
     public synchronized void loadXmlData(ClassLoader classLoader = this.getClass().getClassLoader()) {
-
         // note that "classpath*:" will only work reliably with at least one root directory before the pattern starts,
         // unless the actual target files reside in the file system. This means that a pattern like "classpath*:*.xml"
         // will not retrieve files from the root of jar files but rather only from the root of expanded directories.
@@ -87,10 +87,9 @@ public class DatabaseHelper {
             return
         }
 
-        def databaseConfig = loadDatabaseConfig(classLoader)
         Class.forName(databaseConfig.jdbc.className)
         Connection jdbcConnection =
-        DriverManager.getConnection(databaseConfig.jdbc.url as String, databaseConfig.jdbc.user as String, databaseConfig.jdbc.password as String)
+            DriverManager.getConnection(databaseConfig.jdbc.url as String, databaseConfig.jdbc.user as String, databaseConfig.jdbc.password as String)
         IDatabaseConnection connection = new DatabaseConnection(jdbcConnection)
 
         // assumes that these data files are order independant, if there is order dependancy then it is
@@ -105,25 +104,14 @@ public class DatabaseHelper {
         }
     }
 
-    private def loadDatabaseConfig(ClassLoader classLoader = this.getClass().getClassLoader()) {
-        LOG.info "DatabaseHelper.loadDatabaseConfig databaseConfigFileName = $databaseConfigFileName"
-        PathMatchingResourcePatternResolver resourceLoader = new PathMatchingResourcePatternResolver(classLoader)
-        Resource[] resources = resourceLoader.getResources("classpath*:$databaseConfigFileName")
-        Properties databaseProps = new Properties()
-
-        if (resources.length < 1) {
-            throw new RuntimeException("Error could not find a single database config file with name '$databaseConfigFileName' on the classpath")
-        }
-
-        resources.each { resource ->
-            LOG.info "Loading database config resource : $resource"
-            databaseProps.load(resource.inputStream)
-        }
-        new ConfigSlurper().parse(databaseProps)
+    public def executeSql(String sql) {
+        LOG.debug "Executing SQL: ${sql}"
+        JdbcTemplate jdbcTemplate = new JdbcTemplate(getDataSource())
+        jdbcTemplate.execute(sql)
     }
 
     private DataSource getDataSource() {
-        def databaseConfig = loadDatabaseConfig()
+        validateDatabaseProperties()
         DriverManagerDataSource dataSource = new DriverManagerDataSource()
         dataSource.driverClassName = databaseConfig.jdbc.className
         dataSource.url = databaseConfig.jdbc.url
@@ -136,8 +124,8 @@ public class DatabaseHelper {
         dataSource
     }
 
-    public def executeSql(String sql) {
-        JdbcTemplate jdbcTemplate = new JdbcTemplate(getDataSource())
-        jdbcTemplate.execute(sql)
+    private void validateDatabaseProperties() {
+        if (!databaseConfig.flatten().keySet().containsAll(['jdbc.className', 'jdbc.url']))
+            throw new RuntimeException("Required database properties not found ('jdbc.url', 'jdbc.className'). Is there a madcow.database.properties on the classpath?")
     }
 }

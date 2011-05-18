@@ -109,7 +109,7 @@
     </target>
 
     <target name="loadDatabase">
-        <madcowDatabaseLoad databaseConfigFileName="${madcow.database.properties.file}">
+        <madcowDatabaseLoad>
             <classpath refid="test.classpath" />
         </madcowDatabaseLoad>
     </target>

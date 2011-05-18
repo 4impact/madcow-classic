@@ -19,40 +19,27 @@
  * under the License.
  */
 
-package com.projectmadcow.extension.webtest.step
+package com.projectmadcow.engine
 
-import com.canoo.webtest.steps.request.InvokePage
-import com.projectmadcow.engine.MadcowConfigSlurper
-import org.apache.log4j.Logger
-
-/**
- * InvokeUrl
- *
- * @author mcallon
+/*
+ * Uses the files src/test/resources/madcow.url.properties and src/test/resources/dev.madcow.url.properties
  */
-public class InvokeUrl extends InvokePage {
+class MadcowConfigSlurperTest extends GroovyTestCase {
 
-    protected static final Logger LOG = Logger.getLogger(InvokeUrl.class);
-
-    public static final String URL_CONFIG_FILE_SUFFIX = 'madcow.url.properties'
-
-    static ConfigObject urlMappings;
-
-    static {
-        urlMappings = new MadcowConfigSlurper(MadcowConfigSlurper.URL).parse()
+    public void testParseWithoutFilePrefixPropertySet() {
+        MadcowConfigSlurper slurper = new MadcowConfigSlurper(MadcowConfigSlurper.URL)
+        def configObject = slurper.parse()
+        assert configObject.TEST_SITE == 'http://test-site.projectmadcow.com:8080/madcow-test-site'
     }
 
-    String value
+    public void testParseWithFilePrefixPropertySet() {
+        System.setProperty('madcow.url.properties.file', 'dev')
+        MadcowConfigSlurper slurper = new MadcowConfigSlurper(MadcowConfigSlurper.URL)
+        def configObject = slurper.parse()
+        assert configObject.TEST_SITE == 'http://localhost:8080/madcow-test-site'
 
-    @Override
-    public String getUrl() {
-        resolveUrlMappings(value)
+        //Err - just in case.
+        System.setProperty('madcow.url.properties.file', '')
     }
 
-    def resolveUrlMappings(url){
-        urlMappings.each { key, value ->
-            url = url.replaceAll(key, value)
-        }
-        url
-    }
 }

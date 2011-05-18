@@ -36,9 +36,6 @@ public class DatabaseLoadTask extends Task {
 
     static final Logger LOG = Logger.getLogger(DatabaseLoadTask.class)
 
-    public static final String DATABASE_CONFIG_FILE_SUFFIX = 'madcow.database.properties'
-
-    private String databaseConfigFileName = DATABASE_CONFIG_FILE_SUFFIX
     private ClasspathUtils.Delegate cpDelegate
 
     public void init() {
@@ -47,13 +44,9 @@ public class DatabaseLoadTask extends Task {
     }
     
     public void execute() throws BuildException {
-        new DatabaseHelper(databaseConfigFileName).loadXmlData(cpDelegate.getClassLoader())
+        new DatabaseHelper().loadXmlData(cpDelegate.getClassLoader())
     }
 
-    public void setDatabaseConfigFileName(String databaseConfigFileName) {
-        this.databaseConfigFileName = databaseConfigFileName != '' ? databaseConfigFileName + ".${DATABASE_CONFIG_FILE_SUFFIX}" : DATABASE_CONFIG_FILE_SUFFIX
-    }
-    
     public void setClasspathRef(Reference r) {
         this.cpDelegate.setClasspathRef(r)
     }
