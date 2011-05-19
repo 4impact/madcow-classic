@@ -183,11 +183,18 @@ class GrassParser {
     }
 
     String getDataParameterValue(String line, String parameterName) {
-        if (!runtimeContext.dataParameters.containsKey(parameterName))
-            throw new Exception("Unable to parse line: $line, data parameter not set ${parameterName}")
+        def parameterValue
 
-        LOG.debug "Replacing data parameter $parameterName with ${runtimeContext.dataParameters.get(parameterName)}"
-        return runtimeContext.dataParameters.get(parameterName)
+        if (runtimeContext.dataParameters.containsKey(parameterName)) {
+            parameterValue = runtimeContext.dataParameters.get(parameterName)
+        } else if (runtimeContext.dataParameters.containsKey("${parameterName}.default".toString())) {
+            parameterValue = runtimeContext.dataParameters.get("${parameterName}.default".toString())
+        } else {
+            throw new Exception("Unable to parse line: $line, data parameter not set ${parameterName}")
+        }
+
+        LOG.debug "Replacing data parameter $parameterName with $parameterValue"
+        return parameterValue
     }
 
     void setDataParameterValue(String key, String value) {

@@ -74,6 +74,30 @@ public class GrassParserTest extends GroovyTestCase {
 		assert parsedCode == [ 'addressLine1.value=\''+ new Date().format('dd/MM/yyyy')+'\'']
 
     }
+
+    void testParameterValuesAreUsedInPreferenceOfDefaultValues() {
+        List unparsedCode = [ '@addrValue = 55 Queen Street',
+                              '@addrValue.default = 28 Blargh Street',
+							  'addressLine1.value = @addrValue' ]
+		List parsedCode = grassParser.parseCode(unparsedCode)
+		assert parsedCode == [ "addressLine1.value='55 Queen Street'"]
+    }
+
+    void testParameterDefaultValuesAreUsedIfParameterIsNotDefined() {
+        List unparsedCode = [ '@someOtherParameter = This is just here for effect',
+                              '@addrValue.default = 28 Blargh Street',
+							  'addressLine1.value = @addrValue' ]
+		List parsedCode = grassParser.parseCode(unparsedCode)
+		assert parsedCode == [ "addressLine1.value='28 Blargh Street'"]
+    }
+
+    void testParameterValuesCanBeDefinedAfterDefault() {
+        List unparsedCode = [ '@addrValue.default = 28 Blargh Street',
+                              '@addrValue = 55 Queen Street',
+							  'addressLine1.value = @addrValue' ]
+		List parsedCode = grassParser.parseCode(unparsedCode)
+		assert parsedCode == [ "addressLine1.value='55 Queen Street'"]
+    }
 	
 	void testMaps() {
 		List unparsedCode = ['clickLink = [xpath : \'//a\']']
