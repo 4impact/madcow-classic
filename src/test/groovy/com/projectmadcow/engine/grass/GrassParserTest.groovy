@@ -142,9 +142,14 @@ public class GrassParserTest extends GroovyTestCase {
     }
 
     void testMapInUnsupportedCommand() {
-        List unparsedCode = ["sometable.table.currentRow['Address line 1' : 'Unit A'].clickLink = Id"]
         shouldFail {
-            grassParser.parseCode(unparsedCode)
+            grassParser.parseCode(["sometable.table.currentRow['Address line 1' : 'Unit A'].clickLink = Id"])
+        }
+    }
+
+    void testLinesWithNoOperationOrCommandWillFail() {
+        shouldFail {
+            grassParser.parseCode(["menu_newAddress"])
         }
     }
 }

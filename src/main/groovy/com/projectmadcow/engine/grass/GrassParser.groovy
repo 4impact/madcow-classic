@@ -71,7 +71,9 @@ class GrassParser {
             // ignore comment and empty lines
             if (line.startsWith('#') || StringUtils.isEmpty(line))
                 return
-
+            //If this line doesn't actually do anything, we need to error
+            if (!line.contains('=') && !line.contains('.'))
+                throw new RuntimeException("Unable to parse line '${line}'. It doesn't appear to do anything.")
             // if it is just an operation, add the line
             if (!line.contains('=')) {
                 parsedCode.add(line)
