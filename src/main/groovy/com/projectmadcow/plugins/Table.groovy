@@ -167,6 +167,10 @@ public class Table extends Plugin {
         invokePlugin('unselectCheckbox', column, "//input[@type='checkbox']")
     }
 
+    def setCheckValueEmpty(String column){
+        invokePlugin('checkValueEmpty', column)
+    }
+
     def setVerifySelectFieldOptions(def valueMap){
         invokePlugin('verifySelectFieldOptions', valueMap, '//select[1]')
     }
