@@ -37,8 +37,8 @@ public class AddressTest extends AbstractTestCase {
         // get the id of the newly created address
 
         // JIRA  MADCOW-174
-//        storeXPath = [property : 'addressId', xpath : "madcow:numbers-only(//*[@id='addressId']/text())"]
-//        storeXPath = [property : 'addressIdFormatted', xpath : "//*[@id='addressId']"]
+        storeXPath = [property : 'addressId', xpath : "madcow:numbers-only(//*[@id='addressId']/text())"]
+        storeXPath = [property : 'addressIdFormatted', xpath : "//*[@id='addressId']"]
         testsite_create_addressId.store = 'addressId'
         testsite_create_addressIdFormatted.store = 'addressIdFormatted'
 
