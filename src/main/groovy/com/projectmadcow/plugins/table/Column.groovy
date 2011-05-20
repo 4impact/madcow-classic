@@ -19,24 +19,27 @@
  * under the License.
  */
 
-package com.projectmadcow.util
+package com.projectmadcow.plugins.table
 
-/*
- * A home for re-usable slivers of XPath that we don't want lying around the application
- */
-class XPathHelper {
+class Column {
 
-    /**
-     * Returns an xpath expression to get a columns position within the table, with the specific column heading text
-     */
-    static def getColumnPositionXPath(String prefixXPath, def columnHeaderText) {
-        if (columnHeaderText == "firstColumn")
+    private String tableXPath
+
+    private def columnHeader
+
+    public Column(String tableXPath, def columnHeader) {
+        this.tableXPath = tableXPath
+        this.columnHeader = columnHeader
+    }
+
+    public String getColumnPositionXPath() {
+        if (columnHeader == "firstColumn")
             return "1"
-        else if (columnHeaderText == "lastColumn")
-            return "count(${prefixXPath}/thead/tr/th[position() = last()]/preceding-sibling::*)+1"
-        else if (columnHeaderText.toString().toLowerCase() ==~ /column\d*/)
-             return columnHeaderText.toString().substring(6)
+        else if (columnHeader == "lastColumn")
+            return "count(${tableXPath}/thead/tr/th[position() = last()]/preceding-sibling::*)+1"
+        else if (columnHeader.toString().toLowerCase() ==~ /column\d*/)
+             return columnHeader.toString().substring(6)
         else
-            return "count(${prefixXPath}/thead/tr/th[.//text() = '${columnHeaderText}' or .//@value = '${columnHeaderText}']/preceding-sibling::*)+1"
+            return "count(${tableXPath}/thead/tr/th[.//text() = '${columnHeader}' or .//@value = '${columnHeader}']/preceding-sibling::*)+1"
     }
 }

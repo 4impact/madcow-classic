@@ -21,15 +21,13 @@
 
 package com.projectmadcow.plugins
 
-import org.apache.log4j.Logger
-
 import com.projectmadcow.engine.plugin.Plugin
 import com.projectmadcow.engine.plugin.PluginResolver
-
+import com.projectmadcow.plugins.table.Column
 import com.projectmadcow.plugins.table.TableCountRows
-import com.projectmadcow.plugins.table.TableHeaderColumnCount
 import com.projectmadcow.plugins.table.TableCountRowsWithCriteria
-import com.projectmadcow.util.XPathHelper
+import com.projectmadcow.plugins.table.TableHeaderColumnCount
+import org.apache.log4j.Logger
 
 /**
  * Ideally modify this class to dynamically invoke any madcow plugin or webtest step
@@ -57,7 +55,7 @@ public class Table extends Plugin {
     }
 
     protected def getColumnPositionXPath(def columnHeaderText) {
-        String xpath = XPathHelper.getColumnPositionXPath(getPrefixXPath(), columnHeaderText)
+        String xpath = new Column(prefixXPath, columnHeaderText).getColumnPositionXPath()
         LOG.debug("getColumnPositionXPath(${columnHeaderText} = ${xpath}")
         return xpath
     }

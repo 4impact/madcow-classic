@@ -21,9 +21,6 @@
 
 package com.projectmadcow.plugins.table
 
-import com.projectmadcow.util.XPathHelper
-
-
 class TableCountRowsWithCriteria extends AbstractCount {
 
     private def columnHeadersAndCellValuesMap
@@ -41,7 +38,8 @@ class TableCountRowsWithCriteria extends AbstractCount {
     protected String buildRowCountXPath(operator, value) {
         def xpath = "count(${prefixXPath}/tbody/tr"
         columnHeadersAndCellValuesMap.each { headerText, cellText ->
-            xpath += "/td[position() = (${XPathHelper.getColumnPositionXPath(prefixXPath, headerText)}) and (.//text() = '${cellText}' or .//@value = '${cellText}')]/parent::*"
+            Column column = new Column(prefixXPath, headerText)
+            xpath += "/td[position() = (${column.getColumnPositionXPath()}) and (.//text() = '${cellText}' or .//@value = '${cellText}')]/parent::*"
         }
         xpath += ")${operator}${value}"
         return xpath
