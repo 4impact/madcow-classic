@@ -68,7 +68,7 @@ public class Table extends Plugin {
         String rowXPath = "count(${getPrefixXPath()}/tbody/tr"
 
         columnHeaderTextCellTextMap.each { columnText, cellText ->
-            rowXPath += "/td[position() = (${getColumnPositionXPath(columnText)}) and (wt:cleanText(.//text()) = '${cellText}' or .//@value = '${cellText}')]/parent::*"
+            rowXPath += "/td[position() = (${getColumnPositionXPath(columnText)}) and (wt:cleanText(.//text()) = '${cellText}' or wt:cleanText(.//@value) = '${cellText}')]/parent::*"
         }
         rowXPath += "/preceding-sibling::*)+1"
 

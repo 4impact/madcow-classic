@@ -40,6 +40,6 @@ class Column {
         else if (columnHeader.toString().toLowerCase() ==~ /column\d*/)
              return columnHeader.toString().substring(6)
         else
-            return "count(${tableXPath}/thead/tr/th[wt:cleanText(.//text()) = '${columnHeader}' or .//@value = '${columnHeader}']/preceding-sibling::*)+1"
+            return "count(${tableXPath}/thead/tr/th[wt:cleanText(.//text()) = '${columnHeader}' or wt:cleanText(.//@value) = '${columnHeader}']/preceding-sibling::*)+1"
     }
 }
