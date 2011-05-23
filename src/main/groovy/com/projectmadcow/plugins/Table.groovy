@@ -68,7 +68,7 @@ public class Table extends Plugin {
         String rowXPath = "count(${getPrefixXPath()}/tbody/tr"
 
         columnHeaderTextCellTextMap.each { columnText, cellText ->
-            rowXPath += "/td[position() = (${getColumnPositionXPath(columnText)}) and (.//text() = '${cellText}' or .//@value = '${cellText}')]/parent::*"
+            rowXPath += "/td[position() = (${getColumnPositionXPath(columnText)}) and (wt:cleanText(.//text()) = '${cellText}' or .//@value = '${cellText}')]/parent::*"
         }
         rowXPath += "/preceding-sibling::*)+1"
 
@@ -177,7 +177,7 @@ public class Table extends Plugin {
         antBuilder.plugin(description: getDescription('setRadioButton', valueMap)) {
             antBuilder.verifyDynamicProperty (name: getPropertyName())
             valueMap.each { column, value ->
-                def attributes = [xpath : getCellXPath("#{${getPropertyName()}}", column) + "//*[text() = '$value']//input[@type='radio']"]
+                def attributes = [xpath : getCellXPath("#{${getPropertyName()}}", column) + "//*[wt:cleanText(text()) = '$value']//input[@type='radio']"]
                 antBuilder.setRadioButton(attributes)
             }
         }

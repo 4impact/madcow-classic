@@ -22,18 +22,14 @@
 package com.projectmadcow.plugins.table
 
 import com.projectmadcow.plugins.AbstractPluginTestCase
-import javax.xml.parsers.DocumentBuilderFactory
-import javax.xml.xpath.XPath
-import javax.xml.xpath.XPathFactory
-import org.w3c.dom.Element
-import javax.xml.xpath.XPathConstants
+import com.projectmadcow.plugins.XPathEvaluator
 
 class TableCountRowsWithCriteriaTest  extends AbstractPluginTestCase {
 
 
     String html
-    Element htmlAsDocumentElement
-    XPath xpath
+    XPathEvaluator xPathEvaluator
+
 
     void setUp() {
         super.setUp()
@@ -80,35 +76,33 @@ class TableCountRowsWithCriteriaTest  extends AbstractPluginTestCase {
                        </body></html>"""
         contextStub.setDefaultResponse(html)
 
-        def builder = DocumentBuilderFactory.newInstance().newDocumentBuilder()
-        htmlAsDocumentElement = builder.parse(new ByteArrayInputStream(html.bytes)).documentElement
-        xpath = XPathFactory.newInstance().newXPath()
-
-
+        xPathEvaluator = new XPathEvaluator(html)
     }
 
     void testCountRowsXPath() {
         def parameters = ['State' : 'Queensland']
         TableCountRowsWithCriteria rowCounter = new TableCountRowsWithCriteria( "//table[@id='searchResults']", antBuilder, '', parameters)
 
-        assert xpath.evaluate(rowCounter.buildRowCountXPath('=', '3'), htmlAsDocumentElement, XPathConstants.STRING) == "true"
-        assert xpath.evaluate(rowCounter.buildRowCountXPath('<', '4'), htmlAsDocumentElement, XPathConstants.STRING) == "true"
-        assert xpath.evaluate(rowCounter.buildRowCountXPath('>', '2'), htmlAsDocumentElement, XPathConstants.STRING) == "true"
+        assert xPathEvaluator.evaluateXPath(rowCounter.buildRowCountXPath('=', '3')) == "true"
+        assert xPathEvaluator.evaluateXPath(rowCounter.buildRowCountXPath('<', '4')) == "true"
+        assert xPathEvaluator.evaluateXPath(rowCounter.buildRowCountXPath('>', '2')) == "true"
 
-        assert xpath.evaluate(rowCounter.buildRowCountXPath('=', '8'), htmlAsDocumentElement, XPathConstants.STRING) == "false"
-        assert xpath.evaluate(rowCounter.buildRowCountXPath('<', '2'), htmlAsDocumentElement, XPathConstants.STRING) == "false"
-        assert xpath.evaluate(rowCounter.buildRowCountXPath('>', '4'), htmlAsDocumentElement, XPathConstants.STRING) == "false"
+        assert xPathEvaluator.evaluateXPath(rowCounter.buildRowCountXPath('=', '8')) == "false"
+        assert xPathEvaluator.evaluateXPath(rowCounter.buildRowCountXPath('<', '2')) == "false"
+        assert xPathEvaluator.evaluateXPath(rowCounter.buildRowCountXPath('>', '4')) == "false"
     }
 
     void testCountRowsXPathWithMultipleCriterea() {
         def parameters = ['State' : 'Queensland', 'Suburb' : 'TENERIFFE']
         TableCountRowsWithCriteria rowCounter = new TableCountRowsWithCriteria( "//table[@id='searchResults']", antBuilder, '', parameters)
-        assert xpath.evaluate(rowCounter.buildRowCountXPath('=', '1'), htmlAsDocumentElement, XPathConstants.STRING) == "true"
+        assert xPathEvaluator.evaluateXPath(rowCounter.buildRowCountXPath('=', '1')) == "true"
     }
 
     void testCountRowsXPathWithSpecialColumnValues() {
         def parameters = ['firstColumn' : '2', 'column4' : 'BRISBANE', 'lastColumn' : '4000']
         TableCountRowsWithCriteria rowCounter = new TableCountRowsWithCriteria( "//table[@id='searchResults']", antBuilder, '', parameters)
-        assert xpath.evaluate(rowCounter.buildRowCountXPath('=', '1'), htmlAsDocumentElement, XPathConstants.STRING) == "true"
+        assert xPathEvaluator.evaluateXPath(rowCounter.buildRowCountXPath('=', '1')) == "true"
     }
+
+
 }

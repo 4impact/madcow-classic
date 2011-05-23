@@ -39,7 +39,7 @@ class TableCountRowsWithCriteria extends AbstractCount {
         def xpath = "count(${prefixXPath}/tbody/tr"
         columnHeadersAndCellValuesMap.each { headerText, cellText ->
             Column column = new Column(prefixXPath, headerText)
-            xpath += "/td[position() = (${column.getColumnPositionXPath()}) and (.//text() = '${cellText}' or .//@value = '${cellText}')]/parent::*"
+            xpath += "/td[position() = (${column.getColumnPositionXPath()}) and (wt:cleanText(.//text()) = '${cellText}' or .//@value = '${cellText}')]/parent::*"
         }
         xpath += ")${operator}${value}"
         return xpath

@@ -226,7 +226,7 @@ public class AddressTest extends AbstractTestCase {
             'Address Line 2' : addressValues.addressLine2,
             'Post Code' : addressValues.postCode]
 
-        createTable.table.currentRow.setRadioButton = ['Suburb' : ' ROYAL EXCHANGE']
+        createTable.table.currentRow.setRadioButton = ['Suburb' : 'ROYAL EXCHANGE']
 
         if (addressValues.wirelessAccessPointDetected){
             createTable.table.currentRow.selectCheckbox = 'Wireless Access Point Detected'
