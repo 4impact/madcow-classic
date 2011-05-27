@@ -34,16 +34,31 @@ class VerifyTextTest extends AbstractPluginTestCase {
     void setUp() {
         super.setUp()
 
-        final String html = """<html><body><form>
-                                     Address Details
-                               </form></body></html>"""
+        final String html = """
+                <td class="name" valign="top">
+                  <input onclick="new Ajax.Request('/madcow-test-site/address/ajaxCheckForDuplicates',{asynchronous:true,evalScripts:true,onComplete:function(e){showNumberOfDuplicates(e)},parameters:Form.serialize(this.form)});return false" name="checkForDuplicates" value="Check For Duplicates" type="button">
+                </td>
+                <td valign="top">
+                  <div valign="top" class="warning" id="duplicatesMessage">
+                    <p>
+                      0 duplicate addresses found
+                    </p>
+                  </div>
+                </td>"""
         contextStub.setDefaultResponse(html)
     }
 
     void testTextExists() {
-        verifyTextPlugin.invoke(antBuilder, [value : 'Address Details'])
+        verifyTextPlugin.invoke(antBuilder, [value : '0 duplicate addresses found'])
         Task pluginTask = findTask(antTaskName)
-        assert findAttribute(pluginTask, 'text') == 'Address Details'
+        assert findAttribute(pluginTask, 'text') == '0 duplicate addresses found'
+    }
+
+
+    void testTextDoesNotExist() {
+        assertStepFailedException({
+            verifyTextPlugin.invoke(antBuilder, [value : '55 duplicate addresses found'])
+        }, 'Step[verifyText (1/0)]: Text not found in page. Expected <55 duplicate addresses found>')
     }
 
     void testAttributesMandatoryMissing() {
