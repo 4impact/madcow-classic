@@ -29,17 +29,44 @@ import com.projectmadcow.engine.plugin.Plugin
  * @author mcallon
  */
 public class CheckValue extends Plugin {
-	
-	def invoke(AntBuilder antBuilder, Map pluginParameters) {
 
-        LOG.debug ("-- CHECK VALUE ------------- pluginParameters : $pluginParameters")
-        remapPluginParameter pluginParameters, 'value', 'text'
+    def invoke(AntBuilder antBuilder, Map pluginParameters) {
 
-		if (pluginParameters.htmlId != null) {
-			antBuilder.verifyElementText(pluginParameters)
-		} else {
-			antBuilder.verifyXPath(pluginParameters)
-		}
-	}
-	
+        LOG.debug("-- CHECK VALUE ------------- pluginParameters : $pluginParameters")
+
+        if (pluginParameters.htmlId != null) {
+            remapPluginParameter pluginParameters, 'value', 'text'
+            antBuilder.verifyElementText(pluginParameters)
+        } else if (pluginParameters.xpath != null) {
+            remapPluginParameter pluginParameters, 'value', 'text'
+            antBuilder.verifyXPath(pluginParameters)
+        } else if (pluginParameters.name != null) {
+            if (pluginParameters.type == "radio") {
+                pluginParameters.remove 'type'
+                antBuilder.verifyRadioButton(pluginParameters)
+            } else if (pluginParameters.type == "select") {
+                pluginParameters.remove 'type'
+                antBuilder.verifySelectField(pluginParameters)
+            } else if (pluginParameters.type == "input") {
+                remapPluginParameter pluginParameters, 'value', 'text'
+                antBuilder.verifyElementText(pluginParameters)
+            } else if (pluginParameters.type == null) {
+                // assume implicit type of input
+                pluginParameters.type = "input"
+                remapPluginParameter pluginParameters, 'value', 'text'
+                antBuilder.verifyElementText(pluginParameters)
+            } else {
+                LOG.error("invoke() name reference - UNIMPLEMENTED type pluginParameter: " + pluginParameters)
+                assert false: "CheckValue name reference - UNIMPLEMENTED type pluginParameter: " + pluginParameters
+            }
+        } else if (pluginParameters.forLabel != null) {
+            pluginParameters.xpath = '//input[@label=\'' + pluginParameters.forLabel + '\']/@value'
+            pluginParameters.remove 'forLabel'
+            remapPluginParameter pluginParameters, 'value', 'text'
+            antBuilder.verifyXPath(pluginParameters)
+        } else {
+            LOG.error("invoke() - UNKNOWN pluginParameter: " + pluginParameters)
+            assert false: "CheckValue - UNKNOWN pluginParameter: " + pluginParameters
+        }
+    }
 }
