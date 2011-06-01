@@ -55,16 +55,15 @@ abstract class AbstractWaitForAttributeTest extends AbstractPluginTestCase {
         assert findAttribute(pluginTask, 'attribute') == 'checked'
     }
 
-//    TODO - Raised Jira MADCOW-172
-//    void testWaitByName() {
-//        assertStepFailedException({
-//            plugin.invoke(antBuilder, [name : 'female', milliseconds : '1'])
-//        }, 'did not appear within timeout for element')
-//
-//        Task pluginTask = findTask(antTaskName)
-//        assert findAttribute(pluginTask, 'htmlId') == 'female'
-//        assert findAttribute(pluginTask, 'attribute') == 'checked'
-//    }
+    void testWaitByName() {
+        assertStepFailedException({
+            plugin.invoke(antBuilder, [name : 'female', milliseconds : '1'])
+        }, 'did not appear within timeout for element')
+
+        Task pluginTask = findTask(antTaskName)
+        assert findAttribute(pluginTask, 'name') == 'female'
+        assert findAttribute(pluginTask, 'attribute') == 'checked'
+    }
 
     void testWaitForByXPath() {
         assertStepFailedException({
@@ -79,7 +78,7 @@ abstract class AbstractWaitForAttributeTest extends AbstractPluginTestCase {
     void testAttributesMandatoryMissing() {
         assertStepExecutionException({
             plugin.invoke(antBuilder, [:])
-        }, '"htmlId" or "xPath" must be set!')
+        }, '"htmlId", "xPath" or "name" must be set!')
     }
 
     void testAttributeUnsupported() {

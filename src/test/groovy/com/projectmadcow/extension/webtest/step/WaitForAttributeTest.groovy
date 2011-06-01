@@ -35,12 +35,17 @@ public class WaitForAttributeTest extends AbstractWaitForTest {
     protected void setUp() throws Exception {
         super.setUp()
         fStep = (WaitForAttribute) getStep()
-        setCurrentPageHtml '<html><input id="theInput" theAttribute="theValue" /></html>'
+        setCurrentPageHtml '<html><input id="theInput" name="inputName" theAttribute="theValue" /></html>'
     }
 
-    public void testWaitForAttribute(){
+    public void testWaitForAttributeByHtmlId(){
         fStep.attribute = 'theAttribute'        
-        testWaitFor fStep, 'theInput', 'theValue'
+        testWaitForByHtmlId fStep, 'theInput', 'theValue'
+    }
+
+    public void testWaitForAttributeByName(){
+        fStep.attribute = 'theAttribute'
+        testWaitForByName fStep, 'inputName', 'theValue'
     }
 
     public void testWaitForAttributeThatDoesNotExist(){

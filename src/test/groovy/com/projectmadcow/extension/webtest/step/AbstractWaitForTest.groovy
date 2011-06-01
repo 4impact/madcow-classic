@@ -32,8 +32,15 @@ public abstract class AbstractWaitForTest extends AbstractXpathHtmlIdStepTest {
         getContext().setDefaultResponse(html)
     }
 
-    public void testWaitFor(def theStep, def htmlId, def value = null, def milliseconds = 2){
+    public void testWaitForByHtmlId(def theStep, def htmlId, def value = null, def milliseconds = 2){
         theStep.htmlId = htmlId
+        theStep.value = value
+        theStep.milliseconds = milliseconds
+        theStep.execute()
+    }
+
+    public void testWaitForByName(def theStep, def name, def value = null, def milliseconds = 2) {
+        theStep.name = name
         theStep.value = value
         theStep.milliseconds = milliseconds
         theStep.execute()
@@ -41,7 +48,7 @@ public abstract class AbstractWaitForTest extends AbstractXpathHtmlIdStepTest {
 
     public void testWaitForExpectException(def theStep, def htmlId, def value = null, def milliseconds = 2){
         try {
-            testWaitFor theStep, htmlId, value, milliseconds
+            testWaitForByHtmlId theStep, htmlId, value, milliseconds
         } catch (StepFailedException e){
             // success
             assert e.message.contains("Value $value did not appear within timeout for element id")

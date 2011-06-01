@@ -35,11 +35,15 @@ public class WaitForTextTest extends AbstractWaitForTest {
     protected void setUp() throws Exception {
         super.setUp()
         fStep = (WaitForText) getStep()
-        setCurrentPageHtml '<html><label id="theLabel">something</label></html>'
+        setCurrentPageHtml '<html><label id="theLabel" name="theName">something</label></html>'
     }
 
-    public void testWaitForText(){
-        testWaitFor fStep, 'theLabel', 'something'
+    public void testWaitForTextByHtmlId(){
+        testWaitForByHtmlId fStep, 'theLabel', 'something'
+    }
+
+    public void testWaitForTextByName(){
+        testWaitForByName fStep, 'theName', 'something'
     }
 
     public void testWaitForTextThatDoesNotExist(){
