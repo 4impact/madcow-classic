@@ -33,6 +33,11 @@ public class ClickLink extends Plugin {
 
     def invoke(AntBuilder antBuilder, Map pluginParameters) {
 
+        if (pluginParameters.name != null) {
+            pluginParameters.xpath = "//*[@name='${pluginParameters.name}']"
+            pluginParameters.remove('name')
+        }
+
         if (!(pluginParameters.value instanceof String) || StringUtils.isEmpty(pluginParameters.value)) {
             antBuilder.clickLink(pluginParameters)
             return

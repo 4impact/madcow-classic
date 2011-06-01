@@ -46,13 +46,12 @@ public class ClickLinkTest extends AbstractPluginTestCase {
         assert findAttribute(pluginTask, 'htmlid') == 'submit'
     }
 
-//    TODO - Raised Jira MADCOW-171
-//    void testClickLinkByName() {
-//        clickLinkPlugin.invoke(antBuilder, [name: 'submit'])
-//
-//        Task pluginTask = findTask('clickLink')
-//        assert findAttribute(pluginTask, 'htmlid') == 'submit'
-//    }
+    void testClickLinkByName() {
+        clickLinkPlugin.invoke(antBuilder, [name: 'submit'])
+
+        Task pluginTask = findTask('clickLink')
+        assert findAttribute(pluginTask, 'xpath') == "//*[@name='submit']"
+    }
 
     void testClickLinkByXPath() {
         clickLinkPlugin.invoke(antBuilder, [xpath: '//a[1]'])
