@@ -35,11 +35,15 @@ public class WaitForElementTest extends AbstractWaitForTest {
     protected void setUp() throws Exception {
         super.setUp()
         fStep = (WaitForElement) getStep()
-        setCurrentPageHtml '<html><input id="theInput"/></html>'
+        setCurrentPageHtml '<html><input id="theInput" name="inputName"/></html>'
     }
 
-    public void testWaitForElement(){
-        testWaitFor fStep, 'theInput'
+    public void testWaitForElementByHtmlId(){
+        testWaitForByHtmlId fStep, 'theInput'
+    }
+
+    public void testWaitForElementByName(){
+        testWaitForByName fStep, 'inputName'
     }
 
     public void testWaitForElementThatDoesNotExist(){

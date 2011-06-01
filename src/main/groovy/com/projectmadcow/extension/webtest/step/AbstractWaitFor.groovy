@@ -31,6 +31,7 @@ public abstract class AbstractWaitFor extends AbstractMadcowStep {
 
     String htmlId
     String xpath
+    String name
     String value
     String seconds
     String milliseconds
@@ -47,6 +48,9 @@ public abstract class AbstractWaitFor extends AbstractMadcowStep {
 
         final boolean found = (1..Integer.parseInt(seconds ? seconds : milliseconds)).any {
             HtmlElement waitForElement = null
+            
+            if (name != null)
+                xpath = "//*[@name='${name}']"
 
             try {
                 waitForElement = findElement(htmlId, xpath)
@@ -71,7 +75,7 @@ public abstract class AbstractWaitFor extends AbstractMadcowStep {
     protected void verifyParameters() {
         super.verifyParameters();
         nullResponseCheck();
-        paramCheck(htmlId == null && xpath == null, "\"htmlId\" or \"xPath\" must be set!");
+        paramCheck(htmlId == null && xpath == null && name == null, "\"htmlId\", \"xPath\" or \"name\" must be set!");
         paramCheck(seconds == null && milliseconds == null, '"seconds" or "milliseconds" must be set!');
         paramCheck(seconds != null && milliseconds != null, '"seconds" and "milliseconds" cannot both be set!');
     }

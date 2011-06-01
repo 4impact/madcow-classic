@@ -51,15 +51,14 @@ class WaitUntilExistsTest extends AbstractPluginTestCase {
         assert findAttribute(pluginTask, 'htmlId') == 'unknown'
     }
 
-//    TODO - Raised Jira MADCOW-172
-//    void testWaitByName() {
-//        assertStepFailedException({
-//            waitUntilExistsPlugin.invoke(antBuilder, [name : 'unknown', milliseconds : '1'])
-//        }, 'did not appear within timeout for element')
-//
-//        Task pluginTask = findTask(antTaskName)
-//        assert findAttribute(pluginTask, 'name') == 'unknown'
-//    }
+    void testWaitByName() {
+        assertStepFailedException({
+            waitUntilExistsPlugin.invoke(antBuilder, [name : 'unknown', milliseconds : '1'])
+        }, 'did not appear within timeout for element')
+
+        Task pluginTask = findTask(antTaskName)
+        assert findAttribute(pluginTask, 'name') == 'unknown'
+    }
 
     void testWaitForByXPath() {
         assertStepFailedException({
@@ -73,7 +72,7 @@ class WaitUntilExistsTest extends AbstractPluginTestCase {
     void testAttributesMandatoryMissing() {
         assertStepExecutionException({
             waitUntilExistsPlugin.invoke(antBuilder, [:])
-        }, '"htmlId" or "xPath" must be set!')
+        }, '"htmlId", "xPath" or "name" must be set!')
     }
 
     void testAttributeUnsupported() {

@@ -21,9 +21,6 @@
 
 package com.projectmadcow.plugins
 
-import org.apache.tools.ant.Task
-import com.canoo.webtest.engine.StepExecutionException
-
 class CheckValueEmptyTest extends AbstractPluginTestCase {
 
     CheckValueEmpty checkValueEmptyPlugin = new CheckValueEmpty()

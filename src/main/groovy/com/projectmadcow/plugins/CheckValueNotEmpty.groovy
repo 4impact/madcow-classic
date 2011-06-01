@@ -24,24 +24,49 @@ package com.projectmadcow.plugins
 import com.projectmadcow.engine.plugin.Plugin
 
 /**
- * CheckValueNotEmpty
+ * CheckValueNotEmpty - i.e. a non-blank field. Attribute/field needs to exist and be non-blank.
  *
  * @author mcallon
  */
 public class CheckValueNotEmpty extends Plugin {
-    
-    def invoke(AntBuilder antBuilder, Map pluginParameters){
 
-        // regex to check value not empty
-        //def regexValue = "((?:[a-z0-9]*))"
-        pluginParameters.text = "((?:[a-z0-9]*))"
+    def invoke(AntBuilder antBuilder, Map pluginParameters) {
+
+        // regex to check value not empty (including blank)
+        pluginParameters.text = "(.+)" // works as is for blank fields (maybe WebTest automatically does a trim)
         pluginParameters.regex = true
+
+        LOG.debug("-- CHECK VALUE NOT EMPTY ------------- pluginParameters : $pluginParameters")
 
         if (pluginParameters.htmlId != null) {
             antBuilder.verifyElementText(pluginParameters)
-        } else {
+        } else if (pluginParameters.xpath != null) {
             antBuilder.verifyXPath(pluginParameters)
-        }    
-	}
-	
+        } else if (pluginParameters.name != null) {
+            if (pluginParameters.type == "radio") {
+                pluginParameters.remove 'type'
+                antBuilder.verifyRadioButton(pluginParameters)
+            } else if (pluginParameters.type == "select") {
+                pluginParameters.remove 'type'
+                antBuilder.verifySelectField(pluginParameters)
+            } else if (pluginParameters.type == "input") {
+                antBuilder.verifyElementText(pluginParameters)
+            } else if (pluginParameters.type == null) {
+                // assume implicit type of input
+                pluginParameters.type = "input"
+                antBuilder.verifyElementText(pluginParameters)
+            } else {
+                LOG.error("invoke() name reference - UNIMPLEMENTED type pluginParameter: " + pluginParameters)
+                assert false: "CheckValueNotEmpty name reference - UNIMPLEMENTED type pluginParameter: " + pluginParameters
+            }
+        } else if (pluginParameters.forLabel) {
+            pluginParameters.xpath = '//input[@label=\'' + pluginParameters.forLabel + '\']/@value'
+            pluginParameters.remove 'forLabel'
+            antBuilder.verifyXPath(pluginParameters)
+        } else {
+            LOG.error("invoke() - UNKNOWN pluginParameter: " + pluginParameters)
+            assert false: "CheckValueNotEmpty - UNKNOWN pluginParameter: " + pluginParameters
+        }
+    }
+
 }
