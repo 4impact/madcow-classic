@@ -53,31 +53,4 @@ public class CountWithCriteriaTest extends AbstractTestCase {
         searchResults.table.headerColumnCount.equals = 6
 
     }
-    def createAddress(def addressValues, Closure setSuburb = {} ) {
-        invokeCreateAddressUrl()
-        setValues addressValues, setSuburb
-        create.clickButton
-
-        // verify regular expression text exists on the page
-        verifyText = ['text' : '(Address).*?(\\d+).*?(created)', 'regex' : true]
-        checkValues addressValues
-    }
-    def setValues(values, Closure setSuburb = {} ) {
-        // set values using convention of html id to identify the html elements.
-        addressLine1.value = values.addressLine1
-        addressLine2.value = values.addressLine2
-        postCodeEntry.value = values.postCode
-
-        // example of select and unselect checkbox
-        values.wirelessAccessPointDetected ? wirelessAccessPointDetected.selectCheckbox : wirelessAccessPointDetected.unselectCheckbox
-
-        setSuburb()
-    }
-
-    def checkValues(values) {
-        addressLine1.checkValue = values.addressLine1
-        addressLine2.checkValue = values.addressLine2
-        postCode.checkValue = values.postCode
-        wirelessAccessPointDetected.checkValue = "${values.wirelessAccessPointDetected ? true : false}"
-    }
 }
