@@ -28,10 +28,13 @@ import com.gargoylesoftware.htmlunit.Page
 import com.projectmadcow.engine.XPathExtensionRegister
 
 /**
- * A helper class that we can use to evaluate XPath in tests. This is being used
+ * A helper class that we can use to evaluate XPath. This is being used
  * in place of the more simple javax.xml.Xpath API because it allows us to test
  * XPath with Webtest and Madcow XPath functions. As an added bonus, it also means
  * that we're using the same XPath parser for both our tests and execution.
+ *
+ * This class has been moved from the test to the source in order to get re-use in
+ * plugins.
  */
 class XPathEvaluator {
 
