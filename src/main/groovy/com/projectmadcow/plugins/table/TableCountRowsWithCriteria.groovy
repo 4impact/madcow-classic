@@ -32,7 +32,7 @@ class TableCountRowsWithCriteria extends AbstractCount {
 
     def doCount(operator, value, description) {
         String xpath = buildRowCountXPath(operator, value)
-        antBuilder.verifyXPath(xpath: xpath, description: description)
+        antBuilder.countRows(xpath: xpath, description: description)
     }
 
     protected String buildRowCountXPath(operator, value) {

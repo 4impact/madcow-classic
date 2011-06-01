@@ -31,7 +31,7 @@ public class TableHeaderColumnCount extends AbstractCount {
   }
 
   public doCount(operator, value, description) {
-    antBuilder.verifyXPath(xpath: "${prefixXPath}/thead/tr[count(th)${operator}${value}]",
+    antBuilder.countColumns(xpath: "${prefixXPath}/thead/tr[count(th)${operator}${value}]",
                            description: description)
   }
 }

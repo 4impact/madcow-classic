@@ -31,7 +31,7 @@ public class TableCountRows extends AbstractCount {
     }
 
     def doCount(operator, value, description) {
-        antBuilder.verifyXPath(xpath: "${prefixXPath}/tbody[count(tr)${operator}${value}]",
+        antBuilder.countRows(xpath: "${prefixXPath}/tbody[count(tr)${operator}${value}]",
                 description: description)
     }
 

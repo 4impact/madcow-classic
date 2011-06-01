@@ -52,4 +52,8 @@
         classname="com.projectmadcow.extension.webtest.step.WaitSeconds" />
     <taskdef name="waitForText"
         classname="com.projectmadcow.extension.webtest.step.WaitForText" />
+    <taskdef name="countRows"
+        classname="com.canoo.webtest.steps.verify.VerifyXPath" />
+    <taskdef name="countColumns"
+        classname="com.canoo.webtest.steps.verify.VerifyXPath" />
 </antlib>
