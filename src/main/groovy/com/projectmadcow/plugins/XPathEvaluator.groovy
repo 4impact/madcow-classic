@@ -41,6 +41,7 @@ class XPathEvaluator {
     private Page page
 
     public XPathEvaluator(String html) {
+        assert html, 'XPathEvaluator cannot be instantiated without html to operate on.'
         URL url = new URL("http://localhost/")
         WebClient client = createTestWebClient(url, html)
         page = client.getPage(url)
@@ -56,7 +57,13 @@ class XPathEvaluator {
     }
 
     public String evaluateXPath(String xpath) {
-        def helper = new XPathHelper()
+        XPathHelper helper = new XPathHelper()
         return helper.stringValueOf(page, xpath)
     }
+
+    public boolean doesNodeExist(String xpath) {
+        XPathHelper helper = new XPathHelper()
+        return helper.selectFirst(page, xpath) == null
+    }
+    
 }
