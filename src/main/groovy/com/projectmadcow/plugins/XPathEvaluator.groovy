@@ -63,7 +63,7 @@ class XPathEvaluator {
 
     public boolean doesNodeExist(String xpath) {
         XPathHelper helper = new XPathHelper()
-        return helper.selectFirst(page, xpath) == null
+        return helper.selectFirst(page, xpath) != null
     }
     
 }
