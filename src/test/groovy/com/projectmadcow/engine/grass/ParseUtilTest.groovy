@@ -60,9 +60,9 @@ class ParseUtilTest extends GroovyTestCase {
     }
 
     void testEvalMeString() {
-        assert ParseUtil.evalMe('\'Queensland\'') == '\'\'Queensland\'\''
+        assert ParseUtil.evalMe('\'Queensland\'') == '\'\\\'Queensland\\\'\''
         assert ParseUtil.evalMe('"Queensland"') == '\'"Queensland"\''
-        assert ParseUtil.evalMe('\'Queensland\'') == '\'\'Queensland\'\''
+        assert ParseUtil.evalMe('\'Queensland\'') == '\'\\\'Queensland\\\'\''
         assert ParseUtil.evalMe('Queensland') == '\'Queensland\''
     }
 
@@ -70,5 +70,9 @@ class ParseUtilTest extends GroovyTestCase {
         assert ParseUtil.unquote('\'addressLine1\'') == 'addressLine1'
         assert ParseUtil.unquote('"addressLine1"') == 'addressLine1'
         assert ParseUtil.unquote('\'addressLine1\'') == 'addressLine1'
+    }
+
+    void testEscapeCharactersIfRequired() {
+        assert ParseUtil.escapeCharactersIfRequired("//a[@id='superAwesomeButton']") == '//a[@id=\\\'superAwesomeButton\\\']'
     }
 }

@@ -101,6 +101,7 @@ class GrassParser {
      * Parse an individual line of code.
      */
     protected void parseLine(String line, String operation, String expression, String operationCommand = operation) {
+        expression = ParseUtil.unquote(expression)
 
         // recursive callback for imported files
         if (operation.startsWith('import')) {
@@ -109,19 +110,16 @@ class GrassParser {
             if (operation == 'import')
                 operation = 'importTemplate'
 
-            String filename = ParseUtil.unquote(expression)
-
             IMPORT_COMMAND_DIRECTORIES.each { String key, String value ->
                 if (key == operation) {
-                    parsedCode.add("${operation} = [value: '$filename', startOfImport : 'true']")
-                    parseCode(loadImport(filename, value), false)
-                    parsedCode.add("${operation} = [value: '$filename', endOfImport : 'true']")
+                    parsedCode.add("${operation} = [value: '$expression ', startOfImport : 'true']")
+                    parseCode(loadImport(expression, value), false)
+                    parsedCode.add("${operation} = [value: '$expression ', endOfImport : 'true']")
                 }
             }
 
             return
         }
-
         operation = transformAnyParametersInOperation(operation, line)
 
         // evaluate the expression to expand any embedded closures
@@ -222,7 +220,9 @@ class GrassParser {
 
         if (expression.startsWith("'madcow.eval")) {
             Macro macro = new Macro()
-            expression = "'${Eval.x(macro, 'x.' + ParseUtil.unquote(expression))}'"
+            //We need to un-escape the quotes in this text because it's going to be interpreted as code..
+            String reQuotedExpression = expression.replaceAll("\\\\'", '\'')
+            expression = "'${Eval.x(macro, 'x.' + ParseUtil.unquote(reQuotedExpression))}'"
         }
 
         if (isSettingDataParameter) {

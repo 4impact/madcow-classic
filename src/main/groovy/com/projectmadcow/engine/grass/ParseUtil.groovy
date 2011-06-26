@@ -117,6 +117,6 @@ class ParseUtil {
      * Escape characters which cause the groovy string evaluation to fall over when not escaped.
      */
     static String escapeCharactersIfRequired(String str, boolean isMapListValue = false) {
-        return str.replaceAll('\'', "${isMapListValue ? '\\' : ''}\\\'")
+        return str.replaceAll('\'', "${isMapListValue ? '\\' : ''}\\\\'")
     }
 }

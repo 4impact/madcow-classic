@@ -43,7 +43,7 @@ public class GrassParserTest extends GroovyTestCase {
 
         unparsedCode = [ 'verifyText = Dr Bunney\'s Emporium' ]
 		parsedCode = grassParser.parseCode(unparsedCode)
-		assert parsedCode == ['verifyText=\'Dr Bunney\'s Emporium\'']
+		assert parsedCode == ['verifyText=\'Dr Bunney\\\'s Emporium\'']
 	}
 	
 	void testStatementsOnlyWithClosures() {
@@ -175,5 +175,23 @@ public class GrassParserTest extends GroovyTestCase {
         shouldFail {
             grassParser.parseCode(["menu_newAddress"])
         }
+    }
+
+    void testQuotesWrappingValuesAreRemoved() {
+        List unparsedCode = [ 'verifyText = "Pig is the tastiest beast"',
+                              "verifyText = 'Skunk is not'"]
+		List parsedCode = grassParser.parseCode(unparsedCode)
+		assert parsedCode == ['verifyText=\'Pig is the tastiest beast\'',
+                              'verifyText=\'Skunk is not\'']
+        
+    }
+
+    void testQuotesInValuesAreEscaped() {
+        println ParseUtil.escapeCharactersIfRequired("//a[@id='superAwesomeButton']")
+        List unparsedCode = [ 'verifyText = Accident Date: Field "Accident Date" is mandatory',
+                              "verifyXPath = //a[@id='superAwesomeButton'] "]
+		List parsedCode = grassParser.parseCode(unparsedCode)
+		assert parsedCode == [ 'verifyText=\'Accident Date: Field "Accident Date" is mandatory\'',
+                              'verifyXPath=\'//a[@id=\\\'superAwesomeButton\\\']\'']
     }
 }
