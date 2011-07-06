@@ -26,12 +26,11 @@ import com.projectmadcow.extension.webtest.xpath.ReplaceAll
 import com.projectmadcow.extension.webtest.xpath.EndsWith
 import com.projectmadcow.extension.webtest.xpath.NumbersOnly
 import com.canoo.webtest.engine.xpath.XPathHelper
+import com.projectmadcow.extension.webtest.xpath.StartsWith
 
 /**
  * Class used to register the custom madcow XPath extensions,
  * to the WebTest XPathHelper.
- *
- * @author gbunney
  */
 public class XPathExtensionRegister {
 
@@ -50,6 +49,7 @@ public class XPathExtensionRegister {
 
         // register our madcow functions
         XPathHelper.registerGlobalFunction(XPathNamespaceURI, EndsWith.XPATH_FUNCTION_NAME, EndsWith.class)
+        XPathHelper.registerGlobalFunction(XPathNamespaceURI, StartsWith.XPATH_FUNCTION_NAME, StartsWith.class)
         XPathHelper.registerGlobalFunction(XPathNamespaceURI, ReplaceAll.XPATH_FUNCTION_NAME, ReplaceAll.class)
         XPathHelper.registerGlobalFunction(XPathNamespaceURI, NumbersOnly.XPATH_FUNCTION_NAME, NumbersOnly.class)
     }
