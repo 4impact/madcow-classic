@@ -24,12 +24,12 @@ package com.projectmadcow.plugins
 import com.projectmadcow.engine.plugin.Plugin
 
 /**
- * Verifies that the specified select field contains the specified options (and no others)
+ * Verifies a list of select options contains the specified values
  */
-public class VerifySelectFieldOptions extends Plugin {
+public class VerifySelectFieldContains extends Plugin {
 
     def invoke(AntBuilder antBuilder, Map pluginParameters) {
         remapPluginParameter pluginParameters, 'value', 'options'
-        antBuilder.verifySelectFieldOptions(pluginParameters);
+        antBuilder.verifySelectFieldContains(pluginParameters);
     }
 }

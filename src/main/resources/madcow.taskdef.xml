@@ -44,6 +44,8 @@
         classname="com.projectmadcow.extension.webtest.step.VerifyDynamicProperty" />
     <taskdef name="verifySelectFieldOptions"
         classname="com.projectmadcow.extension.webtest.step.VerifySelectFieldOptions" />
+    <taskdef name="verifySelectFieldContains"
+        classname="com.projectmadcow.extension.webtest.step.VerifySelectFieldContains" />
     <taskdef name="waitForAttribute"
         classname="com.projectmadcow.extension.webtest.step.WaitForAttribute" />
     <taskdef name="waitForElement"

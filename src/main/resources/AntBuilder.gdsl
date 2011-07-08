@@ -35,6 +35,7 @@ contributor(antBuilderContext) {
     method name: 'submitForm', type: 'void', params: [attributes : Map];
     method name: 'verifyDynamicProperty', type: 'void', params: [attributes : Map];
     method name: 'verifySelectFieldOptions', type: 'void', params: [attributes : Map];
+    method name: 'verifySelectFieldContains', type: 'void', params: [attributes : Map];
     method name: 'waitForAttribute', type: 'void', params: [attributes : Map];
     method name: 'waitForElement', type: 'void', params: [attributes : Map];
     method name: 'waitForText', type: 'void', params: [attributes : Map];

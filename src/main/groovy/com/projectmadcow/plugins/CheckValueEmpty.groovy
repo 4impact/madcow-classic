@@ -31,7 +31,6 @@ class CheckValueEmpty extends Plugin {
         pluginParameters.text = '^\\s*$'
         pluginParameters.regex = true
 
-        //pluginParameters.xpath = "//*[@name='${pluginParameters.name}']//text()"
         if (pluginParameters.htmlId != null) {
 			antBuilder.verifyElementText(pluginParameters)
         } else if (pluginParameters.name != null) {

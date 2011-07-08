@@ -21,17 +21,18 @@
 
 package com.projectmadcow.extension.webtest.step
 
-import com.canoo.webtest.engine.StepFailedException
-import com.gargoylesoftware.htmlunit.html.HtmlSelect
 import org.apache.log4j.Logger
+import com.gargoylesoftware.htmlunit.html.HtmlSelect
+import com.canoo.webtest.engine.StepFailedException
 
 /**
- * Verify that the list of selected options exist for the specified
- * select field.
+ * This step verifies that all the supplied options appear in the specified select field.
+ * This differs from VerifySelectFieldOptions in that it won't fail if the supplied list
+ * doesn't contain ALL the options that are in the select field on the web page.
  */
-class VerifySelectFieldOptions extends AbstractVerifySelectFieldStep {
+class VerifySelectFieldContains extends AbstractVerifySelectFieldStep {
 
-    private static Logger LOG = Logger.getLogger(VerifySelectFieldOptions.class)
+    private static Logger LOG = Logger.getLogger(VerifySelectFieldContains.class)
 
     protected Logger getLog() {
         return LOG
@@ -42,19 +43,8 @@ class VerifySelectFieldOptions extends AbstractVerifySelectFieldStep {
             selectElement.options.find { opt -> opt.asText() == option } == null
         }
 
-        List missingInOptions = selectElement.options.findAll { option ->
-            !optionsList.contains(option.asText())
-        }*.asText()
-
-        if ((missingInElement.size() != 0) || (missingInOptions.size() != 0)) {
-            String errorMessage = "Select field options do not match!"
-            if (missingInElement.size() != 0)
-                errorMessage += "\n\nMissing in Page: $missingInElement"
-
-            if (missingInOptions.size() != 0)
-                errorMessage += "\n\nMissing in Test: $missingInOptions"
-
-            throw new StepFailedException(errorMessage, this)
+        if ((missingInElement.size() != 0)) {
+            throw new StepFailedException("Select field options do not match!\n\nMissing in Page: $missingInElement" , this)
         }
     }
 }
