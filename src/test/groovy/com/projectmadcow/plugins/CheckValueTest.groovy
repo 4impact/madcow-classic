@@ -37,24 +37,24 @@ class CheckValueTest extends AbstractPluginTestCase {
                                     <form>
 	                                    <input id="addressLine1" name="addressLine1Name" label="addressLine1Label" value="Adelaide St"/>
                                     </form>
-      
+
                                     <form>
 	                                    <input type="text" name="addressLine2" label="addressLine2Label" value="Queen St"/>
                                     </form>
-                              
+
                                     <form>
 	                                    <input type="button" name="button1" value="value1" />
                                     </form>
-                                    
+
                                     <form>
 	                                    <input type="text" name="firstname" value="value2" />
                                     </form>
-                                    
+
                                     <form>
 	                                    <input type="radio" name="sex" value="male" /> Male<br />
 										<input type="radio" name="sex" value="female" /> Female
 									</form>
-                                    
+
                                     <form>
 	                                    <input type="radio" name="sex_checked" value="man" />Man<br />
 										<input type="radio" name="sex_checked" value="woman" checked/>Woman
@@ -114,11 +114,7 @@ class CheckValueTest extends AbstractPluginTestCase {
     }
 
     void testCheckInputValueByNameInputTypeImplicit() {
-
         checkValuePlugin.invoke(antBuilder, [name: 'addressLine1Name', value: 'Adelaide St'])
-        Task pluginTask = findTask('verifyElementText')
-        assert findAttribute(pluginTask, 'name') == 'addressLine1Name'
-        assert findAttribute(pluginTask, 'text') == 'Adelaide St'
     }
 
     void testCheckButtonByName() {
@@ -170,10 +166,5 @@ class CheckValueTest extends AbstractPluginTestCase {
         assert findAttribute(pluginTask, 'name') == 'mydropdown'
         assert findAttribute(pluginTask, 'value') == 'Cheese'
     }
-
-    /**
-     * for all the options checking @see VerifySelectFieldOptionsTest
-     *
-     */
 
 }

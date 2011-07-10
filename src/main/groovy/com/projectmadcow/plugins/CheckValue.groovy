@@ -24,9 +24,7 @@ package com.projectmadcow.plugins
 import com.projectmadcow.engine.plugin.Plugin
 
 /**
- * CheckValue
- *
- * @author mcallon
+ * This plugin checks that the specified element has the supplied value
  */
 public class CheckValue extends Plugin {
 
@@ -51,16 +49,16 @@ public class CheckValue extends Plugin {
                 remapPluginParameter pluginParameters, 'value', 'text'
                 antBuilder.verifyElementText(pluginParameters)
             } else if (pluginParameters.type == null) {
-                // assume implicit type of input
-                pluginParameters.type = "input"
                 remapPluginParameter pluginParameters, 'value', 'text'
-                antBuilder.verifyElementText(pluginParameters)
+                pluginParameters.xpath = """//select[@name='${pluginParameters.name}']/option[@selected]/text() | //*[@name='${pluginParameters.name}']/@value"""
+                pluginParameters.remove 'name'
+                antBuilder.verifyXPath(pluginParameters)
             } else {
                 LOG.error("invoke() name reference - UNIMPLEMENTED type pluginParameter: " + pluginParameters)
                 assert false: "CheckValue name reference - UNIMPLEMENTED type pluginParameter: " + pluginParameters
             }
         } else if (pluginParameters.forLabel != null) {
-            pluginParameters.xpath = '//input[@label=\'' + pluginParameters.forLabel + '\']/@value'
+            pluginParameters.xpath = """//select[@label='${pluginParameters.forLabel}']/option[@selected]/text() | //*[@label='${pluginParameters.forLabel}']/@value"""
             pluginParameters.remove 'forLabel'
             remapPluginParameter pluginParameters, 'value', 'text'
             antBuilder.verifyXPath(pluginParameters)
