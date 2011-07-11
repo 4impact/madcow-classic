@@ -58,6 +58,7 @@ public class AddressTest extends AbstractTestCase {
 
         // check that the suburb is as expected for postcode 4000
         suburb.checkValue = 'BRISBANE'
+        suburb.checkValueContains = 'RIS'
 
         // show the suburb on the report
         suburb.showOnReport = 'SelectedSuburb'
