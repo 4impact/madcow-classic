@@ -25,8 +25,6 @@ class CheckValueContainsTest extends AbstractPluginTestCase {
 
     CheckValueContains plugin = new CheckValueContains()
 
-    XPathEvaluator evaluator 
-
     void setUp() {
         super.setUp()
 
@@ -60,21 +58,14 @@ class CheckValueContainsTest extends AbstractPluginTestCase {
 									</form>
                                </body></html>"""
         contextStub.setDefaultResponse(html)
-        evaluator = new XPathEvaluator(html)
     }
-
-    public void testMonsterXPath() {
-        println evaluator.evaluateXPath("//select[@name='addressLine1Name']/option[@selected]/text() | //*[@name='addressLine1Name']/@value")
-//        println evaluator.evaluateXPath("//input[@id='mydropdown']/@value | //select[@id='mydropdown']/@value")
-    }
-
-    //TODO: All the XPaths fail if we don't put /@value at the end. That's poor.
 
     public void testCheckValueContainsWithUnTypedInput() {
         plugin.invoke(antBuilder, [name : 'addressLine1Name', value : 'Adelaide'])
         plugin.invoke(antBuilder, [htmlId : 'addressLine1', value : 'e St'])
         plugin.invoke(antBuilder, [forLabel : 'addressLine1Label', value : 'aid'])
         plugin.invoke(antBuilder, [xpath : "//input[@id='addressLine1']/@value", value : 'St'])
+        plugin.invoke(antBuilder, [xpath : "//input[@id='addressLine1']", value : 'St'])
 
         assertStepFails { plugin.invoke(antBuilder, [name : 'addressLine1Name', value : 'afe3wa']) }
         assertStepFails { plugin.invoke(antBuilder, [htmlId : 'addressLine1', value : 'adelaide']) }
@@ -88,6 +79,7 @@ class CheckValueContainsTest extends AbstractPluginTestCase {
         plugin.invoke(antBuilder, [htmlId : 'button1Id', value : 'value\\d'])
         plugin.invoke(antBuilder, [forLabel : 'button1Label', value : '\\w*\\d'])
         plugin.invoke(antBuilder, [xpath : "//input[@id='button1Id']/@value", value : 'u'])
+        plugin.invoke(antBuilder, [xpath : "//input[@id='button1Id']", value : 'u'])
 
         assertStepFails { plugin.invoke(antBuilder, [name : 'button1', value : 'vaAlue']) }
         assertStepFails { plugin.invoke(antBuilder, [htmlId : 'button1Id', value : 'piglets']) }
@@ -100,6 +92,7 @@ class CheckValueContainsTest extends AbstractPluginTestCase {
         plugin.invoke(antBuilder, [htmlId : 'addressLine2', value : 'een S'])
         plugin.invoke(antBuilder, [forLabel : 'addressLine2', value : ' '])
         plugin.invoke(antBuilder, [xpath : "//input[@id='addressLine2']/@value", value : 'Q'])
+        plugin.invoke(antBuilder, [xpath : "//input[@id='addressLine2']", value : 'Q'])
 
         assertStepFails { plugin.invoke(antBuilder, [name : 'addressLine2', value : 'QueensSt']) }
         assertStepFails { plugin.invoke(antBuilder, [htmlId : 'addressLine2', value : 'eeb =']) }
@@ -112,6 +105,7 @@ class CheckValueContainsTest extends AbstractPluginTestCase {
         plugin.invoke(antBuilder, [htmlId : 'sexMale', value : '\\w*'])
         plugin.invoke(antBuilder, [forLabel : 'sexMale', value : 'ale'])
         plugin.invoke(antBuilder, [xpath : "//input[@id='sexMale']/@value", value : 'l\\w'])
+        plugin.invoke(antBuilder, [xpath : "//input[@id='sexMale']", value : 'l\\w'])
 
         assertStepFails { plugin.invoke(antBuilder, [name : 'sexMale', value : '2']) }
         assertStepFails { plugin.invoke(antBuilder, [htmlId : 'sexMale', value : 'm a']) }
@@ -124,11 +118,13 @@ class CheckValueContainsTest extends AbstractPluginTestCase {
         plugin.invoke(antBuilder, [htmlId : 'sexCheckedFemale', value : '\\w*[ef]'])
         plugin.invoke(antBuilder, [forLabel : 'sexCheckedFemale', value : 'female'])
         plugin.invoke(antBuilder, [xpath : "//input[@id='sexCheckedFemale']/@value", value : 'fe'])
+        plugin.invoke(antBuilder, [xpath : "//input[@id='sexCheckedFemale']", value : 'fe'])
 
         assertStepFails { plugin.invoke(antBuilder, [name : 'sexCheckedFemale', value : 'femail']) }
         assertStepFails { plugin.invoke(antBuilder, [htmlId : 'sexCheckedFemale', value : 'djdj']) }
         assertStepFails { plugin.invoke(antBuilder, [forLabel : 'sexCheckedFemale', value : ' ']) }
         assertStepFails { plugin.invoke(antBuilder, [xpath : "//input[@id='sexCheckedFemale']", value : '\\d']) }
+
     }
 
     /**

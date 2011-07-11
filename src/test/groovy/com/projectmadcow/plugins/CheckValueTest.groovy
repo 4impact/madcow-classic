@@ -43,6 +43,10 @@ class CheckValueTest extends AbstractPluginTestCase {
                                     </form>
 
                                     <form>
+	                                    <span id="addressLine3">Apartment 7A</span>
+                                    </form>
+
+                                    <form>
 	                                    <input type="button" name="button1" value="value1" />
                                     </form>
 
@@ -89,24 +93,33 @@ class CheckValueTest extends AbstractPluginTestCase {
         assert findAttribute(pluginTask, 'text') == 'Adelaide St'
     }
 
-    void testCheckValueByXPath() {
+    void testCheckValueByXPathWithValue() {
         def attributes = [xpath: '//input[@label=\'addressLine1Label\']/@value', value: 'Adelaide St']
-
         checkValuePlugin.invoke(antBuilder, attributes)
-        Task pluginTask = findTask('verifyXPath')
-        assert findAttribute(pluginTask, 'xpath') == attributes.xpath
-        assert findAttribute(pluginTask, 'text') == 'Adelaide St'
+    }
+
+    void testCheckValueByXPathWithoutValue() {
+        def attributes = [xpath: '//input[@label=\'addressLine1Label\']', value: 'Adelaide St']
+        checkValuePlugin.invoke(antBuilder, attributes)
+    }
+
+    void testCheckValueByXPathWithText() {
+        def attributes = [xpath: '//*[@id=\'addressLine3\']/text()', value: 'Apartment 7A']
+        checkValuePlugin.invoke(antBuilder, attributes)
+    }
+
+    void testCheckValueByXPathWithoutText() {
+        def attributes = [xpath: '//*[@id=\'addressLine3\']', value: 'Apartment 7A']
+        checkValuePlugin.invoke(antBuilder, attributes)
     }
 
     void testCheckValueByForLabel() {
-
         checkValuePlugin.invoke(antBuilder, [forLabel: 'addressLine1Label', value: 'Adelaide St'])
         Task pluginTask = findTask('verifyXPath')
         assert findAttribute(pluginTask, 'text') == 'Adelaide St'
     }
 
     void testCheckInputValueByNameInputTypeExplicit() {
-
         checkValuePlugin.invoke(antBuilder, [type: 'input', name: 'addressLine1Name', value: 'Adelaide St'])
         Task pluginTask = findTask('verifyElementText')
         assert findAttribute(pluginTask, 'name') == 'addressLine1Name'
