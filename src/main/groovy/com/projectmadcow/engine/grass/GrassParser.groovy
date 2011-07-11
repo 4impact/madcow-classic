@@ -126,7 +126,7 @@ class GrassParser {
         def expressionValue = ParseUtil.evalMe(expression)
 
         LOG.trace "Evaluated expression : $expressionValue, type of ${expressionValue.class}"
-        
+
         boolean isParserInstruction = false
         boolean isSettingDataParameter = operation.startsWith(DATA_PARAMETER_KEY)
 
@@ -162,17 +162,30 @@ class GrassParser {
         splitOperation.eachWithIndex { op, index ->
             if (op ==~ /\w*\[.*\]/) {
                 def operationName = op.substring(0, op.indexOf(('[')))
+                //If the operation doesn't take a parameter, throw an exception
                 if (!OPERATIONS_THAT_TAKE_MAP_OR_LIST_PARAMETERS.contains(operationName))
                     throw new Exception("Unable to parse line: $line, operation '$operationName' doesn't support parameters")
-
-                splitOperation[index] = op.replaceFirst('\\[', '\\(\\[').replaceFirst('\\]', '\\]\\)')
+                //grab the string that represents the parameter (a map or a list)
+                def collectionAsString = op.substring(op.indexOf('['), op.indexOf(']') + 1)
+                //Parse the collection to an object, clean it up, and spit it back to a string
+                String parsedCollection = evaluateStringAsCollection(collectionAsString, line, operation)
+                //Put the cleaned up string representing the collection back into the operation string
+                splitOperation[index] = op.replace(op.substring(op.indexOf('['), op.indexOf(']') + 1), "($parsedCollection)")
             }
         }
         return splitOperation.join('.')
     }
 
-    String transformOperation(String operation) {
-
+    protected String evaluateStringAsCollection(String collectionAsString, String line, String operation) {
+        def parsedCollection = ParseUtil.evalMe(collectionAsString)
+        switch (parsedCollection) {
+            case Map:
+                return parseMapExpression(parsedCollection as Map, line, operation, null, false)
+            case List:
+                return parseListExpression(parsedCollection as List, line, operation, null, false)
+            default:
+                throw new Exception("Unable to parse line: $line, parameter $parsedCollection is not recognised.")
+        }
     }
 
     List loadImport(String filename, String basedir) {
