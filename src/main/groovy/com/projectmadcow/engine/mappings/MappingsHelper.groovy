@@ -92,7 +92,7 @@ class MappingsHelper extends AbstractMadcowPropertiesHelper {
 				prop = "htmlId";
 			}
 			Map attr = new HashMap<String, String>()
-			attr."$prop" = value
+			attr."$prop" = value?.trim()
 			mappings.put(id, attr)
 		}
 
