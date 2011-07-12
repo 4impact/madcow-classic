@@ -45,7 +45,7 @@ public class CheckValue extends Plugin {
     }
 
     protected def checkValueByLabel(Map pluginParameters, AntBuilder antBuilder) {
-        pluginParameters.xpath = """//select[@label='${pluginParameters.forLabel}']/option[@selected]/text() | //*[@label='${pluginParameters.forLabel}']/self::node()[not(text())]/@value"""
+        pluginParameters.xpath = """//select[@label='${pluginParameters.forLabel}']/option[@selected]/text() | //*[@label='${pluginParameters.forLabel}' and not(text())]/@value"""
         pluginParameters.remove 'forLabel'
         remapPluginParameter pluginParameters, 'value', 'text'
         antBuilder.verifyXPath(pluginParameters)
@@ -63,7 +63,7 @@ public class CheckValue extends Plugin {
             antBuilder.verifyElementText(pluginParameters)
         } else if (pluginParameters.type == null) {
             remapPluginParameter pluginParameters, 'value', 'text'
-            pluginParameters.xpath = """//select[@name='${pluginParameters.name}']/option[@selected]/text() | //*[@name='${pluginParameters.name}']/self::node()[not(text())]/@value"""
+            pluginParameters.xpath = """//select[@name='${pluginParameters.name}']/option[@selected]/text() | //*[@name='${pluginParameters.name}' and not(text())]/@value"""
             pluginParameters.remove 'name'
             antBuilder.verifyXPath(pluginParameters)
         } else {
