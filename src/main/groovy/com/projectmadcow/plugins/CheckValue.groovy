@@ -45,7 +45,7 @@ public class CheckValue extends Plugin {
     }
 
     protected def checkValueByLabel(Map pluginParameters, AntBuilder antBuilder) {
-        pluginParameters.xpath = """//select[@label='${pluginParameters.forLabel}']/option[@selected]/text() | //*[@label='${pluginParameters.forLabel}']/@value"""
+        pluginParameters.xpath = """//select[@label='${pluginParameters.forLabel}']/option[@selected]/text() | //*[@label='${pluginParameters.forLabel}']/self::node()[not(text())]/@value"""
         pluginParameters.remove 'forLabel'
         remapPluginParameter pluginParameters, 'value', 'text'
         antBuilder.verifyXPath(pluginParameters)
@@ -63,7 +63,7 @@ public class CheckValue extends Plugin {
             antBuilder.verifyElementText(pluginParameters)
         } else if (pluginParameters.type == null) {
             remapPluginParameter pluginParameters, 'value', 'text'
-            pluginParameters.xpath = """//select[@name='${pluginParameters.name}']/option[@selected]/text() | //*[@name='${pluginParameters.name}']/@value"""
+            pluginParameters.xpath = """//select[@name='${pluginParameters.name}']/option[@selected]/text() | //*[@name='${pluginParameters.name}']/self::node()[not(text())]/@value"""
             pluginParameters.remove 'name'
             antBuilder.verifyXPath(pluginParameters)
         } else {
@@ -73,9 +73,9 @@ public class CheckValue extends Plugin {
     }
 
     private void checkValueByXPath(Map pluginParameters, AntBuilder antBuilder) {
-        //If the mapping doesn't end with /@value or /text(), we'll need to add it so Webtest can find the value
+        //If the mapping doesn't end with /@value or /text(), we'll need to add it so Webtest can find the value.
         if (!(pluginParameters.xpath =~ /.*\/@value/ || pluginParameters.xpath =~ /.*\/text()/)) {
-            pluginParameters.xpath = "$pluginParameters.xpath/text() | $pluginParameters.xpath/@value"
+            pluginParameters.xpath = "$pluginParameters.xpath/text() | $pluginParameters.xpath/self::node()[not(text())]/@value"
         }
         remapPluginParameter pluginParameters, 'value', 'text'
         antBuilder.verifyXPath(pluginParameters)

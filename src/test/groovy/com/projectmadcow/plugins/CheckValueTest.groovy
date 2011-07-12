@@ -64,12 +64,16 @@ class CheckValueTest extends AbstractPluginTestCase {
 										<input type="radio" name="sex_checked" value="woman" checked/>Woman
 									</form>
 
+									<form>
+									    <span id='spanWithValueAndText' value='GOATS'>goats</span>
+									</form>
+
                                     <form>
-									<select name="mydropdown">
-										<option value="Milk">Fresh Milk</option>
-										<option value="Cheese" selected="yes">Old Cheese</option>
-										<option value="Bread">Hot Bread</option>
-									</select>
+                                        <select name="mydropdown">
+                                            <option value="Milk">Fresh Milk</option>
+                                            <option value="Cheese" selected="yes">Old Cheese</option>
+                                            <option value="Bread">Hot Bread</option>
+                                        </select>
 									</form>
                                </body></html>"""
         // TODO: TC: check html validity before testing on it
@@ -173,11 +177,14 @@ class CheckValueTest extends AbstractPluginTestCase {
     }
 
     void testCheckMenuOptionValueByName() {
-
         checkValuePlugin.invoke(antBuilder, [type: 'select', name: 'mydropdown', value: 'Cheese'])
         Task pluginTask = findTask('verifySelectField')
         assert findAttribute(pluginTask, 'name') == 'mydropdown'
         assert findAttribute(pluginTask, 'value') == 'Cheese'
+    }
+
+    void testCheckValueUsesTextInPreferenceToValue() {
+        checkValuePlugin.invoke(antBuilder, [htmlId: 'spanWithValueAndText', value: 'goats'])
     }
 
 }
