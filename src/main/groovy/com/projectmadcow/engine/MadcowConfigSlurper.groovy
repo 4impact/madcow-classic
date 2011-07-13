@@ -40,11 +40,13 @@ class MadcowConfigSlurper extends ConfigSlurper {
 
     private static enum PropertiesType {
         DATABASE,
-        URL
+        URL,
+        CONFIG
     }
 
     public static final PropertiesType DATABASE = PropertiesType.DATABASE
     public static final PropertiesType URL = PropertiesType.URL
+    public static final PropertiesType CONFIG = PropertiesType.CONFIG
 
     private String propertiesFileName
     private PropertiesType type

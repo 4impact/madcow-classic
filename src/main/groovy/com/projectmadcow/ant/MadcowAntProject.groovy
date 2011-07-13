@@ -28,6 +28,7 @@ import org.apache.tools.ant.BuildException
 import org.apache.tools.ant.DefaultLogger
 import org.apache.tools.ant.Project
 import org.apache.tools.ant.ProjectHelper
+import com.projectmadcow.engine.MadcowConfigSlurper
 
 /**
  * This is the central Ant Project hook for running Madcow
@@ -40,14 +41,16 @@ import org.apache.tools.ant.ProjectHelper
 public class MadcowAntProject {
 
     protected static final Logger LOG = Logger.getLogger(MadcowAntProject.class);
+    protected static def CONFIG_FILE = MadcowConfigSlurper.CONFIG
 
     Project antProject
     def specifiedTests
     def target = 'run-all-tests'
-    def browser = 'firefox3'
+    def browser = 'Firefox3'
     def madcowSuitesPattern = ''
     def urlProperties = ''
     def databaseProperties = ''
+    def threads = '10'
 
     public MadcowAntProject(){
     }
@@ -77,6 +80,7 @@ public class MadcowAntProject {
         antProject.setProperty 'madcow.browser', browser
         antProject.setProperty 'madcow.url.properties.file', urlProperties
         antProject.setProperty 'madcow.database.properties.file', databaseProperties
+        antProject.setProperty 'madcow.threads', threads
 
         LOG.info "Invoking ant with target : $target"
         antProject.executeTarget(target)
@@ -84,7 +88,7 @@ public class MadcowAntProject {
 
 
 
-    def parseArgs(incomingArgs) throws ParseException {
+    private def parseArgs(incomingArgs) throws ParseException {
         def cli = new CliBuilder(usage:'runMadcow [options]', header:'Options:')
 
         cli.with {
@@ -134,10 +138,27 @@ public class MadcowAntProject {
             databaseProperties = options.d
     }
 
+    //Reads the madcow config file madcow.config.properties
+    private void readConfigFile() {
+        ConfigObject conf = new MadcowConfigSlurper(CONFIG_FILE).parse()
+
+        browser = conf.madcow.browser ?: browser
+        urlProperties = conf.madcow.default.url ?: urlProperties
+        databaseProperties = conf.madcow.default.database ?: databaseProperties
+        threads = conf.madcow.threads ?: threads
+    }
+
+    //we read the config file first, then override with the command line switches
+    def readConfigurations(incomingArgs) {
+        readConfigFile()
+        parseArgs incomingArgs
+    }
+
+
     static main(args){
         try {
             def madcowAntProject = new MadcowAntProject()
-            madcowAntProject.parseArgs args
+            madcowAntProject.readConfigurations(args)
             madcowAntProject.executeAnt()
 
         } catch (e){
