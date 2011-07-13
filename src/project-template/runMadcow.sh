@@ -5,4 +5,11 @@ if [ -z "$JAVA_HOME" ] ; then
     exit 1
 fi
 
-$JAVA_HOME/bin/java -classpath ./.madcow/*:./.madcow/lib/*:lib/*:./.madcow/webtest/lib/* com.projectmadcow.ant.MadcowAntProject $@
+export MADCOW_LIB_CLASSPATH=`find ./.madcow/lib -name "*.jar" | tr "\n" ":"`
+export MADCOW_CONF_CLASSPATH=./conf
+export PROJECT_LIB_CLASSPATH=`find ./lib -name "*.jar" | tr "\n" ":"`
+export WEBTEST_LIB_CLASSPATH=`find ./.madcow/webtest/lib -name "*.jar" | tr "\n" ":"`
+
+export CLASSPATH=$MADCOW_LIB_CLASSPATH:$MADCOW_CONF_CLASSPATH:$PROJECT_LIB_CLASSPATH:$WEBTEST_LIB_CLASSPATH
+
+$JAVA_HOME/bin/java -classpath $CLASSPATH com.projectmadcow.ant.MadcowAntProject $@

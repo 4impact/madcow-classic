@@ -12,6 +12,7 @@ for /R ./lib %%a in (*.jar) do (
 for /R ./.madcow/webtest/lib %%a in (*.jar) do (
   set CLASSPATH=!CLASSPATH!;%%a
 )
+set CLASSPATH=!CLASSPATH!;./conf
 
 set CLASSPATH=!CLASSPATH!"
 
