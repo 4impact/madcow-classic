@@ -116,9 +116,8 @@ public class MadcowAntProject {
         }
 
         if (options.ts){
-
             specifiedTests = options.ts.toString()
-            specifiedTests = specifiedTests.substring(1, specifiedTests.length()-1)
+            specifiedTests = specifiedTests.substring(1, specifiedTests.length()-1).replaceAll(', ', ',')
 
             target = 'run-tests'
         }
