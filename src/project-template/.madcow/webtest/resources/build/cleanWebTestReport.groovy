@@ -32,7 +32,6 @@ line ->
 			def matcher = catchWebTestHome.matcher(line)
 			matcher.find()
 			WebTestHome = matcher.group(1)
-//			println WebTestHome
 		}
 			
 		newLine = newLine - WebTestHome

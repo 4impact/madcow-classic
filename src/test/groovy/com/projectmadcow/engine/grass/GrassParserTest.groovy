@@ -194,7 +194,6 @@ public class GrassParserTest extends GroovyTestCase {
     }
 
     void testQuotesInValuesAreEscaped() {
-        println ParseUtil.escapeCharactersIfRequired("//a[@id='superAwesomeButton']")
         List unparsedCode = [ 'verifyText = Accident Date: Field "Accident Date" is mandatory',
                               "verifyXPath = //a[@id='superAwesomeButton'] "]
 		List parsedCode = grassParser.parseCode(unparsedCode)

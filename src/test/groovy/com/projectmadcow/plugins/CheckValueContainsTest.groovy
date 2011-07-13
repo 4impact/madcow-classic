@@ -146,7 +146,6 @@ class CheckValueContainsTest extends AbstractPluginTestCase {
     }
 
     private void assertStepFails(Closure pluginCall) {
-        println "Blargh"
         assertStepFailedException(pluginCall, 'Wrong')
     }
 }
