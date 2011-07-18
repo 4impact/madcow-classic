@@ -75,7 +75,7 @@ public class CheckValue extends Plugin {
     private void checkValueByXPath(Map pluginParameters, AntBuilder antBuilder) {
         //If the mapping doesn't end with /@value or /text(), we'll need to add it so Webtest can find the value.
         if (!(pluginParameters.xpath =~ /.*\/@value/ || pluginParameters.xpath =~ /.*\/text()/)) {
-            pluginParameters.xpath = "$pluginParameters.xpath/text() | $pluginParameters.xpath/self::node()[not(text())]/@value"
+            pluginParameters.xpath = "$pluginParameters.xpath/text() | $pluginParameters.xpath/self::node()[not(text())]/@value | $pluginParameters.xpath/self::node()/option[@selected]/text()"
         }
         remapPluginParameter pluginParameters, 'value', 'text'
         antBuilder.verifyXPath(pluginParameters)

@@ -134,15 +134,15 @@ class CheckValueContainsTest extends AbstractPluginTestCase {
      */
     public void testCheckValueContainsWithSelect() {
         plugin.invoke(antBuilder, [htmlId : 'mydropdown', value : 'Cheese'])
-        plugin.invoke(antBuilder, [name : 'mydropdown', value : 'Cheese'])
-        plugin.invoke(antBuilder, [forLabel : 'mydropdown', value : 'Cheese'])
+        plugin.invoke(antBuilder, [name : 'mydropdown', value : 'Old Cheese'])
+        plugin.invoke(antBuilder, [forLabel : 'mydropdown', value : 'd Che'])
+        plugin.invoke(antBuilder, [xpath : "//select[@id='mydropdown']", value : 'Cheese'])
 
         assertStepFails { plugin.invoke(antBuilder, [htmlId : 'mydropdown', value : 'read =']) }
         assertStepFails { plugin.invoke(antBuilder, [name : 'mydropdown', value : 'Bread']) }
         assertStepFails { plugin.invoke(antBuilder, [forLabel : 'mydropdown', value : 'ilk']) }
+        assertStepFails { plugin.invoke(antBuilder, [xpath : "//select[@id='mydropdown']", value : '8d8sd8sd']) }
 
-        //plugin.invoke(antBuilder, [xpath : "//select[@id='mydropdown']/@value", value : 'Cheese'])
-        //assertStepFails { plugin.invoke(antBuilder, [xpath : "//select[@id='mydropdown']", value : '8d8sd8sd']) }
     }
 
     private void assertStepFails(Closure pluginCall) {
