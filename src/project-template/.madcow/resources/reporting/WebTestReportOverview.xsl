@@ -530,7 +530,11 @@ This XSL allows to generate the report overview.
                 <a href="{../@name}/WebTestReport.html">
                     <xsl:value-of select="@name"/>
                 </a>
-
+                <xsl:if test="count(ignoreTest) > 0">
+                    <table cellspacing="0" cellpadding="3">
+                        <tr><td style="color:red">TEST IGNORED</td></tr>
+                    </table>
+                </xsl:if>
                 <xsl:if test="count(showOnReport) > 0">
                     <table cellspacing="0" cellpadding="3">
                     <xsl:for-each select="showOnReport">

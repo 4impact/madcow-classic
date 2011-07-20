@@ -32,6 +32,8 @@
         classname="com.projectmadcow.extension.webtest.step.ExecuteSql" />
     <taskdef name="plugin"
         classname="com.canoo.webtest.steps.control.GroupStep" />
+    <taskdef name="ignoreTest"
+        classname="com.projectmadcow.extension.webtest.step.IgnoreTest" />
     <taskdef name="importTemplate"
         classname="com.projectmadcow.extension.webtest.step.ImportTemplate" />
     <taskdef name="invokeUrl"

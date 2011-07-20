@@ -27,6 +27,7 @@ contributor(antBuilderContext) {
     method name: 'executeJavascript', type: 'void', params: [attributes : Map];
     method name: 'executeSql', type: 'void', params: [attributes : Map];
     method name: 'executionError', type: 'void', params: [attributes : Map];
+    method name: 'ignoreTest', type: 'void', params: [attributes : Map];
     method name: 'importTemplate', type: 'void', params: [attributes : Map];
     method name: 'importTest', type: 'void', params: [attributes : Map];
     method name: 'invokeUrl', type: 'void', params: [attributes : Map];

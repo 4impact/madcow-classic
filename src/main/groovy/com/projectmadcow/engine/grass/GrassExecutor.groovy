@@ -29,31 +29,48 @@ import com.projectmadcow.engine.RuntimeContext
 /**
  * Executor for Grass Code. Called by the Properties, CSV and Spreadsheet runners,
  * to parse and then execute the Grass Code.
- *
- * @author chris
  */
 public class GrassExecutor {
 
     protected static final Logger LOG = Logger.getLogger(GrassExecutor.class);
 
     static def executeCode(RuntimeContext runtimeContext, List unparsedCode, def currentTestName) {
-
         try {
-            GrassParser grassParser = new GrassParser(runtimeContext);
-            grassParser.parseCode(unparsedCode).each {String line ->
-                try {
-                    Eval.x runtimeContext, "x." + line
-                    LOG.debug line
-                } catch (Throwable t) {
-                    LOG.error "unable to parse test : ${currentTestName} line : $line"
-                    throw new Exception("Unable to parse line: $line", t)
-                }
+            if (isTestIgnored(unparsedCode)) {
+                ignoreTest(runtimeContext, currentTestName)
+            } else {
+                parseGrassCode(runtimeContext, unparsedCode, currentTestName)
             }
         } catch (WebTestException wte) {
             throw wte
         } catch (e) {
             e.printStackTrace()
             runtimeContext.antBuilder.executionError(message: e.message)
+        }
+    }
+
+    protected static boolean isTestIgnored(List unparsedCode) {
+        return unparsedCode.any { String lineOfCode ->
+            lineOfCode.trim().equalsIgnoreCase('madcow.ignore')
+        }
+    }
+
+    protected static def ignoreTest(RuntimeContext runtimeContext, currentTestName) {
+        LOG.debug "Test $currentTestName has been ignored"
+        runtimeContext.antBuilder.ignoreTest()
+        
+    }
+
+    protected static def parseGrassCode(RuntimeContext runtimeContext, List unparsedCode, currentTestName) {
+        GrassParser grassParser = new GrassParser(runtimeContext);
+        grassParser.parseCode(unparsedCode).each {String line ->
+            try {
+                Eval.x runtimeContext, "x." + line
+                LOG.debug line
+            } catch (Throwable t) {
+                LOG.error "unable to parse test : ${currentTestName} line : $line"
+                throw new Exception("Unable to parse line: $line", t)
+            }
         }
     }
 

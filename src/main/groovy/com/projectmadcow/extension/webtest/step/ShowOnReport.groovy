@@ -55,7 +55,7 @@ public class ShowOnReport extends Step implements IComputeValue {
      */
 	public void doExecute() throws XPathException {
 
-        if (htmlId ?: '' != '')
+        if (htmlId)
             xpath = "//*[@id='${htmlId}']/text()";
 
         reportValue = evaluateXPath();
@@ -96,7 +96,7 @@ public class ShowOnReport extends Step implements IComputeValue {
      */
     public String getComputedValue() {
 
-        if ((valueFormatString ?: '') != '')
+        if (valueFormatString)
             return valueFormatString.replace(value, reportValue)
         else
 		    return reportValue;
