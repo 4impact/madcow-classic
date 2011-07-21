@@ -149,6 +149,10 @@ public class Table extends Plugin {
         invokePlugin('checkValue', valueMap)
     }
 
+    def setCheckValueContains(def valueMap){
+        invokePlugin('checkValueContains', valueMap)
+    }
+
     def setValue(def valueMap){
         invokePlugin('value', valueMap, '//input[1]')
     }
