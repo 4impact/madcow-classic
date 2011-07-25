@@ -38,13 +38,11 @@ class VerifySelectFieldOptions extends AbstractVerifySelectFieldStep {
     }
 
     protected def checkOptionsList(List optionsList, HtmlSelect selectElement) {
-        List missingInElement = optionsList.findAll { option ->
-            selectElement.options.find { opt -> opt.asText() == option } == null
-        }
+        List missingInOptions = selectElement.options*.asText()
+        optionsList.each{missingInOptions.remove(it)}
 
-        List missingInOptions = selectElement.options.findAll { option ->
-            !optionsList.contains(option.asText())
-        }*.asText()
+        List missingInElement = optionsList.clone() as List
+        selectElement.options*.asText().each{ missingInElement.remove(it)}
 
         if ((missingInElement.size() != 0) || (missingInOptions.size() != 0)) {
             String errorMessage = "Select field options do not match!"

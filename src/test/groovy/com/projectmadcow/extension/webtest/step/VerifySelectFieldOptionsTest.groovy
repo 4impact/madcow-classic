@@ -35,6 +35,7 @@ public class VerifySelectFieldOptionsTest extends AbstractXpathHtmlIdStepTest {
         'Queensland',
         'South Australia',
         'Victoria',
+        'Western Australia',
         'Western Australia'
     ]
 
@@ -47,6 +48,7 @@ public class VerifySelectFieldOptionsTest extends AbstractXpathHtmlIdStepTest {
                 <option selected>Queensland</option>
                 <option>South Australia</option>
                 <option>Victoria</option>
+                <option>Western Australia</option>
                 <option>Western Australia</option>
             </select></form>
        </body></html>"""
@@ -81,7 +83,12 @@ public class VerifySelectFieldOptionsTest extends AbstractXpathHtmlIdStepTest {
 
     void testMissingInTest(){
         testExpectStepFailedException "state", "['Queensland']",
-        'Missing in Test: [Australan Captial Territory, New South Wales, Northern Territory, South Australia, Victoria, Western Australia]'
+        'Missing in Test: [Australan Captial Territory, New South Wales, Northern Territory, South Australia, Victoria, Western Australia, Western Australia]'
+    }
+
+    void testThatDuplicateOptionsCauseFailureIfNotSpecified() {
+        testExpectStepFailedException "state", "['Australan Captial Territory','New South Wales','Northern Territory','Queensland','South Australia','Victoria','Western Australia']",
+        'Missing in Test: [Western Australia]'
     }
 
     void testMissingInPage(){
