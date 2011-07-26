@@ -81,6 +81,8 @@ public class AddressTest extends AbstractTestCase {
 
         // now use count rows plugin to verify there is only one unique address found.
         searchResults.table.countRows.equals = 1
+
+
     }
 
     void testSearchTableLayoutAddress(){

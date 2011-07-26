@@ -60,4 +60,6 @@
         classname="com.canoo.webtest.steps.verify.VerifyXPath" />
     <taskdef name="countColumns"
         classname="com.canoo.webtest.steps.verify.VerifyXPath" />
+    <taskdef name="checkAttribute"
+        classname="com.projectmadcow.extension.webtest.step.CheckAttribute" />
 </antlib>

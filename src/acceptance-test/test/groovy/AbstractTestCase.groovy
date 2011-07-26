@@ -58,6 +58,8 @@ class AbstractTestCase extends GroovyMadcowTestCase {
     }
     def checkValues(values) {
         addressLine1.checkValue = values.addressLine1
+        addressLine1.checkAttribute = ['class' : 'value']
+        addressLine1.checkAttribute = ['valign' : 'top']
         addressLine2.checkValue = values.addressLine2
         postCode.checkValue = values.postCode
         wirelessAccessPointDetected.checkValue = "${values.wirelessAccessPointDetected ? true : false}"
