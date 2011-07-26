@@ -21,19 +21,29 @@
 
 package com.projectmadcow.extension.webtest.step
 
+import com.canoo.webtest.boundary.HtmlUnitBoundary
 import com.canoo.webtest.extension.StoreElementAttribute
 import com.canoo.webtest.steps.Step
 import com.gargoylesoftware.htmlunit.html.HtmlElement
 import com.gargoylesoftware.htmlunit.html.HtmlPage
 import org.apache.log4j.Logger
 
-public abstract class AbstractMadcowStep extends Step
-{  
+public abstract class AbstractMadcowStep extends Step {
 
-  abstract protected Logger getLog()
+    abstract protected Logger getLog()
 
-  protected HtmlElement findElement(String htmlId, String xpath) {
-    final HtmlPage currentResp = getContext().getCurrentHtmlResponse(this)
-    StoreElementAttribute.findElement(currentResp, htmlId, xpath, getLog(), this)
-  }
+    protected HtmlElement findElement(String htmlId, String xpath) {
+        final HtmlPage currentResp = getContext().getCurrentHtmlResponse(this)
+        StoreElementAttribute.findElement(currentResp, htmlId, xpath, getLog(), this)
+    }
+
+    //Same as findElement, but it doesn't throw an exception if the element can't be found
+    protected HtmlElement findElementOrNull(String htmlId, String xpath) {
+        final HtmlPage currentResp = getContext().getCurrentHtmlResponse(this)
+        if (xpath) {
+            return HtmlUnitBoundary.trySelectSingleNodeByXPath(xpath, currentResp, this) as HtmlElement
+        } else {
+            return currentResp.getAllHtmlChildElements().find { it.id == htmlId} as HtmlElement
+        }
+    }
 }
