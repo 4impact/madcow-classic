@@ -27,8 +27,6 @@ import com.projectmadcow.engine.plugin.Plugin
 
 /**
  * Store plugin to allow dynamic storing of properties
- *
- * @author gbunney
  */
 class Store extends Plugin {
 
@@ -51,8 +49,9 @@ class Store extends Plugin {
    	}
 
     String createXPathToStore(String xPathToIdentifyNode) {
-        return "//*[${xPathToIdentifyNode} and @value and not(text())]/@value " +
-                "| //*[${xPathToIdentifyNode} and text()]/text() "
+        return "//*[${xPathToIdentifyNode} and @value and not(text()) and not(self::select)]/@value " +
+                "| //*[${xPathToIdentifyNode} and text()  and not(self::select)]/text() " +
+                "| //select[${xPathToIdentifyNode}]/option[@selected]/text()"
 
     }
 }

@@ -45,7 +45,8 @@ public class StoreTest extends AbstractPluginTestCase {
                                <div id="address" name="address">Adelaide St, Brisbane</div>
                                <input type="text" name="postCode" id="postCode" value="4000"/>
                                <select id="planet">
-                                    <option id="theOnlyOption" value="3">Earth</option>
+                                    <option id="anOption" value="3">Earth</option>
+                                    <option id="anotherOption" selected="" value="4">Saturn</option>
                                </select>
                                </body></html>"""
         contextStub.setDefaultResponse(html)
@@ -68,9 +69,16 @@ public class StoreTest extends AbstractPluginTestCase {
     }
 
     void testTextIsStoredInPreferenceToValue() {
-        String xPathToStoreValue =  storePlugin.createXPathToStore("@id='theOnlyOption'")
+        String xPathToStoreValue =  storePlugin.createXPathToStore("@id='anOption'")
         String retrievedText = xpath.evaluate(xPathToStoreValue, htmlAsDocumentElement, XPathConstants.STRING)
         assertEquals("Earth", retrievedText)
+    }
+
+    void testStoreWorksForSelectFields() {
+        String xPathToStoreValue =  storePlugin.createXPathToStore("@id='planet'")
+        String retrievedText = xpath.evaluate(xPathToStoreValue, htmlAsDocumentElement, XPathConstants.STRING)
+        println xPathToStoreValue
+        assertEquals('Saturn', retrievedText)
     }
 
 
