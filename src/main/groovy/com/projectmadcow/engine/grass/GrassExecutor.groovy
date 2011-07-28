@@ -39,7 +39,7 @@ public class GrassExecutor {
             if (isTestIgnored(unparsedCode)) {
                 ignoreTest(runtimeContext, currentTestName)
             } else {
-                parseGrassCode(runtimeContext, unparsedCode, currentTestName)
+                parseAndExecuteGrassCode(runtimeContext, unparsedCode, currentTestName)
             }
         } catch (WebTestException wte) {
             throw wte
@@ -61,7 +61,7 @@ public class GrassExecutor {
         
     }
 
-    protected static def parseGrassCode(RuntimeContext runtimeContext, List unparsedCode, currentTestName) {
+    protected static def parseAndExecuteGrassCode(RuntimeContext runtimeContext, List unparsedCode, currentTestName) {
         GrassParser grassParser = new GrassParser(runtimeContext);
         grassParser.parseCode(unparsedCode).each {String line ->
             try {
