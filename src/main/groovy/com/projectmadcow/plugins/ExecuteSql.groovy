@@ -1,4 +1,5 @@
 /*
+/*
  * Copyright 2008-2011 4impact Technology Services, Brisbane, Australia
  *
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -19,20 +20,10 @@
  * under the License.
  */
 
-/**
- * 
- */
 package com.projectmadcow.plugins
 
 import com.projectmadcow.engine.plugin.Plugin
 
-/**
- * ExecuteSql
- *
- * @author mcallon
- * 06/11/2009 3:26:44 PM
- *
- */
 public class ExecuteSql extends Plugin {
 
     def invoke(AntBuilder antBuilder, Map pluginParameters){
