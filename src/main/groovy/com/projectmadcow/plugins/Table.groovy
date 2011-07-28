@@ -221,8 +221,6 @@ public class Table extends Plugin {
         return new TableCountRowsWithCriteria(getPrefixXPath(), antBuilder, description, parameters)
     }
 
-    def
-
     protected String getPrefixXPath() {
         if (attributes.htmlId) {
             "//table[@id='${attributes.htmlId}']"
