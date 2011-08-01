@@ -177,6 +177,10 @@ public class Table extends Plugin {
         invokePlugin('verifySelectFieldOptions', valueMap, '//select[1]')
     }
 
+    def setVerifySelectFieldContains(def valueMap){
+        invokePlugin('verifySelectFieldContains', valueMap, '//select[1]')
+    }
+
     def setSetRadioButton(def valueMap) {
         antBuilder.plugin(description: getDescription('setRadioButton', valueMap)) {
             antBuilder.verifyDynamicProperty (name: getPropertyName())
