@@ -39,6 +39,10 @@
     <property name="madcow.project.lib.dir" location="${basedir}/lib" />
     <property name="madcow.internal.lib.dir" location="${madcow.internal.dir}/lib" />
     <property name="madcow.threads" value="10" />
+    <property name="madcow.proxy.url" value="" />
+    <property name="madcow.proxy.port" value="80" />
+    <property name="madcow.proxy.user" value="" />
+    <property name="madcow.proxy.password" value="" />
     <property name="madcow.database.properties.file" value="" />
     <property name="madcow.url.properties.file" value="" />
     <property name="madcow.browser" value="Firefox3" />
@@ -107,6 +111,7 @@
         <mkdir dir="${madcow.build.results.report.dir}" />
         <antcall target="loadDatabase" />
     </target>
+
 
     <target name="loadDatabase">
         <madcowDatabaseLoad>
@@ -180,6 +185,11 @@
                 <jvmarg value="-Dmadcow.database.properties.file=${madcow.database.properties.file}" />
                 <jvmarg value="-Dmadcow.url.properties.file=${madcow.url.properties.file}" />
                 <jvmarg value="-Dmadcow.browser=${madcow.browser}" />
+                <jvmarg value="-Dmadcow.threads=${madcow.threads}" />
+                <jvmarg value="-Dmadcow.proxy.url=${madcow.proxy.url}" />
+                <jvmarg value="-Dmadcow.proxy.port=${madcow.proxy.port}" />
+                <jvmarg value="-Dmadcow.proxy.user=${madcow.proxy.user}" />
+                <jvmarg value="-Dmadcow.proxy.password=${madcow.proxy.password}" />
                 <jvmarg value="-Xmx512m" />
                 <formatter type="xml" />
                 <jvmargs/>

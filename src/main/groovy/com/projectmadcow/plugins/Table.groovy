@@ -33,7 +33,7 @@ import org.apache.log4j.Logger
  * Ideally modify this class to dynamically invoke any madcow plugin or webtest step
  * using the syntax myTable.table.currentRow.blah where blah is dynamically resolved and
  * invoked instead of this class having to implement a setBlah or getBlah method.
- * Biggest issue currently with this is that we do not know excatly what the html
+ * Biggest issue currently with this is that we do not know exactly what the html
  * element is that we wish to select and then run the plugin/step against.
  * For example currently for clickLink step we append '//a[1]' to the xpath and for value plugin
  * we append '//input[1] and for the checkValue plugin we do not need to append to the xpath.

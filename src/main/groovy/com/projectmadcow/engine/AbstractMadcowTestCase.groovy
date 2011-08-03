@@ -71,6 +71,7 @@ public abstract class AbstractMadcowTestCase extends GroovyTestCase {
     static def executeTest(AntBuilder antBuilder, String testName, Closure executionSteps) {
         def configWithSavePrefix = [saveprefix : testName.replaceAll(" ", "_").replaceAll(':', '_')]
         configWithSavePrefix.putAll(AbstractMadcowTestCase.configMap)
+        setupProxy(antBuilder)
         LOG.info "Running ${testName}"
         try {
             antBuilder.webtest(name: "${testName}") {
@@ -94,6 +95,18 @@ public abstract class AbstractMadcowTestCase extends GroovyTestCase {
             LOG.error "Failed $testName - exception while running test ${exception.message}"
             throw exception
         }
+    }
+
+    static void setupProxy(AntBuilder antBuilder) {
+        if (System.getProperty('madcow.proxy.url')) {
+            def proxyConfigMap = [proxyhost: System.getProperty('madcow.proxy.url'),
+                    proxyport: System.getProperty('madcow.proxy.port'),
+                    proxyuser: System.getProperty('madcow.proxy.user'),
+                    proxypassword: System.getProperty('madcow.proxy.password')]
+            LOG.info("Using http proxy: $proxyConfigMap")
+            antBuilder.setproxy(proxyConfigMap)
+        }
+
     }
 
 }

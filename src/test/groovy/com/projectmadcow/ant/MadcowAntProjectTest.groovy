@@ -35,6 +35,11 @@ class MadcowAntProjectTest extends GroovyTestCase {
         assert proj.urlProperties == 'test'
         assert proj.databaseProperties == 'testDB'
         assert proj.threads == '4'
+        assert proj.proxyURL == 'http://localhost'
+        assert proj.proxyPort == '8181'
+        assert proj.proxyUser == 'joeschmoe'
+        assert proj.proxyPassword == 'awesomepassword28'
+
         
         //Not in the config file, so null
         assert !proj.specifiedTests
@@ -60,9 +65,13 @@ class MadcowAntProjectTest extends GroovyTestCase {
             assert proj.madcowSuitesPattern == 'someSuite'
             assert proj.urlProperties == 'local'
             assert proj.databaseProperties == 'localdb'
-            
+
             //Not available in command line switches so we get the default
             assert proj.threads == '10'
+            assert proj.proxyURL == ''
+            assert proj.proxyPort == '80'
+            assert proj.proxyUser == ''
+            assert proj.proxyPassword == ''
         } finally {
             MadcowAntProject.CONFIG_FILE = MadcowConfigSlurper.CONFIG
         }
@@ -85,6 +94,10 @@ class MadcowAntProjectTest extends GroovyTestCase {
         
         //Not available in command line switches, so taken from the config file
         assert proj.threads == '4'
+        assert proj.proxyURL == 'http://localhost'
+        assert proj.proxyPort == '8181'
+        assert proj.proxyUser == 'joeschmoe'
+        assert proj.proxyPassword == 'awesomepassword28'
     }
 
     public void testReadingConfigWhenTheresNoFileOrSwitches() {
@@ -96,12 +109,16 @@ class MadcowAntProjectTest extends GroovyTestCase {
             //No configs specified, so we get the defaults
             assert proj.browser == 'Firefox3'
             assert proj.threads == '10'
+            assert proj.proxyPort == '80'
 
             //No configs specified, so no value..
             assert !proj.specifiedTests
             assert !proj.madcowSuitesPattern
             assert !proj.urlProperties
             assert !proj.databaseProperties
+            assert !proj.proxyURL
+            assert !proj.proxyUser
+            assert !proj.proxyPassword
         } finally {
             MadcowAntProject.CONFIG_FILE = MadcowConfigSlurper.CONFIG
         }

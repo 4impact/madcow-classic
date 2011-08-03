@@ -51,6 +51,10 @@ public class MadcowAntProject {
     def urlProperties = ''
     def databaseProperties = ''
     def threads = '10'
+    def proxyURL = ''
+    def proxyPort = '80'
+    def proxyUser = ''
+    def proxyPassword = ''
 
     public MadcowAntProject(){
     }
@@ -76,11 +80,15 @@ public class MadcowAntProject {
 
         if (specifiedTests) antProject.setProperty 'madcow.tests', specifiedTests
 
-        antProject.setProperty 'madcow.suites.pattern', madcowSuitesPattern ?: ''
+        antProject.setProperty 'madcow.suites.pattern', madcowSuitesPattern
         antProject.setProperty 'madcow.browser', browser
         antProject.setProperty 'madcow.url.properties.file', urlProperties
         antProject.setProperty 'madcow.database.properties.file', databaseProperties
         antProject.setProperty 'madcow.threads', threads
+        antProject.setProperty 'madcow.proxy.url', proxyURL
+        antProject.setProperty 'madcow.proxy.port', proxyPort
+        antProject.setProperty 'madcow.proxy.user', proxyUser
+        antProject.setProperty 'madcow.proxy.password', proxyPassword
 
         LOG.info "Invoking ant with target : $target"
         antProject.executeTarget(target)
@@ -146,6 +154,10 @@ public class MadcowAntProject {
         urlProperties = conf.madcow.default.url ?: urlProperties
         databaseProperties = conf.madcow.default.database ?: databaseProperties
         threads = conf.madcow.threads ?: threads
+        proxyURL = conf.madcow.proxy.url ?: proxyURL
+        proxyPort = conf.madcow.proxy.port ?: proxyPort
+        proxyUser = conf.madcow.proxy.user ?: proxyUser
+        proxyPassword = conf.madcow.proxy.password ?: proxyPassword
     }
 
     //we read the config file first, then override with the command line switches
