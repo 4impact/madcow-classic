@@ -19,7 +19,9 @@
  * under the License.
  */
 
-package com.projectmadcow.plugins
+package com.projectmadcow.extension.webtest.xpath
+
+import com.projectmadcow.extension.webtest.xpath.XPathEvaluator
 
 class XPathEvaluatorTest extends GroovyTestCase {
 

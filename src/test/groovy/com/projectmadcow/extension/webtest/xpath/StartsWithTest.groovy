@@ -21,8 +21,6 @@
 
 package com.projectmadcow.extension.webtest.xpath
 
-import com.projectmadcow.plugins.XPathEvaluator
-
 class StartsWithTest extends GroovyTestCase {
 
     XPathEvaluator evaluator

@@ -19,7 +19,7 @@
  * under the License.
  */
 
-package com.projectmadcow.plugins
+package com.projectmadcow.extension.webtest.xpath
 
 import com.canoo.webtest.engine.xpath.XPathHelper
 import com.gargoylesoftware.htmlunit.WebClient

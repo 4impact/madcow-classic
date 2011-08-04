@@ -21,6 +21,8 @@
 
 package com.projectmadcow.plugins
 
+import com.projectmadcow.extension.webtest.xpath.XPathEvaluator
+
 /**
  * Test class for the Table plugin.
  */

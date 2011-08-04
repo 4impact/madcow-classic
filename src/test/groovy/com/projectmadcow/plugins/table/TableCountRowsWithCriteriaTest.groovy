@@ -22,7 +22,7 @@
 package com.projectmadcow.plugins.table
 
 import com.projectmadcow.plugins.AbstractPluginTestCase
-import com.projectmadcow.plugins.XPathEvaluator
+import com.projectmadcow.extension.webtest.xpath.XPathEvaluator
 
 class TableCountRowsWithCriteriaTest  extends AbstractPluginTestCase {
 
