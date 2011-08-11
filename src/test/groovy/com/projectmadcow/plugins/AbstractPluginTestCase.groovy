@@ -76,20 +76,24 @@ public abstract class AbstractPluginTestCase extends GroovyTestCase {
         }
     }
 
-    protected void assertStepExecutionException(Closure pluginInvokation, String errorMessage) {
-        try {
-            pluginInvokation.call()
-            assert false // should always throw StepExecutionException
-        } catch (StepExecutionException e) {
-            assert e.message.contains(errorMessage)
-        }
+    protected void assertStepExecutionException(Closure pluginInvocation, String errorMessage) {
+        assertThrowsExceptionOfType(StepExecutionException, pluginInvocation, errorMessage)
     }
 
-    protected void assertStepFailedException(Closure pluginInvokation, String errorMessage) {
+    protected void assertStepFailedException(Closure pluginInvocation, String errorMessage) {
+        assertThrowsExceptionOfType(StepFailedException, pluginInvocation, errorMessage)
+    }
+
+    protected void assertRuntimeException(Closure pluginInvocation, String errorMessage) {
+        assertThrowsExceptionOfType(RuntimeException, pluginInvocation, errorMessage)
+    }
+
+    private void assertThrowsExceptionOfType(Class exceptionClass, Closure pluginInvocation, String errorMessage) {
         try {
-            pluginInvokation.call()
-            assert false // should always throw StepFailedException
-        } catch (StepFailedException e) {
+            pluginInvocation.call()
+            fail "Expected to have exception of type ${exceptionClass.canonicalName} thrown. No exception was thrown."
+        } catch (Exception e) {
+            assert e.getClass() == exceptionClass
             assert e.message.contains(errorMessage)
         }
     }
