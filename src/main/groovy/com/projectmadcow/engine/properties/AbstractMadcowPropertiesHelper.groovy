@@ -45,7 +45,7 @@ abstract class AbstractMadcowPropertiesHelper {
 
 		getAllMappingsFromClasspath().each {Resource r ->
 			def properties = loadMappingProperties(r)
-			getLog().info "Parsing ${getPropertiesFilePrettyName()} File [${r.URL}] "
+			getLog().debug "Parsing ${getPropertiesFilePrettyName()} File [${r.URL}] "
 
 			List duplicateProperties = duplicateProperties(localProperties, properties)
 			if (duplicateProperties.size() > 0){

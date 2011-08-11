@@ -72,7 +72,7 @@ class MappingsHelper extends AbstractMadcowPropertiesHelper {
             
 			mappingNamespace = fileURLSplit[i] + (mappingNamespace != '' ? '_' : '') + mappingNamespace
 		}
-		LOG.info("Mapping Namespace being applied '${mappingNamespace}'")
+		LOG.debug("Mapping Namespace being applied '${mappingNamespace}'")
 		properties.each { prop -> prop.key = (mappingNamespace != '' ? mappingNamespace + '_' : '') + prop.key; }
 	}
     
