@@ -317,6 +317,7 @@
         <copy todir="${wt.config.resultpath}/resources/images" description="Copy resource files">
 			<fileset dir="${madcow.resources.dir}/images">
 				<include name="*.jpg"/>
+                <include name="*.ico"/>
 			</fileset>
 		</copy>
         <copy todir="${wt.config.resultpath}/resources">

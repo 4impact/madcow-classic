@@ -56,7 +56,7 @@ This XSL allows to generate the report overview.
     <xsl:variable name="img.expandPlus" select="concat($resources.dir, '/images/expandPlus.png')"/>
     <xsl:variable name="img.4impact" select="concat($resources.dir, '/images/4impact.jpg')"/>
     <xsl:variable name="img.madcow" select="concat($resources.dir, '/images/madcow.jpg')"/>
-    <xsl:variable name="img.favicon" select="concat($resources.dir, '/images/favicon.ico')"/>
+    <xsl:variable name="img.favicon" select="concat($resources.dir, '/images/4impact.ico')"/>
 
 	<xsl:variable name="webtestVersion" select="/overview/@Implementation-Version"/>
 

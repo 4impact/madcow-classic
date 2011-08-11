@@ -59,7 +59,7 @@
     <xsl:variable name="img.expandPlus" select="concat($resources.dir, '/images/expandPlus.png')"/>
     <xsl:variable name="img.expandMinus" select="concat($resources.dir, '/images/expandMinus.png')"/>
     <xsl:variable name="img.canoo" select="concat($resources.dir, '/images/canoo.gif')"/>
-    <xsl:variable name="img.favicon" select="concat($resources.dir, '/images/favicon.ico')"/>
+    <xsl:variable name="img.favicon" select="concat($resources.dir, '/images/4impact.ico')"/>
 
 	<xsl:variable name="webtestVersion" select="/summary/@Implementation-Version"/>
 
