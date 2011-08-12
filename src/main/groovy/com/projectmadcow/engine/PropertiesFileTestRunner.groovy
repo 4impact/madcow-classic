@@ -40,6 +40,7 @@ public class PropertiesFileTestRunner extends AbstractMadcowTestCase {
     public void runTest() {
         loadFile().each {File currentTest ->
             try {
+                runtimeContext.clearDataParameters();
                 LOG.debug("***** run test $currentTest")
 
                 this.setName(currentTest.name)

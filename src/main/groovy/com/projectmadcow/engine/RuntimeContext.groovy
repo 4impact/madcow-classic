@@ -42,10 +42,14 @@ public class RuntimeContext {
 
 	RuntimeContext(AntBuilder antBuilder = null) {
 		this.antBuilder = antBuilder ?: AntBuilderFactory.createAntBuilder()
-        
+        this.clearDataParameters();
+	}
+
+    def clearDataParameters() {
+        dataParameters = new HashMap<String, Object>()
         dataParameters.putAll(PageModel.globalDataParameters.clone() as Map)
         LOG.debug "dataParameters after adding global : $dataParameters"
-	}
+    }
 
 	def propertyMissing(String name) {
 		return new PageModel(name, antBuilder);
