@@ -28,7 +28,7 @@ import org.apache.log4j.Logger
  *
  * @author gbunney
  */
-public abstract class Plugin {
+public abstract class Plugin implements GroovyObject {
 
     protected static final Logger LOG = Logger.getLogger(Plugin.class)
 
