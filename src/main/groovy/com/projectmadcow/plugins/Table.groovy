@@ -154,7 +154,7 @@ public class Table extends Plugin {
     }
 
     def setValue(def valueMap){
-        invokePlugin('value', valueMap, "//*[(name() ='input' | name()='textarea') and position() = 1]")
+        invokePlugin('value', valueMap, "//*[(local-name() = 'input' or local-name() = 'textarea') and position() = 1]")
     }
 
     def setSelectField(def valueMap){
