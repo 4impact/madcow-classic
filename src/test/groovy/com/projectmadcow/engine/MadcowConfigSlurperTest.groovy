@@ -33,13 +33,85 @@ class MadcowConfigSlurperTest extends GroovyTestCase {
     }
 
     public void testParseWithFilePrefixPropertySet() {
-        System.setProperty('madcow.url.properties.file', 'dev')
-        MadcowConfigSlurper slurper = new MadcowConfigSlurper(MadcowConfigSlurper.URL)
-        def configObject = slurper.parse()
-        assert configObject.TEST_SITE == 'http://localhost:8080/madcow-test-site'
-
-        //Err - just in case.
-        System.setProperty('madcow.url.properties.file', '')
+        try {
+	        System.setProperty('madcow.url.properties.file', 'dev')
+	        MadcowConfigSlurper slurper = new MadcowConfigSlurper(MadcowConfigSlurper.URL)
+	        def configObject = slurper.parse()
+	        assert configObject.TEST_SITE == 'http://localhost:8080/madcow-test-site'
+        } finally {
+			//Err - just in case.
+			System.setProperty('madcow.url.properties.file', '')
+        }
     }
+
+/*
+ * Expects NOT to find the file /madcow/src/test/resources/dev.local.madcow.url.properties
+ */
+    public void testParseWithFilePrefixPropertySetLocal() {
+        try {
+	        System.setProperty('local.madcow.url.properties.file', 'mcdev')
+	        MadcowConfigSlurper slurper = new MadcowConfigSlurper(MadcowConfigSlurper.URL, MadcowConfigSlurper.LOCAL)
+	        def configObject = slurper.parse()
+			assert configObject == [:]
+        } finally {
+			System.setProperty('madcow.url.properties.file', '')
+        }
+    }
+
+/*
+ * Uses the file /madcow/src/test/resources/madcow.config.properties
+ */
+	public void testGlobalConfigDefault() {
+		MadcowConfigSlurper slurper = new MadcowConfigSlurper(MadcowConfigSlurper.CONFIG)
+		def configObject = slurper.parse()
+		assert configObject.madcow.browser == 'InternetExplorer7'
+	}
+	
+	public void testGlobalConfigSpecific() {
+		MadcowConfigSlurper slurper = new MadcowConfigSlurper(MadcowConfigSlurper.CONFIG, MadcowConfigSlurper.GLOBAL)
+		def configObject = slurper.parse()
+		assert configObject.madcow.browser == 'InternetExplorer7'
+	}
+
+/*
+ * Expects NOT to find the file /madcow/src/test/resources/local.madcow.url.properties
+ */
+	public void testLocalConfigNoResourcesFound() {
+		MadcowConfigSlurper slurper = new MadcowConfigSlurper(MadcowConfigSlurper.URL, MadcowConfigSlurper.LOCAL)
+		def configObject = slurper.parse()
+		assert configObject == [:]
+	}
+	
+	
+/*
+ * Uses the file /madcow/src/test/resources/local.madcow.config.properties
+ */
+	public void testLocalConfig() {
+		MadcowConfigSlurper slurper = new MadcowConfigSlurper(MadcowConfigSlurper.CONFIG, MadcowConfigSlurper.LOCAL)
+		def configObject = slurper.parse()
+		assert configObject.madcow.browser == 'Firefox1'
+	}
+	
+/*
+ * Resets the system property for user.name for the tests to pick up the standard PERSONAL test file.
+ * 
+ * Uses the file /madcow/src/test/resources/username.madcow.config.properties
+ */
+	public void testPersonalConfig() {
+		String propertyUser = System.getProperty("user.name", 'no user name')
+		String userHome = System.getProperty("user.home", 'no home')
+		String os = System.getProperty("os.name", 'no os')
+		println "testLocalConfig()   user.name: ${propertyUser}  ||| user.home: ${userHome}  ||| os.name: ${os}"
+
+		String userName = System.getProperty('user.name')
+		try {
+			System.setProperty('user.name', 'username')
+			MadcowConfigSlurper slurper = new MadcowConfigSlurper(MadcowConfigSlurper.CONFIG, MadcowConfigSlurper.PERSONAL)
+			def configObject = slurper.parse()
+			assert configObject.madcow.browser == 'Firefluff'
+        } finally {
+			System.setProperty('user.name', userName)
+        }
+	}
 
 }

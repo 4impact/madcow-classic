@@ -55,7 +55,7 @@ public class MadcowAntProject {
     def proxyPort = '80'
     def proxyUser = ''
     def proxyPassword = ''
-
+	
     public MadcowAntProject(){
     }
 
@@ -106,49 +106,48 @@ public class MadcowAntProject {
             s(longOpt : 'suite', args: 1, argName: 'suitePattern', 'specify matching pattern of the suite(s) to run - e.g. stubbed/finance')
             u(longOpt : 'url', args: 1, argName: 'urlPropertiesName', 'specific url properties file to use when running tests')
             d(longOpt : 'database', args: 1, argName: 'dbPropertiesName', 'specific database properties file to use when running tests')
+            c(longOpt : 'config', args: 1, argName: 'scope', 'config properties file lookup: globalonly, globalandlocal, all')
             m(longOpt : 'mappings', 'Regenerate the Mappings Reference files')
         }
 
         cli.stopAtNonOption = false
 
         def options = cli.parse(incomingArgs)
-
+		
         if (options.help){
             cli.usage()
             System.exit(1)
         }
+		return options
+    }
 
+	private void setConfigFromOptions(options) {
         if (options.m) {
             target = 'generateMappingsReference'
             return
         }
-
         if (options.b){
             browser = options.b
         }
-
         if (options.ts){
             specifiedTests = options.ts.toString()
             specifiedTests = specifiedTests.substring(1, specifiedTests.length()-1).replaceAll(', ', ',')
 
             target = 'run-tests'
         }
-
         if (options.s){
             madcowSuitesPattern = options.s
             target = 'run-all-tests'
         }
-
         if (options.u)
             urlProperties = options.u
-
         if (options.d)
             databaseProperties = options.d
-    }
+	}
 
     //Reads the madcow config file madcow.config.properties
-    private void readConfigFile() {
-        ConfigObject conf = new MadcowConfigSlurper(CONFIG_FILE).parse()
+    private void readConfigFile(type, scope) {
+        ConfigObject conf = new MadcowConfigSlurper(type, scope).parse()
 
         browser = conf.madcow.browser ?: browser
         urlProperties = conf.madcow.default.url ?: urlProperties
@@ -160,10 +159,21 @@ public class MadcowAntProject {
         proxyPassword = conf.madcow.proxy.password ?: proxyPassword
     }
 
-    //we read the config file first, then override with the command line switches
-    def readConfigurations(incomingArgs) {
-        readConfigFile()
-        parseArgs incomingArgs
+    // we read the config files first, then override with the command line switches
+    def readConfigurations(args) {
+		def options = parseArgs(args)
+		def String configScope = 'all'
+        if (options.c)
+            configScope = options.c
+		
+        readConfigFile(CONFIG_FILE, MadcowConfigSlurper.GLOBAL)
+		if (configScope.equals('globalandlocal')) {
+        	readConfigFile(CONFIG_FILE, MadcowConfigSlurper.LOCAL)
+		} else if (configScope.equals('all')) {
+        	readConfigFile(CONFIG_FILE, MadcowConfigSlurper.LOCAL)
+        	readConfigFile(CONFIG_FILE, MadcowConfigSlurper.PERSONAL)
+		}
+		setConfigFromOptions(options)
     }
 
 

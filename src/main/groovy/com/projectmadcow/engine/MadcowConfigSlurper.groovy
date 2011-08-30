@@ -37,7 +37,16 @@ import org.apache.log4j.Logger
 class MadcowConfigSlurper extends ConfigSlurper {
 
     static final Logger LOG = Logger.getLogger(MadcowConfigSlurper.class)
-
+	
+	private static enum ScopeType {
+		GLOBAL,
+		LOCAL,
+		PERSONAL
+	}
+	public static final ScopeType GLOBAL = ScopeType.GLOBAL
+	public static final ScopeType LOCAL = ScopeType.LOCAL
+	public static final ScopeType PERSONAL = ScopeType.PERSONAL
+	
     private static enum PropertiesType {
         DATABASE,
         URL,
@@ -50,17 +59,34 @@ class MadcowConfigSlurper extends ConfigSlurper {
 
     private String propertiesFileName
     private PropertiesType type
-
+	private ScopeType scope
+	
     
     public MadcowConfigSlurper(PropertiesType type) {
-        this.type = type
-        this.propertiesFileName = determinePropertiesFileName()
+		this(type, ScopeType.GLOBAL)
     }
+	
+	public MadcowConfigSlurper(PropertiesType type, ScopeType scope) {
+        this.type = type
+        this.scope = scope
+        this.propertiesFileName = determinePropertiesFileName(type, scope)
+	}
+	
+	private static def scopePrefix(scope) {
+		switch (scope) {
+			case ScopeType.GLOBAL:
+				return ""
+			case ScopeType.LOCAL:
+				return "local."
+			case ScopeType.PERSONAL:
+				return System.getProperty("user.name", 'user')+"."
+		}
+	}
 
-    private def determinePropertiesFileName() {
-        String fileNameSuffix = "madcow.${type.name().toLowerCase()}.properties"
-        String propertyToCheckForFileName = "madcow.${type.name().toLowerCase()}.properties.file"
-
+    private static def determinePropertiesFileName(type, scope) {
+		String fileNameSuffix = "${scopePrefix(scope)}madcow.${type.name().toLowerCase()}.properties"
+        String propertyToCheckForFileName = "${fileNameSuffix}.file"
+		
         String propertyFilePrefix = System.getProperty(propertyToCheckForFileName, '')
         return propertyFilePrefix != '' ? "${propertyFilePrefix}.${fileNameSuffix}" : fileNameSuffix
     }
