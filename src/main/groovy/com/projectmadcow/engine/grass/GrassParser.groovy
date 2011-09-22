@@ -158,7 +158,8 @@ class GrassParser {
 
     //If any portion of the operation contains a map or list, we need to convert it into a method parameter
     private String transformAnyParametersInOperation(String operation, String line) {
-        def splitOperation = operation.split('\\.')
+        //Splits on full stops that aren't between quotes (because they're part of a string)
+        def splitOperation = operation.split('''\\.(?=(?:(?:[^'"]*+["']){2})*+[^"']*+\\z)''')
         splitOperation.eachWithIndex { op, index ->
             if (op ==~ /\w*\[.*\]/) {
                 def operationName = op.substring(0, op.indexOf(('[')))

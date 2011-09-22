@@ -165,6 +165,12 @@ public class GrassParserTest extends GroovyTestCase {
         assertEquals(["sometable.table.countRows(['Address line 1' : 'Unit A', ]).equals='1'"], parsedCode)
     }
 
+    void testMapValueWithFullStopInCommand() {
+        List unparsedCode = ["ctp_claim_workplan_workplanTable.gw.table.countRows[Subject : 'Document Withheld. Notify MAIC'].equals = 1"]
+        List parsedCode = grassParser.parseCode(unparsedCode)
+        assertEquals(["ctp_claim_workplan_workplanTable.gw.table.countRows(['Subject' : 'Document Withheld. Notify MAIC', ]).equals='1'"], parsedCode)
+    }
+
     void testDataParametersAreConvertedForMapsInCommand() {
         List unparsedCode = ['@addrValue = 55 Queen Street',
                              "sometable.table.countRows['Address line 1' : '@addrValue'].equals = 1"]
