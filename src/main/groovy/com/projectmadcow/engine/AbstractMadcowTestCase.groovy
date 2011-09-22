@@ -80,10 +80,6 @@ public abstract class AbstractMadcowTestCase extends GroovyTestCase {
                     option(name: 'ThrowExceptionOnFailingStatusCode', value: false);
                 }
                 steps {
-                    antBuilder.group(description: "Setup Madcow Test") {
-                        antBuilder.groovy("step.context.webClient.setAjaxController(new com.gargoylesoftware.htmlunit.NicelyResynchronizingAjaxController())")
-                        antBuilder.groovy("step.context.webClient.setPageCreator(new com.projectmadcow.extension.htmlunit.pagecreator.MadcowPageCreator())")
-                    }
                     executionSteps.call()
                 }
             }

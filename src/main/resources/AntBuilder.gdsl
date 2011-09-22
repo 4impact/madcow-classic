@@ -65,4 +65,5 @@ contributor(antBuilderContext) {
     method name: 'testInfo', type: 'void', params: [attributes : Map];
     method name: 'verifyText', type: 'void', params: [attributes : Map];
     method name: 'verifyTitle', type: 'void', params: [attributes : Map];
+    method name: 'selectWebClient', type: 'void', params: [attributes : Map];
 }

@@ -29,7 +29,13 @@ class InvokeUrl extends Plugin {
         if (parameters.url) {
             parameters.value = parameters.remove('url')
         }
-        antBuilder.invokeUrl(parameters)
+
+        antBuilder.plugin(description: parameters.description) {
+            antBuilder.selectWebClient(name: "${parameters.value}")
+            antBuilder.groovy("step.context.webClient.setAjaxController(new com.gargoylesoftware.htmlunit.NicelyResynchronizingAjaxController())")
+            antBuilder.groovy("step.context.webClient.setPageCreator(new com.projectmadcow.extension.htmlunit.pagecreator.MadcowPageCreator())")
+            antBuilder.invokeUrl(parameters)
+        }
     }
 
 }
