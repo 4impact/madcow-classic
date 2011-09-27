@@ -67,7 +67,7 @@ for a single webtest.
             <xsl:apply-templates select="results/step[@taskName = 'ignoreTest']" mode="ignoreTest" />
 
             <!-- Madcow: added showOnReport -->
-            <xsl:apply-templates select="results/step[@taskName = 'showOnReport']" mode="showOnReport" />
+            <xsl:apply-templates select="//step[@taskName = 'showOnReport']" mode="showOnReport" />
 
 		</summary>
 	</xsl:template>
@@ -82,7 +82,7 @@ for a single webtest.
 			</xsl:attribute>
 			
             <xsl:apply-templates select="step[(@result = 'failed' and @taskName != 'not') or (@result = 'completed' and @taskName = 'not')]" mode="failurecause"/>
-			
+
 		</failingstep>
     </xsl:template>
 
