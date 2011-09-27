@@ -50,20 +50,18 @@ class GrassParser {
     protected static final List OPERATIONS_THAT_TAKE_MAP_OR_LIST_PARAMETERS = ['countRows']
 
     protected RuntimeContext runtimeContext
-    protected List<String> parsedCode
 
     GrassParser(RuntimeContext runtimeContext) {
         this.runtimeContext = runtimeContext
-        this.parsedCode = []
     }
 
     /**
      * Parse the list of code.
      */
-    public List<String> parseCode(List unparsedCode, boolean clearParsedCode = true) {
+    public ArrayList<Object> parseCode(List unparsedCode, ArrayList<Object> parsedCode = [], boolean clearParsedCode = true) {
 
         if (clearParsedCode)
-            this.parsedCode = []
+            parsedCode = []
 
         unparsedCode.each { String lineWithWhiteSpace ->
             String line = StringUtils.strip(lineWithWhiteSpace)
@@ -90,7 +88,7 @@ class GrassParser {
             if (operation.contains('.'))
                 operationCommand = StringUtils.substringAfterLast(operation, '.')
 
-            this.parseLine(line, operation, expression, operationCommand ?: operation)
+            this.parseLine(parsedCode, line, operation, expression, operationCommand ?: operation)
         }
 
         LOG.debug "Parsed code: $parsedCode"
@@ -100,7 +98,7 @@ class GrassParser {
     /**
      * Parse an individual line of code.
      */
-    protected void parseLine(String line, String operation, String expression, String operationCommand = operation) {
+    protected void parseLine(ArrayList<Object> parsedCode, String line, String operation, String expression, String operationCommand = operation) {
         expression = ParseUtil.unquote(expression)
 
         // recursive callback for imported files
@@ -112,9 +110,10 @@ class GrassParser {
 
             IMPORT_COMMAND_DIRECTORIES.each { String key, String value ->
                 if (key == operation) {
-                    parsedCode.add("${operation} = [value: '$expression ', startOfImport : 'true']")
-                    parseCode(loadImport(expression, value), false)
-                    parsedCode.add("${operation} = [value: '$expression ', endOfImport : 'true']")
+                    ArrayList<Object> templateCode = new ArrayList<Object>()
+                    parseCode(loadImport(expression, value), templateCode, false)
+                    templateCode.add("${operation} = $expression")
+                    parsedCode.add(templateCode);
                 }
             }
 
