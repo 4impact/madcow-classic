@@ -125,7 +125,7 @@
         </groovyc>
     </target>
 
-    <target name="run-tests" depends="-compile-test">
+    <target name="run-tests" description="Run individual tests in the comma seperated param madcow.tests" depends="-compile-test">
         <foreach list="${madcow.tests}" target="-run-groovy-tests" param="testname" parallel="true" maxThreads="${madcow.threads}" inheritrefs="true" inheritall="true" />
         <foreach list="${madcow.tests}" target="-run-properties-tests" param="testname" parallel="true" maxThreads="${madcow.threads}" inheritrefs="true" inheritall="true" />
         <foreach list="${madcow.tests}" target="-run-csv-tests" param="testname" inheritrefs="true" inheritall="true" />
@@ -133,37 +133,79 @@
         <antcall target="-complete" />
     </target>
 
-    <target name="run-all-tests" description="Run Groovy Tests" depends="-compile-test">
-        <foreach target="-run-groovy-tests" param="testname" parallel="true" maxThreads="${madcow.threads}" inheritrefs="true" inheritall="true">
-            <path>
-                <fileset dir="${madcow.build.test.dir}">
-                    <include name="**/${madcow.suites.pattern}/*Test*.class" />
-                    <exclude name="**/${madcow.suites.pattern}/*$*.class" />
-                </fileset>
-            </path>
-        </foreach>
-        <foreach target="-run-properties-tests" param="testname" parallel="true" maxThreads="${madcow.threads}" inheritrefs="true" inheritall="true">
-            <path>
-                <fileset dir="${madcow.test.resources.dir}">
-                    <include name="**/${madcow.suites.pattern}/*.properties" />
-                </fileset>
-            </path>
-        </foreach>
-        <foreach target="-run-csv-tests" param="testname" inheritrefs="true" inheritall="true">
-            <path>
-                <fileset dir="${madcow.test.resources.dir}">
-                    <include name="**/${madcow.suites.pattern}/*.csv" />
-                </fileset>
-            </path>
-        </foreach>
-        <foreach target="-run-spreadsheet-tests" param="testname" inheritrefs="true" inheritall="true">
-            <path>
-                <fileset dir="${madcow.test.resources.dir}">
-                    <include name="**/${madcow.suites.pattern}/*.xls*" />
-                    <exclude name="**/${madcow.suites.pattern}/~*.xls*" />
-                </fileset>
-            </path>
-        </foreach>
+    <target name="run-all-tests" description="Run all tests located (within a specific suite if specified)" depends="-compile-test">
+
+        <if>
+            <equals arg1="${madcow.suites.pattern}" arg2=""/>
+            <then>
+                <foreach target="-run-groovy-tests" param="testname" parallel="true" maxThreads="${madcow.threads}" inheritrefs="true" inheritall="true">
+                    <path>
+                        <fileset dir="${madcow.build.test.dir}">
+                            <include name="**/*Test*.class" />
+                            <exclude name="**/*$*.class" />
+                        </fileset>
+                    </path>
+                </foreach>
+                <foreach target="-run-properties-tests" param="testname" parallel="true" maxThreads="${madcow.threads}" inheritrefs="true" inheritall="true">
+                    <path>
+                        <fileset dir="${madcow.test.resources.dir}">
+                            <include name="**/*.properties" />
+                        </fileset>
+                    </path>
+                </foreach>
+                <foreach target="-run-csv-tests" param="testname" inheritrefs="true" inheritall="true">
+                    <path>
+                        <fileset dir="${madcow.test.resources.dir}">
+                            <include name="**/*.csv" />
+                        </fileset>
+                    </path>
+                </foreach>
+                <foreach target="-run-spreadsheet-tests" param="testname" inheritrefs="true" inheritall="true">
+                    <path>
+                        <fileset dir="${madcow.test.resources.dir}">
+                            <include name="**/*.xls*" />
+                            <exclude name="**/~*.xls*" />
+                        </fileset>
+                    </path>
+                </foreach>
+            </then>
+            <else>
+                <for list="${madcow.suites.pattern}" param="madcow.suites.pattern.current" delimiter="," keepgoing="true" parallel="false">
+                    <sequential>
+                        <foreach target="-run-groovy-tests" param="testname" parallel="true" maxThreads="${madcow.threads}" inheritrefs="true" inheritall="true">
+                            <path>
+                                <fileset dir="${madcow.build.test.dir}">
+                                    <include name="**/@{madcow.suites.pattern.current}/*Test*.class" />
+                                    <exclude name="**/@{madcow.suites.pattern.current}/*$*.class" />
+                                </fileset>
+                            </path>
+                        </foreach>
+                        <foreach target="-run-properties-tests" param="testname" parallel="true" maxThreads="${madcow.threads}" inheritrefs="true" inheritall="true">
+                            <path>
+                                <fileset dir="${madcow.test.resources.dir}">
+                                    <include name="**/@{madcow.suites.pattern.current}/*.properties" />
+                                </fileset>
+                            </path>
+                        </foreach>
+                        <foreach target="-run-csv-tests" param="testname" inheritrefs="true" inheritall="true">
+                            <path>
+                                <fileset dir="${madcow.test.resources.dir}">
+                                    <include name="**/@{madcow.suites.pattern.current/*.csv" />
+                                </fileset>
+                            </path>
+                        </foreach>
+                        <foreach target="-run-spreadsheet-tests" param="testname" inheritrefs="true" inheritall="true">
+                            <path>
+                                <fileset dir="${madcow.test.resources.dir}">
+                                    <include name="**/@{madcow.suites.pattern.current}/*.xls*" />
+                                    <exclude name="**/@{madcow.suites.pattern.current}/~*.xls*" />
+                                </fileset>
+                            </path>
+                        </foreach>
+                    </sequential>
+                </for>
+            </else>
+        </if>
 
         <antcall target="-complete" />
     </target>
