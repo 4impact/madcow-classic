@@ -379,6 +379,11 @@
             </then>
         </if>
 
+        <!-- remove the temporary xml files produced -->
+        <delete>
+            <fileset dir="${madcow.build.results.report.dir}" includes="**/*.xml"/>
+        </delete>
+
         <trycatch>
             <try>
                 <antcall target="wt.openResultFile"/>
