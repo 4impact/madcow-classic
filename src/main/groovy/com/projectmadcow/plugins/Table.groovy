@@ -191,6 +191,10 @@ public class Table extends Plugin {
         }
     }
 
+    def setWaitForText(def valueMap){
+        invokePlugin('waitForText', valueMap)
+    }
+
     def invokePlugin(def pluginName, String column, def cellXPathSuffix = ''){
         def plugin = PluginResolver.resolvePlugin(pluginName, this.callingProperty);
 
