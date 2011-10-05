@@ -60,21 +60,21 @@ class VerifySelectFieldOptionsTest extends AbstractPluginTestCase {
         verifySelectFieldOptionsPlugin.invoke(antBuilder, [htmlId : 'state', value : options])
         Task pluginTask = findTask(antTaskName)
         assert findAttribute(pluginTask, 'htmlId') == 'state'
-        assert findAttribute(pluginTask, 'options') == ParseUtil.convertListToString(options).replaceAll(', ', ',')
+        assert findAttribute(pluginTask, 'options') == ParseUtil.convertListToString(options.collect{it -> "'${it}'"}).replaceAll(', ', ',')
     }
 
     void testSelectedOptionByName() {
         verifySelectFieldOptionsPlugin.invoke(antBuilder, [name : 'state', value : options])
         Task pluginTask = findTask(antTaskName)
         assert findAttribute(pluginTask, 'name') == 'state'
-        assert findAttribute(pluginTask, 'options') == ParseUtil.convertListToString(options).replaceAll(', ', ',')
+        assert findAttribute(pluginTask, 'options') == ParseUtil.convertListToString(options.collect{it -> "'${it}'"}).replaceAll(', ', ',')
     }
 
     void testSelectedOptionByXPath() {
         verifySelectFieldOptionsPlugin.invoke(antBuilder, [xpath : '//select[@label = \'State\']', value : options])
         Task pluginTask = findTask(antTaskName)
         assert findAttribute(pluginTask, 'xpath') == '//select[@label = \'State\']'
-        assert findAttribute(pluginTask, 'options') == ParseUtil.convertListToString(options).replaceAll(', ', ',')
+        assert findAttribute(pluginTask, 'options') == ParseUtil.convertListToString(options.collect{it -> "'${it}'"}).replaceAll(', ', ',')
     }
 
     void testAttributeUnsupported() {

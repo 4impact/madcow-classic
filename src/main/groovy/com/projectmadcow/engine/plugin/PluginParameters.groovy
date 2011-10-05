@@ -63,7 +63,7 @@ class PluginParameters {
             // since groovy toString on List removes the quotes, we need them still
             // to be there so toString it ourselves
             String quotedList = '';
-            value.each { val -> quotedList += "'$val'," }
+            value.each { val -> quotedList += (val.contains("'") ? '"' + val + '",' : "'$val',") }
 
             pluginParameters."$key" = "[$quotedList]"
             return pluginParameters

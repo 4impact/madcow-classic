@@ -189,9 +189,13 @@
   <component name="ProjectRootManager" version="2" languageLevel="JDK_1_5" assert-keyword="true" jdk-15="true" project-jdk-name="1.6" project-jdk-type="JavaSDK">
     <output url="file://$PROJECT_DIR$/out" />
   </component>
+  <component name="TemplateDataLanguageMappings">
+    <file url="file://$PROJECT_DIR$/src/main/groovy" dialect="Groovy" />
+  </component>
   <component name="VcsDirectoryMappings">
     <mapping directory="" vcs="Git" />
   </component>
+  <component name="WebServicesPlugin" addRequiredLibraries="true" />
   <component name="libraryTable">
     <library name="Maven: ant-contrib:ant-contrib:1.0b3">
       <CLASSES>

@@ -75,7 +75,7 @@ public class GrassExecutor {
                 }
 
                 Eval.x runtimeContext, "x." + line
-                LOG.debug line
+                LOG.debug "Parsed Line just executed " + line
             } catch (Throwable t) {
                 LOG.error "unable to parse test : ${currentTestName} line : $line"
                 throw new Exception("Unable to parse line: $line", t)

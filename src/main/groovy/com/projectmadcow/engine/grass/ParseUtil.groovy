@@ -40,7 +40,7 @@ class ParseUtil {
 
             String valueString
             if ((value instanceof String) || (value instanceof GString)) {
-                valueString = "'${escapeCharactersIfRequired(unquote(value as String), true)}'"
+                valueString = value
             } else if (value instanceof List) {
                 valueString = convertListToString(value as List)
             } else {
@@ -57,7 +57,7 @@ class ParseUtil {
      */
     static String convertListToString(List listToConvert) {
         String quotedList = '';
-        listToConvert.each { String val -> quotedList += "'${escapeCharactersIfRequired(val, true)}', " }
+        listToConvert.each { String val -> quotedList += "${val}, " }
         return "[$quotedList]"
     }
 
@@ -78,7 +78,7 @@ class ParseUtil {
     /**
      * Calls the groovy Eval.me for the string.
      * Returns an object of the results; if it is a Map/List, then it is just returned.
-     * If it is a String, then it is returned as String literal
+     * If it is a String, then it is returned as a String
      */
     static def evalMe(String stringToEval) {
         try {
@@ -94,9 +94,14 @@ class ParseUtil {
         } catch (e) {
             // ignored
         }
+        return stringToEval
+    }
 
-        // everything else is a string literal
-        return "'${escapeCharactersIfRequired(stringToEval)}'".toString()
+    /**
+     * Quotes a String and escapes as necessary
+     */
+    static String quoteString(String str) {
+        return "'${str.replace('\'', '\\\'')}'"
     }
 
     /**
@@ -113,10 +118,7 @@ class ParseUtil {
         }
     }
 
-    /**
-     * Escape characters which cause the groovy string evaluation to fall over when not escaped.
-     */
-    static String escapeCharactersIfRequired(String str, boolean isMapListValue = false) {
-        return str.replaceAll('\'', "${isMapListValue ? '\\' : ''}\\\\'")
+    static String escapeSingleQuotes(String str) {
+        return (str.contains("'") ? '"' + str + '"' : "'" + str + "'")
     }
 }

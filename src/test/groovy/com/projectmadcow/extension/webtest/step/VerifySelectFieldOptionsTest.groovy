@@ -37,7 +37,7 @@ public class VerifySelectFieldOptionsTest extends AbstractXpathHtmlIdStepTest {
         'Victoria',
         'Western Australia',
         'Western Australia'
-    ]
+    ].collect{it -> "'${it}'"}
 
     String html =
     """<html><body>

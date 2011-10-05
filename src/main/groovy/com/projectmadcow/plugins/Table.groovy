@@ -28,6 +28,7 @@ import com.projectmadcow.plugins.table.TableCountRows
 import com.projectmadcow.plugins.table.TableCountRowsWithCriteria
 import com.projectmadcow.plugins.table.TableHeaderColumnCount
 import org.apache.log4j.Logger
+import com.projectmadcow.engine.grass.ParseUtil
 
 /**
  * Ideally modify this class to dynamically invoke any madcow plugin or webtest step
@@ -68,7 +69,8 @@ public class Table extends Plugin {
         String rowXPath = "count(${getPrefixXPath()}/tbody/tr"
 
         columnHeaderTextCellTextMap.each { columnText, cellText ->
-            rowXPath += "/td[position() = (${getColumnPositionXPath(columnText)}) and (wt:cleanText(.//text()) = '${cellText}' or wt:cleanText(.//@value) = '${cellText}')]/parent::*"
+            String formattedCellText = ParseUtil.escapeSingleQuotes(cellText)
+            rowXPath += "/td[position() = (${getColumnPositionXPath(columnText)}) and (wt:cleanText(.//text()) = ${formattedCellText} or wt:cleanText(.//@value) = ${formattedCellText})]/parent::*"
         }
         rowXPath += "/preceding-sibling::*)+1"
 
@@ -76,7 +78,7 @@ public class Table extends Plugin {
     }
 
     protected def getRowXPath(def rowPositionXPath) {
-        return "${getPrefixXPath()}/tbody/tr[${rowPositionXPath}]"
+            return "${getPrefixXPath()}/tbody/tr[${rowPositionXPath}]"
     }
 
     /**
@@ -113,13 +115,13 @@ public class Table extends Plugin {
         else if (selectionCriteria == "last")
             rowXPositionPath = getLastRowPositionXPath()
         else if (selectionCriteria.toString().toLowerCase() ==~ /row\d*/)
-             rowXPositionPath = selectionCriteria.toString().substring(3)
+            rowXPositionPath = selectionCriteria.toString().substring(3)
         else
             rowXPositionPath = getRowPositionXPath(selectionCriteria)
 
         antBuilder.plugin(description: getDescription('selectRow', selectionCriteria, false)) {
             verifyXPath(xpath: rowXPositionPath)
-            storeXPath(property : getPropertyName(), xpath : rowXPositionPath, propertyType : 'dynamic')
+            storeXPath(property: getPropertyName(), xpath: rowXPositionPath, propertyType: 'dynamic')
         }
     }
 

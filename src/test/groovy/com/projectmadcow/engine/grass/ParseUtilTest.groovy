@@ -27,44 +27,40 @@ package com.projectmadcow.engine.grass
 class ParseUtilTest extends GroovyTestCase {
 
     void testConvertMapToString() {
-        Map testMap = [htmlId : 'addressLine1', value : 'Adelaide St']
+        Map testMap = ['htmlId' : '\'addressLine1\'', 'value' : '\'Adelaide St\'']
         String testMapAsString = ParseUtil.convertMapToString(testMap)
         assert testMapAsString == '[\'htmlId\' : \'addressLine1\', \'value\' : \'Adelaide St\', ]'
-        assert Eval.me(testMapAsString) == testMap
 
-        testMap = [text : 'His cow\'s are mad']
+        testMap = ['text' : '\'His cow\\\'s are mad\'']
         testMapAsString = ParseUtil.convertMapToString(testMap)
         assert testMapAsString == '[\'text\' : \'His cow\\\'s are mad\', ]'
-        assert Eval.me(testMapAsString) == testMap
     }
 
     void testConvertMapWithListValueToString() {
-        Map testMap = [htmlId : 'addressLine1', value : ['Queensland', 'Victoria']]
+        Map testMap = ['htmlId' : '\'addressLine1\'', 'value' : ['\'Queensland\'', '\'Victoria\'']]
         String testMapAsString = ParseUtil.convertMapToString(testMap)
         assert testMapAsString == '[\'htmlId\' : \'addressLine1\', \'value\' : [\'Queensland\', \'Victoria\', ], ]'
-        assert Eval.me(testMapAsString) == testMap
     }
 
     void testConvertMapWithMapValueToString() {
-        Map testMap = [htmlId : 'addressLine1', value : [state : 'Queensland']]
+        Map testMap = ['htmlId' : '\'addressLine1\'', 'value' : ['state' : '\'Queensland\'']]
         String testMapAsString = ParseUtil.convertMapToString(testMap)
         assert testMapAsString == '[\'htmlId\' : \'addressLine1\', \'value\' : [\'state\' : \'Queensland\', ], ]'
-        assert Eval.me(testMapAsString) == testMap
     }
 
     void testConvertListToString() {
-        List testList = ['Queensland', 'Victoria']
+        List testList = ['\'Queensland\'', '\'Victoria\'']
         String testListAsString = ParseUtil.convertListToString(testList)
         assert testListAsString == '[\'Queensland\', \'Victoria\', ]'
-        assert Eval.me(testListAsString) == testList
     }
 
     void testEvalMeString() {
-        assert ParseUtil.evalMe('\'Queensland\'') == '\'\\\'Queensland\\\'\''
-        assert ParseUtil.evalMe('"Queensland"') == '\'"Queensland"\''
-        assert ParseUtil.evalMe('\'Queensland\'') == '\'\\\'Queensland\\\'\''
-        assert ParseUtil.evalMe('Queensland') == '\'Queensland\''
+        assert ParseUtil.evalMe('\'Queensland\'') == '\'Queensland\''
+        assert ParseUtil.evalMe('"Queensland"') == '"Queensland"'
+        assert ParseUtil.evalMe('Queensland') == 'Queensland'
+        assert ParseUtil.evalMe('Dr Jones\'') == 'Dr Jones\''
     }
+
 
     void testUnquote() {
         assert ParseUtil.unquote('\'addressLine1\'') == 'addressLine1'
@@ -72,7 +68,9 @@ class ParseUtilTest extends GroovyTestCase {
         assert ParseUtil.unquote('\'addressLine1\'') == 'addressLine1'
     }
 
-    void testEscapeCharactersIfRequired() {
-        assert ParseUtil.escapeCharactersIfRequired("//a[@id='superAwesomeButton']") == '//a[@id=\\\'superAwesomeButton\\\']'
+    void testQuoteString() {
+        assert ParseUtil.quoteString('fred') == "'fred'"
+        assert ParseUtil.quoteString("Guns'n'Roses") == "'Guns\\\'n\\\'Roses'"
+        assert ParseUtil.quoteString("//a[@id='superAwesomeButton']") == "'//a[@id=\\'superAwesomeButton\\']'"
     }
 }

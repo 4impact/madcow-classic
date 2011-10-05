@@ -53,7 +53,7 @@ public class GrassParserTest extends GroovyTestCase {
 		List parsedCode = grassParser.parseCode(unparsedCode)
 		
 		assert parsedCode == [ 'invokeUrl=\'http://google.com\'',
-							   'verifyText=\'Google\'s\'']
+							   'verifyText=\'Google\\\'s\'']
 	}
 	
 	void testStatementsOnlyWithDataParameters() {
@@ -98,6 +98,14 @@ public class GrassParserTest extends GroovyTestCase {
 		List parsedCode = grassParser.parseCode(unparsedCode)
 		assert parsedCode == [ "addressLine1.value='55 Queen Street'"]
     }
+
+    void testParametersWithMaps() {
+        List unparsedCode = ['@address = madcow.eval({return \'Address\'})',
+                             '@expectedText = [text: \'@address\']',
+                             'verifyText = @expectedText']
+        List parsedCode = grassParser.parseCode(unparsedCode)
+        assert parsedCode == ['verifyText=[\'text\' : \'Address\', ]']
+    }
 	
 	void testMaps() {
 		List unparsedCode = ['clickLink = [xpath : \'//a\']']
@@ -108,10 +116,12 @@ public class GrassParserTest extends GroovyTestCase {
 		parsedCode = grassParser.parseCode(unparsedCode)
 		assert parsedCode == [ 'clickLink=[\'xpath\' : \'//a\', \'text\' : \'Search\', ]']
 
-        unparsedCode = ['clickLink = [xpath : \'//a\',text : "Dr Jones\'"]']
+        unparsedCode = ['clickLink = [xpath : \'//a\',text : "Dr O\'Brian"]']
 		parsedCode = grassParser.parseCode(unparsedCode)
-		assert parsedCode == [ 'clickLink=[\'xpath\' : \'//a\', \'text\' : \'Dr Jones\\\'\', ]']
-	}
+        def answer = ['clickLink=[\'xpath\' : \'//a\', \'text\' : \'Dr O\\\'Brian\', ]']
+        assert parsedCode == answer
+
+    }
 
 	void testMapsWithClosures() {
 		List unparsedCode = ['clickLink = [xpath : \'madcow.eval({ return "//a"})\', text : "madcow.eval({return \'Search\'})"]']
@@ -129,6 +139,12 @@ public class GrassParserTest extends GroovyTestCase {
 		List unparsedCode = ['@aus = Australia', 'verifySelectFieldOptions = [htmlId: \'country\', options : [\'@aus\', \'New Zealand\']]']
 		List parsedCode = grassParser.parseCode(unparsedCode)
 		assert parsedCode == [ 'verifySelectFieldOptions=[\'htmlId\' : \'country\', \'options\' : [\'Australia\', \'New Zealand\', ], ]']
+	}
+
+    void testMapsWithValueListsWithParametersAndSingleQuotes() {
+		List unparsedCode = ['@aus = Guns\'n\'Roses', 'verifySelectFieldOptions = [htmlId: \'country\', options : [\'@aus\', \'New Zealand\']]']
+		List parsedCode = grassParser.parseCode(unparsedCode)
+		assert parsedCode == [ 'verifySelectFieldOptions=[\'htmlId\' : \'country\', \'options\' : [\'Guns\\\'n\\\'Roses\', \'New Zealand\', ], ]']
 	}
 
     //table.currentRow.checkValue = ['@columnName' : '@columnValue']
@@ -200,10 +216,12 @@ public class GrassParserTest extends GroovyTestCase {
     }
 
     void testQuotesInValuesAreEscaped() {
-        List unparsedCode = [ 'verifyText = Accident Date: Field "Accident Date" is mandatory',
-                              "verifyXPath = //a[@id='superAwesomeButton'] "]
+        List unparsedCode = ['verifyText = Accident Date: \'Field\' "Accident Date" is mandatory',
+                             "verifyXPath = //a[@id='superAwesomeButton'] ",
+                             "something.verifySelectFieldOptions = [\"<none selected>\",\"TCC - TRUCK CAB'N'CHASSIS\", \"This don't work\"]"]
 		List parsedCode = grassParser.parseCode(unparsedCode)
-		assert parsedCode == [ 'verifyText=\'Accident Date: Field "Accident Date" is mandatory\'',
-                              'verifyXPath=\'//a[@id=\\\'superAwesomeButton\\\']\'']
+		assert parsedCode == ['verifyText=\'Accident Date: \\\'Field\\\' "Accident Date" is mandatory\'',
+                              'verifyXPath=\'//a[@id=\\\'superAwesomeButton\\\']\'',
+                              'something.verifySelectFieldOptions=[\'<none selected>\', \'TCC - TRUCK CAB\\\'N\\\'CHASSIS\', \'This don\\\'t work\', ]']
     }
 }

@@ -21,6 +21,8 @@
 
 package com.projectmadcow.plugins.table
 
+import com.projectmadcow.engine.grass.ParseUtil
+
 class TableCountRowsWithCriteria extends AbstractCount {
 
     private def columnHeadersAndCellValuesMap
@@ -39,7 +41,8 @@ class TableCountRowsWithCriteria extends AbstractCount {
         def xpath = "count(${prefixXPath}/tbody/tr"
         columnHeadersAndCellValuesMap.each { headerText, cellText ->
             Column column = new Column(prefixXPath, headerText)
-            xpath += "/td[position() = (${column.getColumnPositionXPath()}) and (wt:cleanText(.//text()) = '${cellText}' or wt:cleanText(.//@value) = '${cellText}')]/parent::*"
+            cellText = ParseUtil.escapeSingleQuotes(cellText)
+            xpath += "/td[position() = (${column.getColumnPositionXPath()}) and (wt:cleanText(.//text()) = ${cellText} or wt:cleanText(.//@value) = ${cellText})]/parent::*"
         }
         xpath += ")${operator}${value}"
         return xpath
