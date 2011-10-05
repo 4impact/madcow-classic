@@ -35,11 +35,13 @@ public class GrassParserTest extends GroovyTestCase {
 	void testStatementsOnly() {
 		List unparsedCode = [ 'invokeUrl = http://google.com',
 						      'verifyText = Google',
-                              'search.value = $5000']
+                              'search.value = $5000',
+                              'testsite_create_addressLine1.value = 220 Queen\'s Stre\\et']
 		List parsedCode = grassParser.parseCode(unparsedCode)
-		assert parsedCode == [ 'invokeUrl=\'http://google.com\'',
+		assert parsedCode == ['invokeUrl=\'http://google.com\'',
 							   'verifyText=\'Google\'',
-                               'search.value=\'$5000\'']
+                               'search.value=\'$5000\'',
+                               'testsite_create_addressLine1.value=\'220 Queen\\\'s Stre\\\\et\'']
 
         unparsedCode = [ 'verifyText = Dr Bunney\'s Emporium' ]
 		parsedCode = grassParser.parseCode(unparsedCode)
@@ -111,15 +113,18 @@ public class GrassParserTest extends GroovyTestCase {
 		List unparsedCode = ['clickLink = [xpath : \'//a\']']
 		List parsedCode = grassParser.parseCode(unparsedCode)
 		assert parsedCode == [ 'clickLink=[\'xpath\' : \'//a\', ]']
-		
+
 		unparsedCode = ['clickLink = [xpath : \'//a\',text : "Search"]']
 		parsedCode = grassParser.parseCode(unparsedCode)
 		assert parsedCode == [ 'clickLink=[\'xpath\' : \'//a\', \'text\' : \'Search\', ]']
 
         unparsedCode = ['clickLink = [xpath : \'//a\',text : "Dr O\'Brian"]']
 		parsedCode = grassParser.parseCode(unparsedCode)
-        def answer = ['clickLink=[\'xpath\' : \'//a\', \'text\' : \'Dr O\\\'Brian\', ]']
-        assert parsedCode == answer
+        assert parsedCode == ['clickLink=[\'xpath\' : \'//a\', \'text\' : \'Dr O\\\'Brian\', ]']
+
+        unparsedCode = ['clickLink = [xpath : \'//a\', text : \'Dr O\\\\Brian\']']
+		parsedCode = grassParser.parseCode(unparsedCode)
+        assert parsedCode == ['clickLink=[\'xpath\' : \'//a\', \'text\' : \'Dr O\\\\Brian\', ]']
 
     }
 

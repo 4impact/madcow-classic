@@ -101,6 +101,7 @@ class ParseUtil {
      * Quotes a String and escapes as necessary
      */
     static String quoteString(String str) {
+        str = str.replace("\\","\\\\")
         return "'${str.replace('\'', '\\\'')}'"
     }
 
