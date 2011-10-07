@@ -55,19 +55,19 @@ public class Table extends Plugin {
         return this
     }
 
-	public String getColumnPositionXPath(def columnHeaderText) {
+	protected String getColumnPositionXPath(def columnHeaderText) {
         return TableXPath.getColumnPositionXPath(getPrefixXPath(), columnHeaderText)
 	}
 	
-	public String getColumnPositionCheckedXPath(def columnHeaderText) {
+	protected String getColumnPositionCheckedXPath(def columnHeaderText) {
         return TableXPath.getColumnPositionCheckedXPath(getPrefixXPath(), columnHeaderText)
 	}
 	
-	public String getRowPositionXPath(def rowReference) {
+	protected String getRowPositionXPath(def rowReference) {
 		return TableXPath.getRowPositionXPath(getPrefixXPath(), rowReference)
 	}
 	
-	public String getRowPositionCheckedXPath(def rowReference) {
+	protected String getRowPositionCheckedXPath(def rowReference) {
 		return TableXPath.getRowPositionCheckedXPath(getPrefixXPath(), rowReference)
 	}
 	
