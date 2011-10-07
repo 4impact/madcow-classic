@@ -75,9 +75,31 @@ class CheckValueTest extends AbstractPluginTestCase {
                                             <option value="Bread">Hot Bread</option>
                                         </select>
 									</form>
+									<form>
+									    <table id="searchResults">
+									    <tbody>
+									        <tr><th>Favourite Animal</th><th>Favourite Cheese</th></tr>
+									        <tr>
+									            <td>
+                                                    <select>
+                                                        <option value="cat">Cat</option>
+                                                        <option value="dog" selected="">Dog</option>
+									                </select>
+									            </td>
+									            <td>Stilton</td>
+									        </tr>
+									    </tbody>
+									    </table>
+									</form>
                                </body></html>"""
         // TODO: TC: check html validity before testing on it
         contextStub.setDefaultResponse(html)
+    }
+
+    void testCheckValueForTableBasedSelects() {
+        //This xpath is generated from the Table Plugin
+        String xpathToCheck = "//table[@id='searchResults']/tbody/tr[2]/td[count(//table[@id='searchResults']/thead/tr/th[wt:cleanText(.//text()) = 'Favourite Animal' or wt:cleanText(.//@value) = 'Favourite Animal']/preceding-sibling::*)+1]"
+        checkValuePlugin.invoke(antBuilder, [xpath: xpathToCheck, value: 'Dog'])
     }
 
     // TODO: TC: also need to do negative tests

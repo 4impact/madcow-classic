@@ -39,7 +39,9 @@ public class GrassExecutor {
             if (isTestIgnored(unparsedCode)) {
                 ignoreTest(runtimeContext, currentTestName)
             } else {
-                parseAndExecuteGrassCode(runtimeContext, unparsedCode, currentTestName)
+                GrassParser grassParser = new GrassParser(runtimeContext)
+                ArrayList<Object> parsedCode = grassParser.parseCode(unparsedCode)
+                executeGrassCode(runtimeContext, parsedCode, currentTestName)
             }
         } catch (WebTestException wte) {
             throw wte
@@ -61,18 +63,23 @@ public class GrassExecutor {
         
     }
 
-    protected static def parseAndExecuteGrassCode(RuntimeContext runtimeContext, List unparsedCode, currentTestName) {
-        GrassParser grassParser = new GrassParser(runtimeContext);
-        grassParser.parseCode(unparsedCode).each {String line ->
+    protected static def executeGrassCode(RuntimeContext runtimeContext, ArrayList<Object> codeBlock, currentTestName) {
+        codeBlock.each { def line ->
             try {
+                if (line instanceof ArrayList) {
+                    def templateCodeBlock = line as ArrayList<Object>
+                    runtimeContext.antBuilder.importTemplate(description: templateCodeBlock.pop() as String) {
+                        executeGrassCode(runtimeContext, templateCodeBlock, currentTestName)
+                    }
+                    return
+                }
+
                 Eval.x runtimeContext, "x." + line
-                LOG.debug line
+                LOG.debug "Parsed Line just executed " + line
             } catch (Throwable t) {
                 LOG.error "unable to parse test : ${currentTestName} line : $line"
                 throw new Exception("Unable to parse line: $line", t)
             }
         }
     }
-
-
 }

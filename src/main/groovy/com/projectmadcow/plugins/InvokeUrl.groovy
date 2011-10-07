@@ -19,21 +19,23 @@
  * under the License.
  */
 
-package com.projectmadcow.extension.webtest.step;
+package com.projectmadcow.plugins
 
+import com.projectmadcow.engine.plugin.Plugin
 
-import static com.googlecode.instinct.expect.Expect.expect as expectation
+class InvokeUrl extends Plugin {
 
-import com.canoo.webtest.steps.BaseStepTestCase
-import org.junit.Ignore
+    def invoke(AntBuilder antBuilder, Map parameters) {
+        if (parameters.url) {
+            parameters.value = parameters.remove('url')
+        }
 
-@Ignore
-public abstract class AbstractTemplateTest extends BaseStepTestCase {
-
-    void testTemplate(def value, def expectedResult){
-        fStep.value = value
-        fStep.execute()
-
-        expectation.that(fStep.message).isEqualTo expectedResult as String
+        antBuilder.plugin(description: parameters.description) {
+            antBuilder.selectWebClient(name: "${parameters.value}")
+            antBuilder.groovy("step.context.webClient.setAjaxController(new com.gargoylesoftware.htmlunit.NicelyResynchronizingAjaxController())")
+            antBuilder.groovy("step.context.webClient.setPageCreator(new com.projectmadcow.extension.htmlunit.pagecreator.MadcowPageCreator())")
+            antBuilder.invokeUrl(parameters)
+        }
     }
+
 }

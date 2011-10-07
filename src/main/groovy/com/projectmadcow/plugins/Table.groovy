@@ -137,19 +137,19 @@ public class Table extends Plugin {
     }
 
     def setValue(def valueMap){
-        invokePlugin('value', valueMap, "//*[(local-name() = 'input' or local-name() = 'textarea') and position() = 1]")
+        invokePlugin('value', valueMap, TableXPath.valueXPathSuffix())
     }
 
     def setSelectField(def valueMap){
-        invokePlugin('selectField', valueMap, '//select[1]')
+        invokePlugin('selectField', valueMap, TableXPath.fieldXPathSuffix())
     }
 
     def setSelectCheckbox(String column){
-        invokePlugin('selectCheckbox', column, "//input[@type='checkbox']")
+        invokePlugin('selectCheckbox', column, TableXPath.checkboxXPathSuffix())
     }
 
     def setUnselectCheckbox(String column){
-        invokePlugin('unselectCheckbox', column, "//input[@type='checkbox']")
+        invokePlugin('unselectCheckbox', column, TableXPath.checkboxXPathSuffix())
     }
 
     def setCheckValueEmpty(String column){
@@ -157,21 +157,26 @@ public class Table extends Plugin {
     }
 
     def setVerifySelectFieldOptions(def valueMap){
-        invokePlugin('verifySelectFieldOptions', valueMap, '//select[1]')
+        invokePlugin('verifySelectFieldOptions', valueMap, TableXPath.fieldXPathSuffix())
     }
 
     def setVerifySelectFieldContains(def valueMap){
-        invokePlugin('verifySelectFieldContains', valueMap, '//select[1]')
+        invokePlugin('verifySelectFieldContains', valueMap, TableXPath.fieldXPathSuffix())
     }
 
     def setSetRadioButton(def valueMap) {
         antBuilder.plugin(description: getDescription('setRadioButton', valueMap)) {
             antBuilder.verifyDynamicProperty (name: getPropertyName())
             valueMap.each { column, value ->
-                def attributes = [xpath : getCellXPath("#{${getPropertyName()}}", column) + "//*[wt:cleanText(text()) = '$value']//input[@type='radio']"]
+				String xPath = getCellXPath("#{${getPropertyName()}}", column)
+                def attributes = [xpath : TableXPath.getSetRadioButtonOnCellXPath(xPath, value) ]
                 antBuilder.setRadioButton(attributes)
             }
         }
+    }
+
+    def setWaitForText(def valueMap){
+        invokePlugin('waitForText', valueMap)
     }
 
     def invokePlugin(def pluginName, String column, def cellXPathSuffix = ''){

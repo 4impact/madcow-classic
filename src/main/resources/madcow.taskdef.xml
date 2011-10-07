@@ -35,7 +35,9 @@
     <taskdef name="ignoreTest"
         classname="com.projectmadcow.extension.webtest.step.IgnoreTest" />
     <taskdef name="importTemplate"
-        classname="com.projectmadcow.extension.webtest.step.ImportTemplate" />
+        classname="com.canoo.webtest.steps.control.GroupStep" />
+    <taskdef name="importTest"
+        classname="com.canoo.webtest.steps.control.GroupStep" />
     <taskdef name="invokeUrl"
         classname="com.projectmadcow.extension.webtest.step.InvokeUrl" />
     <taskdef name="showOnReport"

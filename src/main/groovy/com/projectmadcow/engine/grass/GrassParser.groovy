@@ -44,26 +44,24 @@ class GrassParser {
 
     protected static final String STORE_PLUGIN_NAME = StringUtils.uncapitalise(StringUtils.substringAfterLast(Store.class.toString(), '.'))
 
-    protected static final Map IMPORT_COMMAND_DIRECTORIES = [ 'importTemplate' : 'templates',
-                                                              'importTest' : 'test']
+    protected static final Map IMPORT_COMMAND_DIRECTORIES = ['importTemplate': 'templates',
+            'importTest': 'test']
 
     protected static final List OPERATIONS_THAT_TAKE_MAP_OR_LIST_PARAMETERS = ['countRows']
 
     protected RuntimeContext runtimeContext
-    protected List<String> parsedCode
 
     GrassParser(RuntimeContext runtimeContext) {
         this.runtimeContext = runtimeContext
-        this.parsedCode = []
     }
 
     /**
      * Parse the list of code.
      */
-    public List<String> parseCode(List unparsedCode, boolean clearParsedCode = true) {
+    public ArrayList<Object> parseCode(List unparsedCode, ArrayList<Object> parsedCode = [], boolean clearParsedCode = true) {
 
         if (clearParsedCode)
-            this.parsedCode = []
+            parsedCode = []
 
         unparsedCode.each { String lineWithWhiteSpace ->
             String line = StringUtils.strip(lineWithWhiteSpace)
@@ -90,7 +88,7 @@ class GrassParser {
             if (operation.contains('.'))
                 operationCommand = StringUtils.substringAfterLast(operation, '.')
 
-            this.parseLine(line, operation, expression, operationCommand ?: operation)
+            this.parseLine(parsedCode, line, operation, expression, operationCommand ?: operation)
         }
 
         LOG.debug "Parsed code: $parsedCode"
@@ -100,7 +98,7 @@ class GrassParser {
     /**
      * Parse an individual line of code.
      */
-    protected void parseLine(String line, String operation, String expression, String operationCommand = operation) {
+    protected void parseLine(ArrayList<Object> parsedCode, String line, String operation, String expression, String operationCommand = operation) {
         expression = ParseUtil.unquote(expression)
 
         // recursive callback for imported files
@@ -112,9 +110,10 @@ class GrassParser {
 
             IMPORT_COMMAND_DIRECTORIES.each { String key, String value ->
                 if (key == operation) {
-                    parsedCode.add("${operation} = [value: '$expression ', startOfImport : 'true']")
-                    parseCode(loadImport(expression, value), false)
-                    parsedCode.add("${operation} = [value: '$expression ', endOfImport : 'true']")
+                    ArrayList<Object> templateCode = new ArrayList<Object>()
+                    parseCode(loadImport(expression, value), templateCode, false)
+                    templateCode.add("${operation} = $expression")
+                    parsedCode.add(templateCode);
                 }
             }
 
@@ -151,14 +150,15 @@ class GrassParser {
         LOG.trace "Expression post processing : $expression"
 
         if ((!isParserInstruction) && (expression)) {
-            line = "$operation=$expression"
-            parsedCode.add(line)
+            def parsedLine = "$operation=$expression"
+            parsedCode.add(parsedLine)
         }
     }
 
     //If any portion of the operation contains a map or list, we need to convert it into a method parameter
     private String transformAnyParametersInOperation(String operation, String line) {
-        def splitOperation = operation.split('\\.')
+        //Splits on full stops that aren't between quotes (because they're part of a string)
+        def splitOperation = operation.split('''\\.(?=(?:(?:[^'"]*+["']){2})*+[^"']*+\\z)''')
         splitOperation.eachWithIndex { op, index ->
             if (op ==~ /\w*\[.*\]/) {
                 def operationName = op.substring(0, op.indexOf(('[')))
@@ -210,7 +210,7 @@ class GrassParser {
 
     void setDataParameterValue(String key, String value) {
         LOG.debug "Setting data parameter ${key} : ${value}"
-        runtimeContext.dataParameters.put key, ParseUtil.unquote(value)
+        runtimeContext.dataParameters.put key, value
     }
 
     /**
@@ -218,24 +218,22 @@ class GrassParser {
      */
     protected String parseStringExpression(String expression, String line, String operation, String operationCommand, boolean isSettingDataParameter) {
 
-        Matcher inlineParameters = expression =~ DATA_PARAMETER_INLINE_REGEX
+         Matcher inlineParameters = expression =~ DATA_PARAMETER_INLINE_REGEX
         if (inlineParameters.size() > 0) {
             inlineParameters.each { String paramMatch, String paramName ->
                 expression = StringUtils.replace(expression as String, paramMatch, getDataParameterValue(line, "@${paramName}"))
             }
         } else {
-            if (expression.startsWith("'$DATA_PARAMETER_KEY")) {
-                expression = getDataParameterValue(line, ParseUtil.unquote(expression))
-                if (!expression.startsWith('['))
-                    expression = "'$expression'"
+            if (expression.startsWith("$DATA_PARAMETER_KEY")) {
+                def unquotedExpression = ParseUtil.unquote(expression)
+                expression = getDataParameterValue(line, unquotedExpression)
             }
         }
 
-        if (expression.startsWith("'madcow.eval")) {
+        if (expression.startsWith("madcow.eval")) {
             Macro macro = new Macro()
-            //We need to un-escape the quotes in this text because it's going to be interpreted as code..
-            String reQuotedExpression = expression.replaceAll("\\\\'", '\'')
-            expression = "'${Eval.x(macro, 'x.' + ParseUtil.unquote(reQuotedExpression))}'"
+            expression = "${Eval.x(macro, 'x.' + ParseUtil.unquote(expression))}"
+            LOG.trace("Replacing with $expression")
         }
 
         if (isSettingDataParameter) {
@@ -245,7 +243,9 @@ class GrassParser {
         if (operationCommand == STORE_PLUGIN_NAME) {
             setDataParameterValue("@${ParseUtil.unquote(expression)}", "#{${ParseUtil.unquote(expression)}}")
         }
-
+        if (!expression.startsWith('[')) {
+            expression = ParseUtil.quoteString(expression)
+        }
         return expression
     }
 
@@ -257,7 +257,7 @@ class GrassParser {
         boolean parsedMap = false
         expression.each { String key, def value ->
             if ((key instanceof String) || (key instanceof GString)) {
-                String parsedKey = ParseUtil.unquote(parseStringExpression("'$key'", line, null, null, false))
+                String parsedKey = ParseUtil.unquote(parseStringExpression("$key", line, null, null, false))
                 if (parsedKey != key) {
                     expression.remove(key)
                     expression.put(parsedKey, value)
@@ -265,16 +265,16 @@ class GrassParser {
                 }
             }
             if ((value instanceof String) || (value instanceof GString)) {
-                String parsedValue = ParseUtil.unquote(parseStringExpression("'$value'", line, null, null, false))
+                String parsedValue = parseStringExpression("$value", line, null, null, false)
                 if (parsedValue != value) {
                     expression[key] = parsedValue
                     parsedMap = true
                 }
 
             } else if (value instanceof List) {
-                List parsedValue = Eval.me(parseListExpression(value, line, null, null, false)) as List
-                if (parsedValue != value) {
-                    expression[key] = parsedValue
+                def parsedList = parseListExpression(value, line, null, null, false)
+                if (parsedList != value) {
+                    expression[key] = parsedList
                     parsedMap = true
                 }
             }
@@ -296,7 +296,7 @@ class GrassParser {
 
         boolean parsedList = false
         expression.eachWithIndex { String value, int idx ->
-            String parsedValue = ParseUtil.unquote(parseStringExpression("'$value'", line, null, null, false))
+            String parsedValue = parseStringExpression("$value", line, null, null, false)
             if (parsedValue != value) {
                 expression[idx] = parsedValue
                 parsedList = true

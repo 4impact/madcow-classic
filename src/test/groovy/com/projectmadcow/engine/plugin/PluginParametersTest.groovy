@@ -76,14 +76,14 @@ class PluginParametersTest extends GroovyTestCase {
 
 
     void testAddKeyValuePairToPluginParametersWhereValueIsAList(){
-        def value = ['one', 'two', 'three']
+        def value = ['one', "t'wo", 'th"ree']
         def elementReference = 'theReference'
         def results = ["$elementReference" : 'this should be overridden', 'anotherItem' : 'anotherValue' ]
 
         pluginParameters.addKeyValuePairToPluginParameters results, value, elementReference
 
-        assertEquals results."$elementReference", "['one','two','three',]"
-        assertEquals results.anotherItem, 'anotherValue'
+        assertEquals "['one',\"t'wo\",'th\"ree',]", results."$elementReference"
+        assertEquals 'anotherValue', results.anotherItem
     }
 
     void testAddKeyValuePairToPluginParametersWhereValueIsMap(){

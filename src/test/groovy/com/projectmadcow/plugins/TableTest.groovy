@@ -70,8 +70,8 @@ public class TableTest extends AbstractPluginTestCase {
                             <tbody>
                                 <tr>
                                     <td><a href="/madcow-test-site/address/show/1">1</a></td>
-                                    <td>one</td>
-                                    <td>1</td>
+                                    <td>Guns'n'Roses "Bar"</td>
+                                    <td>222 Queen's Street</td>
                                     <td>TENERIFFE</td>
                                     <td>Queensland</td>
                                     <td>4005</td>
@@ -94,7 +94,7 @@ public class TableTest extends AbstractPluginTestCase {
                                 </tr>
                                 <tr>
                                     <td><a href="/madcow-test-site/address/show/7">4</a></td>
-                                    <td></td>
+                                    <td>"The Manner"</td>
                                     <td>300 Adelaide St</td>
                                     <td>BRISBANE</td>
                                     <td>Queensland</td>
@@ -249,9 +249,22 @@ public class TableTest extends AbstractPluginTestCase {
 		checkRowCheckedPosition.call(['firstColumn' : '1'], '1')
 		checkRowCheckedPosition.call(['lastColumn' : '4101'], '3')
 
-		checkRowCheckedPosition.call(['coLumn2' : 'one'], '1')
+		checkRowCheckedPosition.call(['coLumn2' : 'Unit A'], '3')
+	}
+
+	void testRowPositionXPathSingleValuesPresentEmbeddedSingleQuote() {
+		checkRowCheckedPosition.call(['Address Line 2' : "222 Queen's Street"], '1')
+	}
+
+	void testRowPositionXPathSingleValuesPresentEmbeddedDoubleQuote() {
+		checkRowCheckedPosition.call(['Address Line 1' : '"The Manner"'], '4')
 	}
 	
+// TODO: uncomment once concatQuoteStringXPath() implemented
+//	void testRowPositionXPathSingleValuesPresentEmbeddedBothQuotes() {
+//		checkRowCheckedPosition.call(['Address Line 1' : 'Guns\'n\'Roses "Bar"'], '1')
+//	}
+
 	void testRowPositionXPathMultipleValuesNotPresent() {
 		checkRowCheckedPosition.call(['State' : 'Queensland', 'Suburb' : 'SYDNEY'], ROW_NOT_PRESENT_VALUE)
 		checkRowCheckedPosition.call(['State' : 'New South Wales', 'Suburb' : 'BRISBANE'], ROW_NOT_PRESENT_VALUE)

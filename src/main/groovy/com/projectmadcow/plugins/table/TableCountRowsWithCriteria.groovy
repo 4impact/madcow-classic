@@ -21,7 +21,6 @@
 
 package com.projectmadcow.plugins.table
 
-
 class TableCountRowsWithCriteria extends AbstractCount {
 
     private def columnHeadersAndCellValuesMap
@@ -40,5 +39,5 @@ class TableCountRowsWithCriteria extends AbstractCount {
 		String xpath = TableXPath.getRowReferenceXPathMapped(prefixXPath, columnHeadersAndCellValuesMap) {p,c -> TableXPath.getColumnPositionXPath(p,c)}
 		return TableXPath.getConstrainedRowCountXPath(xpath, operator, value)
 	}
-	
+
 }

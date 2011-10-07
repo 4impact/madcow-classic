@@ -53,7 +53,7 @@ public class TableXPath {
 	 * @return 0 if column does not exist, 1 or more if it does.
 	 */
 	public static String getColumnPositionCheckedXPath(String prefixXPath, def columnHeader) {
-		def result = columnSieve(columnHeader) { getCellXPathRef(it) } { it }
+		def result = columnSieve(columnHeader) { getCellXPathRef(it) }
 		result = getCheckedPositionXPath( getColumnXPath(prefixXPath, result) )
 		if (LOG.isDebugEnabled()) LOG.debug "getColumnPositionCheckedXPath($columnHeader) --> ${result}"
 		return result
@@ -107,7 +107,7 @@ public class TableXPath {
 	}
 
 	private static String getColumnReferenceXPath(def columnHeader) {
-		def result = columnSieve(columnHeader) { getCellXPathRef(it) } {it}
+		def result = columnSieve(columnHeader) { getCellXPathRef(it) }
 		if (LOG.isDebugEnabled()) LOG.debug "getColumnReferenceXPath($columnHeader) --> ${result}"
 		return result
 	}
@@ -116,8 +116,8 @@ public class TableXPath {
 		sieveTransform("first", "last", "row", selectionCriteria, criteriaMapper, positionMapper, nonCriteriaMapper, lastMapper)
 	}
 
-	private static String columnSieve(def selectionCriteria, Closure criteriaMapper, Closure positionMapper = {it}) {
-		sieveTransform("firstColumn", "lastColumn", "column", selectionCriteria, criteriaMapper, positionMapper, {it}, {it})
+	private static String columnSieve(def selectionCriteria, Closure criteriaMapper = {it}, Closure positionMapper = {it}) {
+		sieveTransform("firstColumn", "lastColumn", "column", selectionCriteria, criteriaMapper, positionMapper)
 	}
 
 	/**
@@ -136,7 +136,8 @@ public class TableXPath {
 	 *                          (a transform applied to both direct and indirect terms would be applied to the result of this filtered transform).
 	 * @return
 	 */
-	private static String sieveTransform(String firstLabel, String lastLabel, String numberLabel, def term, Closure criteriaMapper, Closure positionMapper, Closure nonCriteriaMapper, Closure lastMapper) {
+	private static String sieveTransform(String firstLabel, String lastLabel, String numberLabel, def term, 
+				Closure criteriaMapper = {it}, Closure positionMapper = {it}, Closure nonCriteriaMapper = {it}, Closure lastMapper = {it}) {
 		if (term == firstLabel)
 			return nonCriteriaMapper.call("1")
 		else if (term == lastLabel)
@@ -163,7 +164,16 @@ public class TableXPath {
 
    
    /* =========================== some basic XPATH fragments =============================== */
-   
+
+	public static String quoteStringXPath(String str) {
+		if ( ! str.contains("'"))
+			return "'${str}'"
+		else if ( ! str.contains('"'))
+			return '"'+str+'"'
+		else // contains both --> hard! - need something fancy!
+			return concatQuoteStringXPath(str)
+	}
+
    protected static def getRowXPath(String prefixXPath, String rowPositionXPath) {
 	   return "${prefixXPath}/tbody/tr[${rowPositionXPath}]"
    }
@@ -173,7 +183,8 @@ public class TableXPath {
    }
 
    private static String getCellXPathRef(def cellText) {
-		return "(wt:cleanText(.//text()) = '${cellText}' or wt:cleanText(.//@value) = '${cellText}')"
+	   String quotedString = quoteStringXPath(cellText)
+	   return "(wt:cleanText(.//text()) = ${quotedString} or wt:cleanText(.//@value) = ${quotedString})"
    }
 
 	private static String getCheckedXPathAccess(def cellAccess) {
@@ -197,7 +208,8 @@ public class TableXPath {
    }
    
    public static String getTableReferenceXPath(String tableHtmlId) {
-	   return "//table[@id='${tableHtmlId}']"
+	   String quotedString = quoteStringXPath(tableHtmlId)
+	   return "//table[@id=${quotedString}]"
    }
 
 	public static String getClickLinkOnCellXPath(String cellXPath) {
@@ -205,11 +217,29 @@ public class TableXPath {
 	}
    
 	public static String getSetRadioButtonOnCellXPath(String cellXPath, def value) {
-		return "${cellXPath}//*[wt:cleanText(text()) = '$value']//input[@type='radio']"
+		String quotedString = quoteStringXPath(value)
+		return "${cellXPath}//*[wt:cleanText(text()) = ${quotedString}]//input[@type='radio']"
 	}
 
-	/* =========================== counting XPATH fragments =============================== */
+	/* =========================== some XPATH selection suffices =============================== */
 	
+	public static String valueXPathSuffix() {
+		return "//*[(local-name() = 'input' or local-name() = 'textarea') and position() = 1]"
+	}
+	
+	public static String fieldXPathSuffix() {
+		return '//select[1]'
+	}
+	
+	public static String checkboxXPathSuffix() {
+		return "//input[@type='checkbox']"
+	}
+
+	
+	/* =========================== counting XPATH fragments =============================== */
+	/*
+	 * following should not need escapeSingleQuotes since the values are just numbers
+	 */
 	private static String getConstrainedRowCountXPath(String rowReferenceXPath, String operator, def value) {
 		 return "count(${rowReferenceXPath})${operator}${value}"
 	}
@@ -232,4 +262,45 @@ public class TableXPath {
 		return "count(${prefixXPath}/tbody/tr[position() = last()]/preceding-sibling::*)+1"
 	}
 
+	// http://kushalm.com/the-perils-of-xpath-expressions-specifically-escaping-quotes
+	// string myXPathExpression = "books/book[@publisher = " + "concat('Single', "'", 'quote. Double', '"', 'quote.')]";
+	//looks for a publisher called Single'quote. Double"quote
+	/*
+	 * following expects str to contain both single and double quotes
+	 * 
+	 * ref: http://www.w3.org/TR/xpath/#strings    look at the defn: [29] Literal
+	 */
+	static String concatQuoteStringXPath(String str) {
+		// TODO: fill in this stub!
+		LOG.debug "concatQuoteStringXPath($str)"
+		return "'${str}'"
+	}
+
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

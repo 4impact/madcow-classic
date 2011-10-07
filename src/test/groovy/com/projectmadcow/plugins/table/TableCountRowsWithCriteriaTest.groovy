@@ -21,9 +21,11 @@
 
 package com.projectmadcow.plugins.table
 
-import com.projectmadcow.plugins.AbstractPluginTestCase
-import com.projectmadcow.plugins.Table;
 import com.projectmadcow.extension.webtest.xpath.XPathEvaluator
+
+import com.projectmadcow.plugins.AbstractPluginTestCase
+import com.projectmadcow.plugins.Table
+import com.projectmadcow.plugins.table.TableCountRowsWithCriteria
 
 class TableCountRowsWithCriteriaTest  extends AbstractPluginTestCase {
 
@@ -66,7 +68,7 @@ class TableCountRowsWithCriteriaTest  extends AbstractPluginTestCase {
                                 <tr>
                                     <td><a href="/madcow-test-site/address/show/2">3</a></td>
                                     <td>Unit A</td>
-                                    <td>186 Boundary Street</td>
+                                    <td>186 Guns'n'Roses Street</td>
                                     <td>WEST END</td>
                                     <td>Queensland</td>
                                     <td>4101</td>
@@ -102,7 +104,13 @@ class TableCountRowsWithCriteriaTest  extends AbstractPluginTestCase {
         assert xPathEvaluator.evaluateXPath(rowCounter.buildRowCountXPath('<', '3')) == "false"
         assert xPathEvaluator.evaluateXPath(rowCounter.buildRowCountXPath('>', '5')) == "false"
     }
-	
+
+    void testCountRowsXPathWithQuotes() {
+        def parameters = ['Address Line 2' : "186 Guns'n'Roses Street"]
+        TableCountRowsWithCriteria rowCounter = new TableCountRowsWithCriteria( "//table[@id='searchResults']", antBuilder, '', parameters)
+        assert xPathEvaluator.evaluateXPath(rowCounter.buildRowCountXPath('=', '1')) == "true"
+    }
+
 	void testCountRowsXPathNotAll() {
 		def parameters = ['Suburb' : 'BRISBANE']
 		TableCountRowsWithCriteria rowCounter = new TableCountRowsWithCriteria( "//table[@id='searchResults']", antBuilder, '', parameters)
