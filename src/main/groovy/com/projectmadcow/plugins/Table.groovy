@@ -55,7 +55,7 @@ public class Table extends Plugin {
         return this
     }
 
-	protected String getColumnPositionXPath(def columnHeaderText) {
+	protected def getColumnPositionXPath(def columnHeaderText) {
         return TableXPath.getColumnPositionXPath(getPrefixXPath(), columnHeaderText)
 	}
 	
