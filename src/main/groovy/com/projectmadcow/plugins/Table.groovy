@@ -23,10 +23,11 @@ package com.projectmadcow.plugins
 
 import com.projectmadcow.engine.plugin.Plugin
 import com.projectmadcow.engine.plugin.PluginResolver
-import com.projectmadcow.plugins.table.Column
 import com.projectmadcow.plugins.table.TableCountRows
 import com.projectmadcow.plugins.table.TableCountRowsWithCriteria
 import com.projectmadcow.plugins.table.TableHeaderColumnCount
+import com.projectmadcow.plugins.table.TableXPath;
+
 import org.apache.log4j.Logger
 
 /**
@@ -54,75 +55,53 @@ public class Table extends Plugin {
         return this
     }
 
-    protected def getColumnPositionXPath(def columnHeaderText) {
-        String xpath = new Column(prefixXPath, columnHeaderText).getColumnPositionXPath()
-        LOG.debug("getColumnPositionXPath(${columnHeaderText} = ${xpath}")
-        return xpath
-    }
+	public String getColumnPositionXPath(def columnHeaderText) {
+        return TableXPath.getColumnPositionXPath(getPrefixXPath(), columnHeaderText)
+	}
+	
+	public String getColumnPositionCheckedXPath(def columnHeaderText) {
+        return TableXPath.getColumnPositionCheckedXPath(getPrefixXPath(), columnHeaderText)
+	}
+	
+	public String getRowPositionXPath(def rowReference) {
+		return TableXPath.getRowPositionXPath(getPrefixXPath(), rowReference)
+	}
+	
+	public String getRowPositionCheckedXPath(def rowReference) {
+		return TableXPath.getRowPositionCheckedXPath(getPrefixXPath(), rowReference)
+	}
+	
+	/**
+	 * Returns an xpath expression for a particular cell on a particular row
+	 */
+	protected def getCellXPath(def rowPositionXPath, def columnHeaderText) {
+		return TableXPath.getCellXPath(getPrefixXPath(), rowPositionXPath, columnHeaderText)
+	}
 
-    /**
-     * Returns an xpath expression to get the row number within the table, with the specific cellText.
-     * Parameter must be a map of [columnHeaderText : cellText]
-     */
-    protected def getRowPositionXPath(Map columnHeaderTextCellTextMap) {
-        String rowXPath = "count(${getPrefixXPath()}/tbody/tr"
-
-        columnHeaderTextCellTextMap.each { columnText, cellText ->
-            rowXPath += "/td[position() = (${getColumnPositionXPath(columnText)}) and (wt:cleanText(.//text()) = '${cellText}' or wt:cleanText(.//@value) = '${cellText}')]/parent::*"
-        }
-        rowXPath += "/preceding-sibling::*)+1"
-
-        return rowXPath
-    }
-
-    protected def getRowXPath(def rowPositionXPath) {
-        return "${getPrefixXPath()}/tbody/tr[${rowPositionXPath}]"
-    }
-
-    /**
-     * Returns an xpath expression for a particular cell on a particular row
-     */
-    protected def getCellXPath(def rowPositionXPath, def columnHeaderText) {
-        def xpath = "${getRowXPath(rowPositionXPath)}/td[${getColumnPositionXPath(columnHeaderText)}]"
-        LOG.debug("getCellXPath(${rowPositionXPath}) = ${xpath}")
-        return xpath
-    }
-
-    protected def getCellXPath(Map rowPositionMap, def columnHeaderText) {
-        return getCellXPath(getRowPositionXPath(rowPositionMap), columnHeaderText)
-    }
-
-    protected def getFirstRowPositionXPath() {
-        return "1"
-    }
-
-    protected def getLastRowPositionXPath() {
-        return "count(${getPrefixXPath()}/tbody/tr[position() = last()]/preceding-sibling::*)+1"
-    }
+	protected def getCellXPath(Map rowPositionMap, def columnHeaderText) {
+		return TableXPath.getCellXPath(getPrefixXPath(), rowPositionMap, columnHeaderText)
+	}
 
     /**
      * selectionCriteria is expected to be a map of <column header text> : <cell text>
      * which will uniquely identify a particular row
      */
     def setSelectRow(def selectionCriteria) {
-        LOG.debug "setSelectRow($selectionCriteria)"
-
-        String rowXPositionPath = ""
-        if (selectionCriteria == "first")
-            rowXPositionPath = getFirstRowPositionXPath()
-        else if (selectionCriteria == "last")
-            rowXPositionPath = getLastRowPositionXPath()
-        else if (selectionCriteria.toString().toLowerCase() ==~ /row\d*/)
-             rowXPositionPath = selectionCriteria.toString().substring(3)
-        else
-            rowXPositionPath = getRowPositionXPath(selectionCriteria)
+        if (LOG.isDebugEnabled()) LOG.debug "setSelectRow($selectionCriteria)"
+		String prefixXPath = getPrefixXPath()
+        String rowXPositionPath = TableXPath.getRowPositionXPath(prefixXPath, selectionCriteria)
+		String rowXVerifyPath = TableXPath.getRowXPath(prefixXPath, TableXPath.getRowPositionCheckedXPath(prefixXPath, selectionCriteria))
 
         antBuilder.plugin(description: getDescription('selectRow', selectionCriteria, false)) {
-            verifyXPath(xpath: rowXPositionPath)
+			
+			// first check that accessing the row would work - fail fast
+			verifyXPath(xpath: rowXVerifyPath, description: "Verify row exists.")
+			
             storeXPath(property : getPropertyName(), xpath : rowXPositionPath, propertyType : 'dynamic')
         }
     }
 
+	
     def getPropertyName() {
         "madcow.table.${this.callingProperty}"
     }
@@ -134,14 +113,18 @@ public class Table extends Plugin {
     def setClickLink(def column){
         antBuilder.plugin(description: getDescription('clickLink', column)) {
             antBuilder.verifyDynamicProperty (name: getPropertyName())
-            antBuilder.clickLink(xpath: getCellXPath("#{${getPropertyName()}}", column) + "//a[1]")
+			String xPath = getCellXPath("#{${getPropertyName()}}", column)
+			if (LOG.isDebugEnabled()) LOG.debug("setClickLink()  getPropertyName() = ${getPropertyName()}   xPath=${xPath}")
+			antBuilder.verifyXPath(xpath: xPath, description: "Verify row exists: ${"#{${getPropertyName()}}"}")
+            antBuilder.clickLink(xpath: TableXPath.getClickLinkOnCellXPath(xPath) )
         }
     }
 
     def getClickRow() {
+		String prefixXPath = getPrefixXPath()
         antBuilder.plugin(description: getDescription('clickRow')) {
             antBuilder.verifyDynamicProperty (name: getPropertyName())
-            antBuilder.clickElement(xpath: getRowXPath("#{${getPropertyName()}}"))
+            antBuilder.clickElement(xpath: TableXPath.getRowXPath(prefixXPath,"#{${getPropertyName()}}"))
         }
     }
 
@@ -195,10 +178,10 @@ public class Table extends Plugin {
         def plugin = PluginResolver.resolvePlugin(pluginName, this.callingProperty);
 
         def attributes = [xpath : getCellXPath("#{${getPropertyName()}}", column) + cellXPathSuffix]
-
+		
         antBuilder.plugin(description: getDescription(pluginName, column)) {
             antBuilder.verifyDynamicProperty (name: getPropertyName())
-            plugin.invoke(antBuilder, attributes)
+			plugin.invoke(antBuilder, attributes)
         }
 
     }
@@ -227,7 +210,7 @@ public class Table extends Plugin {
 
     protected String getPrefixXPath() {
         if (attributes.htmlId) {
-            "//table[@id='${attributes.htmlId}']"
+            TableXPath.getTableReferenceXPath(attributes.htmlId)
         } else {
             attributes.xpath
         }

@@ -21,6 +21,7 @@
 
 package com.projectmadcow.plugins.table
 
+
 /**
  * @author chris
  */
@@ -31,7 +32,7 @@ public class TableHeaderColumnCount extends AbstractCount {
   }
 
   public doCount(operator, value, description) {
-    antBuilder.countColumns(xpath: "${prefixXPath}/thead/tr[count(th)${operator}${value}]",
+    antBuilder.countColumns(xpath: TableXPath.getColumnCountXPath(prefixXPath, operator, value),
                            description: description)
   }
 }

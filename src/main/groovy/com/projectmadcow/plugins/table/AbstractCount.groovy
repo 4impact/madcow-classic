@@ -41,6 +41,10 @@ public abstract class AbstractCount {
     def setEquals(value) {
         doCount("=", value, "${descriptionPrefix}.equals=$value")
     }
+	
+	def setNotEquals(value) {
+		doCount("!=", value, "${descriptionPrefix}.notEquals=$value")
+	}
 
     def setGreaterThan(value) {
         doCount(">", value, "${descriptionPrefix}.greaterThan=$value")
