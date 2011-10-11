@@ -26,6 +26,7 @@ import com.projectmadcow.extension.webtest.xpath.XPathEvaluator
 import com.projectmadcow.plugins.AbstractPluginTestCase
 import com.projectmadcow.plugins.Table
 import com.projectmadcow.plugins.table.TableCountRowsWithCriteria
+import com.projectmadcow.plugins.table.TableXPath
 
 class TableCountRowsWithCriteriaTest  extends AbstractPluginTestCase {
 
@@ -94,7 +95,7 @@ class TableCountRowsWithCriteriaTest  extends AbstractPluginTestCase {
 
     void testCountRowsXPath() {
         def parameters = ['State' : 'Queensland']
-        TableCountRowsWithCriteria rowCounter = new TableCountRowsWithCriteria( "//table[@id='searchResults']", antBuilder, '', parameters)
+        TableCountRowsWithCriteria rowCounter = new TableCountRowsWithCriteria(new TableXPath(),"//table[@id='searchResults']", antBuilder, '', parameters)
 
         assert xPathEvaluator.evaluateXPath(rowCounter.buildRowCountXPath('=', '4')) == "true"
         assert xPathEvaluator.evaluateXPath(rowCounter.buildRowCountXPath('<', '5')) == "true"
@@ -107,13 +108,13 @@ class TableCountRowsWithCriteriaTest  extends AbstractPluginTestCase {
 
     void testCountRowsXPathWithQuotes() {
         def parameters = ['Address Line 2' : "186 Guns'n'Roses Street"]
-        TableCountRowsWithCriteria rowCounter = new TableCountRowsWithCriteria( "//table[@id='searchResults']", antBuilder, '', parameters)
+        TableCountRowsWithCriteria rowCounter = new TableCountRowsWithCriteria(new TableXPath(), "//table[@id='searchResults']", antBuilder, '', parameters)
         assert xPathEvaluator.evaluateXPath(rowCounter.buildRowCountXPath('=', '1')) == "true"
     }
 
 	void testCountRowsXPathNotAll() {
 		def parameters = ['Suburb' : 'BRISBANE']
-		TableCountRowsWithCriteria rowCounter = new TableCountRowsWithCriteria( "//table[@id='searchResults']", antBuilder, '', parameters)
+		TableCountRowsWithCriteria rowCounter = new TableCountRowsWithCriteria(new TableXPath(),"//table[@id='searchResults']", antBuilder, '', parameters)
 
 		assert xPathEvaluator.evaluateXPath(rowCounter.buildRowCountXPath('!=', '0')) == "true"
 		assert xPathEvaluator.evaluateXPath(rowCounter.buildRowCountXPath('=', '2')) == "true"
@@ -131,19 +132,19 @@ class TableCountRowsWithCriteriaTest  extends AbstractPluginTestCase {
 
     void testCountRowsXPathWithMultipleCriteria() {
         def parameters = ['State' : 'Queensland', 'Suburb' : 'TENERIFFE']
-        TableCountRowsWithCriteria rowCounter = new TableCountRowsWithCriteria( "//table[@id='searchResults']", antBuilder, '', parameters)
+        TableCountRowsWithCriteria rowCounter = new TableCountRowsWithCriteria(new TableXPath(),"//table[@id='searchResults']", antBuilder, '', parameters)
         assert xPathEvaluator.evaluateXPath(rowCounter.buildRowCountXPath('=', '1')) == "true"
     }
 
     void testCountRowsXPathWithSpecialColumnValues() {
         def parameters = ['firstColumn' : '2', 'column4' : 'BRISBANE', 'lastColumn' : '4000']
-        TableCountRowsWithCriteria rowCounter = new TableCountRowsWithCriteria( "//table[@id='searchResults']", antBuilder, '', parameters)
+        TableCountRowsWithCriteria rowCounter = new TableCountRowsWithCriteria(new TableXPath(),"//table[@id='searchResults']", antBuilder, '', parameters)
         assert xPathEvaluator.evaluateXPath(rowCounter.buildRowCountXPath('=', '1')) == "true"
     }
 	
 	void testCountRowsXPathRowNotPresent() {
 		def parameters = ['State' : 'NSW']
-		TableCountRowsWithCriteria rowCounter = new TableCountRowsWithCriteria( "//table[@id='searchResults']", antBuilder, '', parameters)
+		TableCountRowsWithCriteria rowCounter = new TableCountRowsWithCriteria(new TableXPath(),"//table[@id='searchResults']", antBuilder, '', parameters)
 
 		assert xPathEvaluator.evaluateXPath(rowCounter.buildRowCountXPath('!=', '0')) == "false"
 		
@@ -160,7 +161,7 @@ class TableCountRowsWithCriteriaTest  extends AbstractPluginTestCase {
 	
 	void testCountRowsXPathWithSpecialColumnValuesRowNotPresent() {
 		def parameters = ['firstColumn' : '2', 'column4' : 'BRISBANE', 'lastColumn' : '4101']
-		TableCountRowsWithCriteria rowCounter = new TableCountRowsWithCriteria( "//table[@id='searchResults']", antBuilder, '', parameters)
+		TableCountRowsWithCriteria rowCounter = new TableCountRowsWithCriteria(new TableXPath(),"//table[@id='searchResults']", antBuilder, '', parameters)
 		assert xPathEvaluator.evaluateXPath(rowCounter.buildRowCountXPath('=', '0')) == "true"
 	}
 
@@ -169,7 +170,7 @@ class TableCountRowsWithCriteriaTest  extends AbstractPluginTestCase {
 	 */
 	void testCountRowsXPathColumnNotPresent() {
 		def parameters = ['Purple Monkey Dishwasher' : 'NSW']
-		TableCountRowsWithCriteria rowCounter = new TableCountRowsWithCriteria( "//table[@id='searchResults']", antBuilder, '', parameters)
+		TableCountRowsWithCriteria rowCounter = new TableCountRowsWithCriteria(new TableXPath(),"//table[@id='searchResults']", antBuilder, '', parameters)
 
 		assert xPathEvaluator.evaluateXPath(rowCounter.buildRowCountXPath('!=', '0')) == "false"
 		
@@ -189,7 +190,7 @@ class TableCountRowsWithCriteriaTest  extends AbstractPluginTestCase {
 	 */
 	void testCountRowsXPathWithSpecialColumnValuesColumnNotPresent() {
 		def parameters = ['firstColumn' : '2', 'column7' : 'BRISBANE', 'lastColumn' : '4101']
-		TableCountRowsWithCriteria rowCounter = new TableCountRowsWithCriteria( "//table[@id='searchResults']", antBuilder, '', parameters)
+		TableCountRowsWithCriteria rowCounter = new TableCountRowsWithCriteria(new TableXPath(),"//table[@id='searchResults']", antBuilder, '', parameters)
 		assert xPathEvaluator.evaluateXPath(rowCounter.buildRowCountXPath('=', '0')) == "true"
 	}
 	
