@@ -44,42 +44,36 @@ import org.apache.log4j.Logger
  */
 public class Table extends Plugin {
 
-    static final Logger LOG = Logger.getLogger(Table.class)
+    static Logger LOG = Logger.getLogger(Table.class)
 
     Map attributes
     AntBuilder antBuilder
+	TableXPath txp = getTableXPath()
 
+	def getTableXPath() {
+		return new TableXPath()
+	}
+	
     public invoke(AntBuilder antBuilder, Map pluginParameters) {
         this.antBuilder = antBuilder;
         this.attributes = pluginParameters
         return this
     }
-
-	protected def getColumnPositionXPath(def columnHeaderText) {
-        return TableXPath.getColumnPositionXPath(getPrefixXPath(), columnHeaderText)
-	}
 	
-	protected String getColumnPositionCheckedXPath(def columnHeaderText) {
-        return TableXPath.getColumnPositionCheckedXPath(getPrefixXPath(), columnHeaderText)
-	}
-	
-	protected String getRowPositionXPath(def rowReference) {
-		return TableXPath.getRowPositionXPath(getPrefixXPath(), rowReference)
-	}
-	
-	protected String getRowPositionCheckedXPath(def rowReference) {
-		return TableXPath.getRowPositionCheckedXPath(getPrefixXPath(), rowReference)
-	}
-	
-	/**
-	 * Returns an xpath expression for a particular cell on a particular row
-	 */
-	protected def getCellXPath(def rowPositionXPath, def columnHeaderText) {
-		return TableXPath.getCellXPath(getPrefixXPath(), rowPositionXPath, columnHeaderText)
+	protected String getPrefixXPath() {
+		if (attributes.htmlId) {
+			txp.getTableReferenceXPath(attributes.htmlId)
+		} else {
+			attributes.xpath
+		}
 	}
 
-	protected def getCellXPath(Map rowPositionMap, def columnHeaderText) {
-		return TableXPath.getCellXPath(getPrefixXPath(), rowPositionMap, columnHeaderText)
+	protected String getPluginName() {
+		return "table"
+	}
+	
+	def getPropertyName() {
+		"madcow.table.${this.callingProperty}"
 	}
 
     /**
@@ -89,8 +83,8 @@ public class Table extends Plugin {
     def setSelectRow(def selectionCriteria) {
         if (LOG.isDebugEnabled()) LOG.debug "setSelectRow($selectionCriteria)"
 		String prefixXPath = getPrefixXPath()
-        String rowXPositionPath = TableXPath.getRowPositionXPath(prefixXPath, selectionCriteria)
-		String rowXVerifyPath = TableXPath.getRowXPath(prefixXPath, TableXPath.getRowPositionCheckedXPath(prefixXPath, selectionCriteria))
+        String rowXPositionPath = txp.getRowPositionXPath(prefixXPath, selectionCriteria)
+		String rowXVerifyPath = txp.getRowXPath(prefixXPath, txp.getRowPositionCheckedXPath(prefixXPath, selectionCriteria))
 
         antBuilder.plugin(description: getDescription('selectRow', selectionCriteria, false)) {
 			
@@ -101,10 +95,6 @@ public class Table extends Plugin {
         }
     }
 
-	
-    def getPropertyName() {
-        "madcow.table.${this.callingProperty}"
-    }
 
     def getCurrentRow() {
         return this
@@ -116,7 +106,7 @@ public class Table extends Plugin {
 			String xPath = getCellXPath("#{${getPropertyName()}}", column)
 			if (LOG.isDebugEnabled()) LOG.debug("setClickLink()  getPropertyName() = ${getPropertyName()}   xPath=${xPath}")
 			antBuilder.verifyXPath(xpath: xPath, description: "Verify row exists: ${"#{${getPropertyName()}}"}")
-            antBuilder.clickLink(xpath: TableXPath.getClickLinkOnCellXPath(xPath) )
+            antBuilder.clickLink(xpath: txp.getClickLinkOnCellXPath(xPath) )
         }
     }
 
@@ -124,7 +114,7 @@ public class Table extends Plugin {
 		String prefixXPath = getPrefixXPath()
         antBuilder.plugin(description: getDescription('clickRow')) {
             antBuilder.verifyDynamicProperty (name: getPropertyName())
-            antBuilder.clickElement(xpath: TableXPath.getRowXPath(prefixXPath,"#{${getPropertyName()}}"))
+            antBuilder.clickElement(xpath: txp.getRowXPath(prefixXPath,"#{${getPropertyName()}}"))
         }
     }
 
@@ -135,33 +125,33 @@ public class Table extends Plugin {
     def setCheckValueContains(def valueMap){
         invokePlugin('checkValueContains', valueMap)
     }
+	
+	def setCheckValueEmpty(String column){
+		invokePlugin('checkValueEmpty', column)
+	}
 
     def setValue(def valueMap){
-        invokePlugin('value', valueMap, TableXPath.valueXPathSuffix())
+        invokePlugin('value', valueMap, txp.valueXPathSuffix())
     }
 
     def setSelectField(def valueMap){
-        invokePlugin('selectField', valueMap, TableXPath.fieldXPathSuffix())
+        invokePlugin('selectField', valueMap, txp.fieldXPathSuffix())
     }
 
     def setSelectCheckbox(String column){
-        invokePlugin('selectCheckbox', column, TableXPath.checkboxXPathSuffix())
+        invokePlugin('selectCheckbox', column, txp.checkboxXPathSuffix())
     }
 
     def setUnselectCheckbox(String column){
-        invokePlugin('unselectCheckbox', column, TableXPath.checkboxXPathSuffix())
-    }
-
-    def setCheckValueEmpty(String column){
-        invokePlugin('checkValueEmpty', column)
+        invokePlugin('unselectCheckbox', column, txp.checkboxXPathSuffix())
     }
 
     def setVerifySelectFieldOptions(def valueMap){
-        invokePlugin('verifySelectFieldOptions', valueMap, TableXPath.fieldXPathSuffix())
+        invokePlugin('verifySelectFieldOptions', valueMap, txp.fieldXPathSuffix())
     }
 
     def setVerifySelectFieldContains(def valueMap){
-        invokePlugin('verifySelectFieldContains', valueMap, TableXPath.fieldXPathSuffix())
+        invokePlugin('verifySelectFieldContains', valueMap, txp.fieldXPathSuffix())
     }
 
     def setSetRadioButton(def valueMap) {
@@ -169,7 +159,7 @@ public class Table extends Plugin {
             antBuilder.verifyDynamicProperty (name: getPropertyName())
             valueMap.each { column, value ->
 				String xPath = getCellXPath("#{${getPropertyName()}}", column)
-                def attributes = [xpath : TableXPath.getSetRadioButtonOnCellXPath(xPath, value) ]
+                def attributes = [xpath : txp.getSetRadioButtonOnCellXPath(xPath, value) ]
                 antBuilder.setRadioButton(attributes)
             }
         }
@@ -203,33 +193,53 @@ public class Table extends Plugin {
             }
         }
     }
-
+	
+	/* ===================== Counting functions: =============================== */
+	
     def getCountRows() {
-        return new TableCountRows(getPrefixXPath(), antBuilder, getDescription('countRows', null, false))
+        return new TableCountRows(txp, getPrefixXPath(), antBuilder, getDescription('countRows', null, false))
     }
 
     def countRows(def parameters) {
         def description = getDescription("countRows${parameters}", null, false)
-        return new TableCountRowsWithCriteria(getPrefixXPath(), antBuilder, description, parameters)
-    }
-
-    protected String getPrefixXPath() {
-        if (attributes.htmlId) {
-            TableXPath.getTableReferenceXPath(attributes.htmlId)
-        } else {
-            attributes.xpath
-        }
+        return new TableCountRowsWithCriteria(txp, getPrefixXPath(), antBuilder, description, parameters)
     }
 
     def getHeaderColumnCount() {
-        return new TableHeaderColumnCount(getPrefixXPath(), antBuilder, getDescription('headerColumnCount', null, false))
+        return new TableHeaderColumnCount(txp, getPrefixXPath(), antBuilder, getDescription('headerColumnCount', null, false))
     }
+	
+	protected String getDescription(String functionName, def value = null, boolean currentRow = true) {
+		return "${this.callingProperty}.${getPluginName()}${currentRow ? '.currentRow' : ''}.$functionName${value != null ? '=' + value : ''}"
+	}
 
-    protected String getPluginName() {
-        return "table"
-    }
+	/* ===== functions that delegate to txp (TableXPath): (could disappear and just go straight to txp, since that will be extended in the plugins) ====== */
+	
+	protected def getColumnPositionXPath(def columnHeaderText) {
+		return txp.getColumnPositionXPath(getPrefixXPath(), columnHeaderText)
+	}
+	
+	protected String getColumnPositionCheckedXPath(def columnHeaderText) {
+		return txp.getColumnPositionCheckedXPath(getPrefixXPath(), columnHeaderText)
+	}
+	
+	protected String getRowPositionXPath(def rowReference) {
+		return txp.getRowPositionXPath(getPrefixXPath(), rowReference)
+	}
+	
+	protected String getRowPositionCheckedXPath(def rowReference) {
+		return txp.getRowPositionCheckedXPath(getPrefixXPath(), rowReference)
+	}
+	
+	/**
+	 * Returns an xpath expression for a particular cell on a particular row
+	 */
+	protected def getCellXPath(def rowPositionXPath, def columnHeaderText) {
+		return txp.getCellXPath(getPrefixXPath(), rowPositionXPath, columnHeaderText)
+	}
 
-    protected String getDescription(String functionName, def value = null, boolean currentRow = true) {
-        return "${this.callingProperty}.${getPluginName()}${currentRow ? '.currentRow' : ''}.$functionName${value != null ? '=' + value : ''}"
-    }
+	protected def getCellXPath(Map rowPositionMap, def columnHeaderText) {
+		return txp.getCellXPath(getPrefixXPath(), rowPositionMap, columnHeaderText)
+	}
+
 }

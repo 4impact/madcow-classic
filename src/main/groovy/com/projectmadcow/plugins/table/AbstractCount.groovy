@@ -31,12 +31,15 @@ public abstract class AbstractCount {
     AntBuilder antBuilder
     String prefixXPath
     String descriptionPrefix
-
-    def AbstractCount(prefixXPath, antBuilder, descriptionPrefix) {
+	TableXPath txp
+	
+    def AbstractCount(txp, prefixXPath, antBuilder, descriptionPrefix) {
         this.prefixXPath = prefixXPath
         this.antBuilder = antBuilder
         this.descriptionPrefix = descriptionPrefix
+		this.txp = txp
     }
+
 
     def setEquals(value) {
         doCount("=", value, "${descriptionPrefix}.equals=$value")

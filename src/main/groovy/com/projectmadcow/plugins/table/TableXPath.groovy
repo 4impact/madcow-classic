@@ -23,24 +23,27 @@ package com.projectmadcow.plugins.table
 
 import com.projectmadcow.engine.plugin.Plugin
 import com.projectmadcow.engine.plugin.PluginResolver
+
+import com.canoo.webtest.engine.StepExecutionException
+
 import org.apache.log4j.Logger
 
 /**
  * Just bringing a lot of the table-related XPath generation into one place in order to ease maintenance 
  * (separating the plugin-calling aspect from the detail of the XPath generation).
- * Just a static util class.
+ * Just a util class (which can be extended by the plugins).
  */
 public class TableXPath {
 
-    static final Logger LOG = Logger.getLogger(TableXPath.class)
+    static Logger LOG = Logger.getLogger(TableXPath.class)
 
 		
 	/**
 	 *
 	 * @return 1 if column does not exist, 1 or more if it does. i.e. undistinguished
 	 */
-	public static String getColumnPositionXPath(String prefixXPath, def columnHeader) {
-		def result = columnSieve(columnHeader) { getCellXPathRef(it) } { getUncheckedPositionXPath( getColumnXPath(prefixXPath, it) ) }
+	public String getColumnPositionXPath(String prefixXPath, def columnHeader) {
+		def result = columnSieve(columnHeader) { getColumnCellXPathRef(it) } { getUncheckedPositionXPath( getColumnXPath(prefixXPath, it) ) }
 		if (LOG.isDebugEnabled()) LOG.debug "getColumnPositionXPath($columnHeader) --> ${result}"
 		return result
 	}
@@ -52,8 +55,8 @@ public class TableXPath {
 	 *
 	 * @return 0 if column does not exist, 1 or more if it does.
 	 */
-	public static String getColumnPositionCheckedXPath(String prefixXPath, def columnHeader) {
-		def result = columnSieve(columnHeader) { getCellXPathRef(it) }
+	public String getColumnPositionCheckedXPath(String prefixXPath, def columnHeader) {
+		def result = columnSieve(columnHeader) { getColumnCellXPathRef(it) }
 		result = getCheckedPositionXPath( getColumnXPath(prefixXPath, result) )
 		if (LOG.isDebugEnabled()) LOG.debug "getColumnPositionCheckedXPath($columnHeader) --> ${result}"
 		return result
@@ -64,7 +67,7 @@ public class TableXPath {
 	 * Parameter can be first, last, rowNN, or a map of [columnHeaderText : cellText]
 	 * @return 1 if row does not exist, 1 or more if it does. i.e. undistinguished
 	 */
-	public static def getRowPositionXPath(String prefixXPath, def criteria) {
+	public def getRowPositionXPath(String prefixXPath, def criteria) {
 		def rowXPath = rowSieve(criteria) { getRowReferenceXPath(prefixXPath, it) } { getUncheckedPositionXPath(it) } { it } { getRowXPath(prefixXPath, it ) }
 		if (LOG.isDebugEnabled()) LOG.debug("getRowPositionXPath(${criteria})  = ${rowXPath}")
 		return rowXPath
@@ -73,50 +76,50 @@ public class TableXPath {
 	/**
 	 * @return 0 if row does not exist, 1 or more if it does.
 	 */
-	public static def getRowPositionCheckedXPath(String prefixXPath, def criteria) {
+	public def getRowPositionCheckedXPath(String prefixXPath, def criteria) {
 		def rowXPath = rowSieve(criteria) { getRowReferenceCheckedXPath(prefixXPath, it) } { it } { getRowXPath(prefixXPath, it) } 
 		rowXPath = getCheckedPositionXPath( rowXPath )
 		if (LOG.isDebugEnabled()) LOG.debug("getRowPositionCheckedXPath(${criteria})  = ${rowXPath}")
 	   return rowXPath
 	}
 
-	public static String getRowCheckedXPathAccess(String prefixXPath, String rowPositionXPath) {
+	public String getRowCheckedXPathAccess(String prefixXPath, String rowPositionXPath) {
 		 return getCheckedXPathAccess(getRowXPath(prefixXPath, rowPositionXPath))
 	}
 
     /**
      * Returns an xpath expression for a particular cell on a particular row
      */
-    public static def getCellXPath(String prefixXPath, String rowPositionXPath, def columnHeaderText) {
+    public def getCellXPath(String prefixXPath, String rowPositionXPath, def columnHeaderText) {
         def xpath = "${getRowXPath(prefixXPath, rowPositionXPath)}/td[${getColumnPositionXPath(prefixXPath, columnHeaderText)}]"
         if (LOG.isDebugEnabled()) LOG.debug("getCellXPath(${rowPositionXPath}) = ${xpath}")
 		return xpath
     }
 
-    public static def getCellXPath(String prefixXPath, Map rowPositionMap, def columnHeaderText) {
+    public def getCellXPath(String prefixXPath, Map rowPositionMap, def columnHeaderText) {
         return getCellXPath(prefixXPath, getRowPositionXPath(prefixXPath, rowPositionMap), columnHeaderText)
     }
 	
-	public static String getRowReferenceXPath(String prefixXPath, def selectionCriteria) {
+	public String getRowReferenceXPath(String prefixXPath, def selectionCriteria) {
 		return rowSieve(selectionCriteria) { getRowReferenceXPathMapped(prefixXPath, it) {p,c -> getColumnPositionXPath(p,c)} }
 	}
 
-	public static String getRowReferenceCheckedXPath(String prefixXPath, def selectionCriteria) {
+	public String getRowReferenceCheckedXPath(String prefixXPath, def selectionCriteria) {
 		if (LOG.isDebugEnabled()) LOG.debug("getRowReferenceCheckedXPath(${selectionCriteria})  going to sieveTransform...")
 		return rowSieve(selectionCriteria) { getRowReferenceXPathMapped(prefixXPath, it) {p,c -> getColumnPositionCheckedXPath(p,c)} }
 	}
 
-	private static String getColumnReferenceXPath(def columnHeader) {
-		def result = columnSieve(columnHeader) { getCellXPathRef(it) }
+	protected String getColumnReferenceXPath(def columnHeader) {
+		def result = columnSieve(columnHeader) { getColumnCellXPathRef(it) }
 		if (LOG.isDebugEnabled()) LOG.debug "getColumnReferenceXPath($columnHeader) --> ${result}"
 		return result
 	}
 
-	private static String rowSieve(def selectionCriteria, Closure criteriaMapper, Closure positionMapper = {it}, Closure nonCriteriaMapper = {it}, Closure lastMapper = {it}) {
-		sieveTransform("first", "last", "row", selectionCriteria, criteriaMapper, positionMapper, nonCriteriaMapper, lastMapper)
+	protected String rowSieve(def selectionCriteria, Closure criteriaMapper, Closure positionMapper = {it}, Closure nonCriteriaMapper = {it}, Closure lastMapper = {it}) {
+		sieveTransform("first", "last", "row", selectionCriteria, criteriaMapper, positionMapper, nonCriteriaMapper, lastMapper, {rowNumberMapper(it)})
 	}
 
-	private static String columnSieve(def selectionCriteria, Closure criteriaMapper = {it}, Closure positionMapper = {it}) {
+	protected String columnSieve(def selectionCriteria, Closure criteriaMapper = {it}, Closure positionMapper = {it}) {
 		sieveTransform("firstColumn", "lastColumn", "column", selectionCriteria, criteriaMapper, positionMapper)
 	}
 
@@ -136,15 +139,15 @@ public class TableXPath {
 	 *                          (a transform applied to both direct and indirect terms would be applied to the result of this filtered transform).
 	 * @return
 	 */
-	private static String sieveTransform(String firstLabel, String lastLabel, String numberLabel, def term, 
-				Closure criteriaMapper = {it}, Closure positionMapper = {it}, Closure nonCriteriaMapper = {it}, Closure lastMapper = {it}) {
+	protected String sieveTransform(String firstLabel, String lastLabel, String numberLabel, def term, 
+				Closure criteriaMapper = {it}, Closure positionMapper = {it}, Closure nonCriteriaMapper = {it}, Closure lastMapper = {it}, Closure numberMapper = {it}) {
 		if (term == firstLabel)
-			return nonCriteriaMapper.call("1")
+			return nonCriteriaMapper.call(numberMapper.call("1"))
 		else if (term == lastLabel)
-			return nonCriteriaMapper.call( positionMapper.call( lastMapper.call( "position() = last()" ) ) )
+			return nonCriteriaMapper.call( positionMapper.call( lastMapper.call( getLastRowPositionXPath() ) ) )
 		else if (term.toString().toLowerCase() ==~ /^($numberLabel)\d*$/) {
 			def num = term.toString().substring(numberLabel.size())
-			return nonCriteriaMapper.call( term.toString().substring(numberLabel.size()) )
+			return nonCriteriaMapper.call( numberMapper.call(term.toString().substring(numberLabel.size())) )
 		} else
 			return positionMapper.call( criteriaMapper.call(term) )
 	}
@@ -154,18 +157,24 @@ public class TableXPath {
 	* Returns an xpath expression to get the row number within the table, with the specific cellText.
 	* Parameter must be a map of [columnHeaderText : cellText]
 	*/
-   protected static def getRowReferenceXPathMapped(String prefixXPath, Map columnHeaderTextCellTextMap, Closure columnPositionMapper) {
-	   String rowXPath = "${prefixXPath}/tbody/tr"
-	   columnHeaderTextCellTextMap.each { columnText, cellText ->
-		   rowXPath += "/td[position() = (${columnPositionMapper.call(prefixXPath, columnText)}) and ${getCellXPathRef(cellText)}]/parent::*"
-	   }
-	   return rowXPath
+   protected def getRowReferenceXPathMapped(String prefixXPath, def columnHeaderTextCellTextMap, Closure columnPositionMapper) {
+	   if (columnHeaderTextCellTextMap instanceof Map) {
+		   if (columnHeaderTextCellTextMap && columnHeaderTextCellTextMap.size() > 0 ) {
+			   String rowXPath = "${prefixXPath}/tbody/tr"
+			   columnHeaderTextCellTextMap.each { columnText, cellText ->
+				   rowXPath += "/td[position() = (${columnPositionMapper.call(prefixXPath, columnText)}) and ${getRowCellXPathRef(cellText)}]/parent::*"
+			   }
+			   return rowXPath
+		   } else
+	   			throw new StepExecutionException('No search criteria specified', new IllegalArgumentException("the map of column-value pairs must be non-empty"))
+        } else
+            throw new StepExecutionException('Unknown column selection criteria $columnHeaderTextCellTextMap!', new IllegalArgumentException("expecting a map of column-value pairs"))
    }
 
    
-   /* =========================== some basic XPATH fragments =============================== */
+   /* =========================== XPATH quoting =============================== */
 
-	public static String quoteStringXPath(String str) {
+	public String quoteStringXPath(String str) {
 		if ( ! str.contains("'"))
 			return "'${str}'"
 		else if ( ! str.contains('"'))
@@ -174,24 +183,34 @@ public class TableXPath {
 			return concatQuoteStringXPath(str)
 	}
 
-   protected static def getRowXPath(String prefixXPath, String rowPositionXPath) {
+   /* =========================== some basic XPATH fragments =============================== */
+
+   protected def getRowXPath(String prefixXPath, String rowPositionXPath) {
 	   return "${prefixXPath}/tbody/tr[${rowPositionXPath}]"
    }
    
-   protected static def getColumnXPath(String prefixXPath, String columnPositionXPath) {
+   protected def getColumnXPath(String prefixXPath, String columnPositionXPath) {
 	   return "${prefixXPath}/thead/tr/th[${columnPositionXPath}]"
    }
+   
+   protected String getColumnCellXPathRef(def cellText) {
+	   return getCellXPathRef(cellText)
+   }
+   
+   protected String getRowCellXPathRef(def cellText) {
+	   return getCellXPathRef(cellText)
+   }
 
-   private static String getCellXPathRef(def cellText) {
+   protected String getCellXPathRef(def cellText) {
 	   String quotedString = quoteStringXPath(cellText)
 	   return "(wt:cleanText(.//text()) = ${quotedString} or wt:cleanText(.//@value) = ${quotedString})"
    }
 
-	private static String getCheckedXPathAccess(def cellAccess) {
+	protected String getCheckedXPathAccess(def cellAccess) {
 		 return "boolean(${cellAccess})"
 	}
  
-   private static String getUncheckedPositionXPath(def positionXPath) {
+   protected String getUncheckedPositionXPath(def positionXPath) {
 		return "count(${positionXPath}/preceding-sibling::*)+1"
 		/*
 		 * method: count the number of rows or columns preceding (0 for first or non-existent element) the specified one. 
@@ -199,7 +218,7 @@ public class TableXPath {
 		 */
    }
 
-   private static String getCheckedPositionXPath(def positionXPath) {
+   protected String getCheckedPositionXPath(def positionXPath) {
 		return "count(${positionXPath}/preceding-sibling::*)+number(boolean(${positionXPath}))"
 		/*
 		 * method: boolean() checks existence of the row, number() turns that boolean into a 1 or 0 -
@@ -207,31 +226,40 @@ public class TableXPath {
 		 */
    }
    
-   public static String getTableReferenceXPath(String tableHtmlId) {
+   public String getTableReferenceXPath(String tableHtmlId) {
 	   String quotedString = quoteStringXPath(tableHtmlId)
 	   return "//table[@id=${quotedString}]"
    }
 
-	public static String getClickLinkOnCellXPath(String cellXPath) {
+	public String getClickLinkOnCellXPath(String cellXPath) {
 		return "${cellXPath}//a[1]"
 	}
    
-	public static String getSetRadioButtonOnCellXPath(String cellXPath, def value) {
+	public String getSetRadioButtonOnCellXPath(String cellXPath, def value) {
 		String quotedString = quoteStringXPath(value)
 		return "${cellXPath}//*[wt:cleanText(text()) = ${quotedString}]//input[@type='radio']"
+	}
+	
+	// just identity here, but in a plugin (e.g. gw) may be +1
+	protected def rowNumberMapper(String num) {
+		return num
+	}
+	
+	protected def getLastRowPositionXPath() {
+		return "position() = last()"
 	}
 
 	/* =========================== some XPATH selection suffices =============================== */
 	
-	public static String valueXPathSuffix() {
+	public String valueXPathSuffix() {
 		return "//*[(local-name() = 'input' or local-name() = 'textarea') and position() = 1]"
 	}
 	
-	public static String fieldXPathSuffix() {
+	public String fieldXPathSuffix() {
 		return '//select[1]'
 	}
 	
-	public static String checkboxXPathSuffix() {
+	public String checkboxXPathSuffix() {
 		return "//input[@type='checkbox']"
 	}
 
@@ -240,26 +268,16 @@ public class TableXPath {
 	/*
 	 * following should not need escapeSingleQuotes since the values are just numbers
 	 */
-	private static String getConstrainedRowCountXPath(String rowReferenceXPath, String operator, def value) {
+	protected String getConstrainedRowCountXPath(String rowReferenceXPath, String operator, def value) {
 		 return "count(${rowReferenceXPath})${operator}${value}"
 	}
 
-	private static String getColumnCountXPath(String prefixXPath, String operator, def value) {
+	protected String getColumnCountXPath(String prefixXPath, String operator, def value) {
 		 return "${prefixXPath}/thead/tr[count(th)${operator}${value}]"
 	}
 	
-	private static String getRowCountXPath(String prefixXPath, String operator, def value) {
+	protected String getRowCountXPath(String prefixXPath, String operator, def value) {
 		 return "${prefixXPath}/tbody[count(tr)${operator}${value}]"
-	}
-		
-	/* ===== don't know whether these are needed: ---- (should be done by calls anyway) */
-	
-	protected static def getFirstRowPositionXPath() {
-		return "1"
-	}
-
-	protected static def getLastRowPositionXPath(String prefixXPath) {
-		return "count(${prefixXPath}/tbody/tr[position() = last()]/preceding-sibling::*)+1"
 	}
 
 	// http://kushalm.com/the-perils-of-xpath-expressions-specifically-escaping-quotes
@@ -270,9 +288,10 @@ public class TableXPath {
 	 * 
 	 * ref: http://www.w3.org/TR/xpath/#strings    look at the defn: [29] Literal
 	 */
-	static String concatQuoteStringXPath(String str) {
+	String concatQuoteStringXPath(String str) {
 		// TODO: fill in this stub!
-		LOG.debug "concatQuoteStringXPath($str)"
+		LOG.info "concatQuoteStringXPath() NOT YET IMPLEMENTED - cannot quote string: ${str}"
+		throw new StepExecutionException("concatQuoteStringXPath() NOT YET IMPLEMENTED - cannot quote string: ${str}", new IllegalArgumentException("concatQuoteStringXPath() NOT YET IMPLEMENTED"))
 		return "'${str}'"
 	}
 

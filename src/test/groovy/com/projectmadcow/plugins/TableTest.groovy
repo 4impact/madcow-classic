@@ -180,18 +180,16 @@ public class TableTest extends AbstractPluginTestCase {
 	}
 
     void testRowPositionXPath() {
-//        checkRowPosition.call(['firstColumn' : '1'], '1')
-//        checkRowPosition.call(['lastColumn' : '4000'], '4')
-//		checkRowPosition.call(['lastColumn' : '4101'], '3')
-//		
-//        checkRowPosition.call(['coLumn2' :'Unit A'], '3')
+        checkRowPosition.call(['firstColumn' : '1'], '1')
+        checkRowPosition.call(['lastColumn' : '4000'], '4')
+		checkRowPosition.call(['lastColumn' : '4101'], '3')
+		
+        checkRowPosition.call(['coLumn2' :'Unit A'], '3')
 
         checkRowPosition.call(['Id' : '1'], '1')
         checkRowPosition.call(['Id' : '2'], '2')
         checkRowPosition.call(['Suburb' : 'TENERIFFE'], '1')
         checkRowPosition.call(['Suburb' : 'WEST END'], '3')
-		
-// count(//table[@id='searchResults']/tbody/tr/td[position() = (count(//table[@id='searchResults']/thead/tr/th[(wt:cleanText(.//text()) = 'Suburb' or wt:cleanText(.//@value) = 'Suburb')]/preceding-sibling::*)+1) and (wt:cleanText(.//text()) = 'WEST END' or wt:cleanText(.//@value) = 'WEST END')]/parent::*/preceding-sibling::*)+1
 		
 		
         // checkRowPosition.call(['Suburb' : 'BRISBANE'], '2')
@@ -203,19 +201,6 @@ public class TableTest extends AbstractPluginTestCase {
         checkRowPosition.call(['State' : 'Queensland', 'Suburb' : 'BRISBANE'], '4')
 		checkRowPosition.call(['Suburb' : 'BRISBANE', 'State' : 'Queensland'], '4')
     }
-
-	/**
-	 * Don't know whether the following are used anywhere!
-	 */
-//	void testRowPositionXPathFirst() {
-//		String rowPositionXPath = tablePlugin.getFirstRowPositionXPath()
-//		assert xPathEvaluator.evaluateXPath(rowPositionXPath) == '1'
-//	}
-//
-//    void testRowPositionXPathLast() {
-//        String rowPositionXPath = tablePlugin.getLastRowPositionXPath()
-//        assert xPathEvaluator.evaluateXPath(rowPositionXPath) == '4'
-//    }
 
 	// Why do we check? Bogus columns behave as column 1 - can lead to incorrect results (spotted by Tim - MADCOW-217)
 	void testRowPositionXPathHeadersSingleNotPresentUnchecked() {
@@ -250,6 +235,10 @@ public class TableTest extends AbstractPluginTestCase {
 		checkRowCheckedPosition.call(['lastColumn' : '4101'], '3')
 
 		checkRowCheckedPosition.call(['coLumn2' : 'Unit A'], '3')
+	}
+	
+	void testRowPositionXPathEmptyCriteria() {
+        assertStepExecutionException( { checkRowCheckedPosition.call([:], '3') }, 'No search criteria specified')
 	}
 
 	void testRowPositionXPathSingleValuesPresentEmbeddedSingleQuote() {

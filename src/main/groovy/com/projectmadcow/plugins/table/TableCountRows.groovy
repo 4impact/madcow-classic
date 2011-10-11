@@ -27,12 +27,12 @@ package com.projectmadcow.plugins.table
  */
 public class TableCountRows extends AbstractCount {
 
-    def TableCountRows(prefixXPath, antBuilder, descriptionPrefix) {
-        super(prefixXPath, antBuilder, descriptionPrefix)
+    def TableCountRows(tableXPath, prefixXPath, antBuilder, descriptionPrefix) {
+        super(tableXPath, prefixXPath, antBuilder, descriptionPrefix)
     }
 
     def doCount(operator, value, description) {
-        antBuilder.countRows(xpath: TableXPath.getRowCountXPath(prefixXPath, operator, value),
+        antBuilder.countRows(xpath: txp.getRowCountXPath(prefixXPath, operator, value),
                 description: description)
     }
 

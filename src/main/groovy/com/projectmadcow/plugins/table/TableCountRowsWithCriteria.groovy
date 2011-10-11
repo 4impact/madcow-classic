@@ -25,8 +25,8 @@ class TableCountRowsWithCriteria extends AbstractCount {
 
     private def columnHeadersAndCellValuesMap
 
-    def TableCountRowsWithCriteria(prefixXPath, antBuilder, descriptionPrefix, columnHeadersAndCellValuesMap) {
-        super(prefixXPath, antBuilder, descriptionPrefix)
+    def TableCountRowsWithCriteria(tableXPath, prefixXPath, antBuilder, descriptionPrefix, columnHeadersAndCellValuesMap) {
+        super(tableXPath, prefixXPath, antBuilder, descriptionPrefix)
         this.columnHeadersAndCellValuesMap = columnHeadersAndCellValuesMap
     }
 
@@ -36,8 +36,8 @@ class TableCountRowsWithCriteria extends AbstractCount {
     }
 	
 	protected String buildRowCountXPath(operator, value) {
-		String xpath = TableXPath.getRowReferenceXPathMapped(prefixXPath, columnHeadersAndCellValuesMap) {p,c -> TableXPath.getColumnPositionXPath(p,c)}
-		return TableXPath.getConstrainedRowCountXPath(xpath, operator, value)
+		String xpath = txp.getRowReferenceXPathMapped(prefixXPath, columnHeadersAndCellValuesMap) {p,c -> txp.getColumnPositionXPath(p,c)}
+		return txp.getConstrainedRowCountXPath(xpath, operator, value)
 	}
 
 }
