@@ -119,11 +119,11 @@ public class Table extends Plugin {
     }
 
     def setCheckValue(def valueMap){
-        invokePlugin('checkValue', valueMap)
+        invokePlugin('checkValue', valueMap, txp.checkValueXPathSuffix())
     }
 
     def setCheckValueContains(def valueMap){
-        invokePlugin('checkValueContains', valueMap)
+        invokePlugin('checkValueContains', valueMap, txp.checkValueXPathSuffix())
     }
 	
 	def setCheckValueEmpty(String column){
@@ -131,7 +131,9 @@ public class Table extends Plugin {
 	}
 
     def setValue(def valueMap){
-        invokePlugin('value', valueMap, txp.valueXPathSuffix())
+		LOG.info "setValue($valueMap)    suffix: "+txp.setValueXPathSuffix()
+		LOG.info "setValue($valueMap)    PrefixXPath: "+getPrefixXPath()
+        invokePlugin('value', valueMap, txp.setValueXPathSuffix())
     }
 
     def setSelectField(def valueMap){
@@ -186,9 +188,12 @@ public class Table extends Plugin {
 
         // iterate over each key in the map using the key as the column name and value as the value to "apply" in the column
         antBuilder.plugin(description: getDescription(pluginName, valueMap)) {
-            antBuilder.verifyDynamicProperty (name: getPropertyName())
+			def propName = getPropertyName()
+            antBuilder.verifyDynamicProperty (name: propName)
             valueMap.each { column, value ->
-                def attributes = [xpath : getCellXPath("#{${getPropertyName()}}", column) + cellXPathSuffix, value : value]
+				String xPath = getCellXPath("#{${getPropertyName()}}", column) + cellXPathSuffix
+				if (LOG.isDebugEnabled()) LOG.debug("invokePlugin(${pluginName})  getPropertyName() = ${propName}   xPath=${xPath}")
+                def attributes = [xpath : xPath, value : value]
                 plugin.invoke(antBuilder, attributes)
             }
         }

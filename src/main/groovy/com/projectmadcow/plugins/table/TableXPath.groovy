@@ -241,7 +241,7 @@ public class TableXPath {
 	}
 	
 	// just identity here, but in a plugin (e.g. gw) may be +1 
-	public def rowNumberMapper(def num) {
+	protected def rowNumberMapper(def num) {
 		return num
 	}
 	
@@ -251,7 +251,11 @@ public class TableXPath {
 
 	/* =========================== some XPATH selection suffices =============================== */
 	
-	public String valueXPathSuffix() {
+	public String checkValueXPathSuffix() {
+		return ""
+	}
+	
+	public String setValueXPathSuffix() {
 		return "//*[(local-name() = 'input' or local-name() = 'textarea') and position() = 1]"
 	}
 	
@@ -291,7 +295,7 @@ public class TableXPath {
 	String concatQuoteStringXPath(String str) {
 		// TODO: fill in this stub!
 		LOG.info "concatQuoteStringXPath() NOT YET IMPLEMENTED - cannot quote string: ${str}"
-		throw new StepExecutionException("concatQuoteStringXPath() NOT YET IMPLEMENTED - cannot quote string: ${str}", new IllegalArgumentException("concatQuoteStringXPath() NOT YET IMPLEMENTED"))
+		throw new StepExecutionException("concatQuoteStringXPath() NOT YET IMPLEMENTED - cannot quote string with both embedded single and double quotes: ${str}", new IllegalArgumentException("concatQuoteStringXPath() NOT YET IMPLEMENTED"))
 		return "'${str}'"
 	}
 
