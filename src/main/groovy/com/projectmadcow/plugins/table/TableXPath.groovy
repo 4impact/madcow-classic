@@ -106,7 +106,7 @@ public class TableXPath {
 
 	public String getRowReferenceCheckedXPath(String prefixXPath, def selectionCriteria) {
 		if (LOG.isDebugEnabled()) LOG.debug("getRowReferenceCheckedXPath(${selectionCriteria})  going to sieveTransform...")
-		return rowSieve(selectionCriteria) { getRowReferenceXPathMapped(prefixXPath, it) {p,c -> getColumnPositionCheckedXPath(p,c)} }
+		return rowSieve(selectionCriteria) { getRowReferenceXPathMapped(prefixXPath, it) {p,c -> getColumnPositionCheckedXPath(p,c)} } 
 	}
 
 	protected String getColumnReferenceXPath(def columnHeader) {
@@ -116,7 +116,7 @@ public class TableXPath {
 	}
 
 	protected String rowSieve(def selectionCriteria, Closure criteriaMapper, Closure positionMapper = {it}, Closure nonCriteriaMapper = {it}, Closure lastMapper = {it}) {
-		sieveTransform("first", "last", "row", selectionCriteria, criteriaMapper, positionMapper, nonCriteriaMapper, lastMapper, {rowNumberMapper(it)})
+		sieveTransform("first", "last", "row", selectionCriteria, criteriaMapper, positionMapper, { rowNumberMapper(it) }, nonCriteriaMapper, lastMapper)
 	}
 
 	protected String columnSieve(def selectionCriteria, Closure criteriaMapper = {it}, Closure positionMapper = {it}) {
@@ -140,7 +140,7 @@ public class TableXPath {
 	 * @return
 	 */
 	protected String sieveTransform(String firstLabel, String lastLabel, String numberLabel, def term, 
-				Closure criteriaMapper = {it}, Closure positionMapper = {it}, Closure nonCriteriaMapper = {it}, Closure lastMapper = {it}, Closure numberMapper = {it}) {
+				Closure criteriaMapper = {it}, Closure positionMapper = {it}, Closure numberMapper = {it}, Closure nonCriteriaMapper = {it}, Closure lastMapper = {it}) {
 		if (term == firstLabel)
 			return nonCriteriaMapper.call(numberMapper.call("1"))
 		else if (term == lastLabel)
@@ -240,8 +240,8 @@ public class TableXPath {
 		return "${cellXPath}//*[wt:cleanText(text()) = ${quotedString}]//input[@type='radio']"
 	}
 	
-	// just identity here, but in a plugin (e.g. gw) may be +1
-	protected def rowNumberMapper(String num) {
+	// just identity here, but in a plugin (e.g. gw) may be +1 
+	public def rowNumberMapper(def num) {
 		return num
 	}
 	
