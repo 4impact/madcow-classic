@@ -73,20 +73,22 @@ public class TableEmptyTest extends AbstractPluginTestCase {
 
     }
 
-    void testColumnPositionXPath() {
+    void testColumnNamePositionXPath() {
         checkColumnCheckedPosition.call('Id', NOT_PRESENT_VALUE)
         checkColumnCheckedPosition.call('Address Line 1', NOT_PRESENT_VALUE)
         checkColumnCheckedPosition.call('Address Line 2', NOT_PRESENT_VALUE)
         checkColumnCheckedPosition.call('Suburb', NOT_PRESENT_VALUE)
         checkColumnCheckedPosition.call('State', NOT_PRESENT_VALUE)
         checkColumnCheckedPosition.call('Postcode', NOT_PRESENT_VALUE)
-
-        checkColumnCheckedPosition.call('firstColumn', NOT_PRESENT_VALUE)
-        checkColumnCheckedPosition.call('lastColumn', NOT_PRESENT_VALUE)
-
-        checkColumnCheckedPosition.call('COLUMN4', NOT_PRESENT_VALUE)
-        checkColumnCheckedPosition.call('coLumn2', NOT_PRESENT_VALUE)
     }
+	
+	void testColumnPositionXPath() {
+		checkColumnCheckedPosition.call('firstColumn', NOT_PRESENT_VALUE)
+		checkColumnCheckedPosition.call('lastColumn', NOT_PRESENT_VALUE)
+
+		checkColumnCheckedPosition.call('COLUMN4', NOT_PRESENT_VALUE)
+		checkColumnCheckedPosition.call('coLumn2', NOT_PRESENT_VALUE)
+	}
 
     void testRowPositionXPath() {
         checkRowCheckedPosition.call(['Id' : '0'], NOT_PRESENT_VALUE)

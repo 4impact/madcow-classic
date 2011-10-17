@@ -72,8 +72,14 @@ public class Table extends Plugin {
 		return "table"
 	}
 	
+	/**
+	 * 
+	 * @return ant-cleansed property name in format:   madcow.pluginName.callingProperty
+	 */
 	def getPropertyName() {
-		"madcow.table.${this.callingProperty}"
+		// ant/groovy does not like ":" in the property names!
+		String cleansedPropertyName = this.callingProperty.replace(":", ".")
+		"madcow.${this.pluginName}.${cleansedPropertyName}"
 	}
 
     /**
@@ -87,11 +93,13 @@ public class Table extends Plugin {
 		String rowXVerifyPath = txp.getRowXPath(prefixXPath, txp.getRowPositionCheckedXPath(prefixXPath, selectionCriteria))
 
         antBuilder.plugin(description: getDescription('selectRow', selectionCriteria, false)) {
-			
 			// first check that accessing the row would work - fail fast
+			if (LOG.isDebugEnabled()) LOG.debug "setSelectRow($selectionCriteria)  verifyXPath    getPropertyName(): ${getPropertyName()}   xpath: ${rowXVerifyPath}"
 			verifyXPath(xpath: rowXVerifyPath, description: "Verify row exists.")
 			
             storeXPath(property : getPropertyName(), xpath : rowXPositionPath, propertyType : 'dynamic')
+			
+			// if (LOG.isDebugEnabled()) LOG.debug("setSelectRow($selectionCriteria)  AFTER  storeXPath    antBuilder.project.properties.getProperty(${getPropertyName()}): ${antBuilder.project.getProperty(getPropertyName())}     antBuilder.project.properties: ${antBuilder.project.properties}")
         }
     }
 
@@ -131,8 +139,6 @@ public class Table extends Plugin {
 	}
 
     def setValue(def valueMap){
-		LOG.info "setValue($valueMap)    suffix: "+txp.setValueXPathSuffix()
-		LOG.info "setValue($valueMap)    PrefixXPath: "+getPrefixXPath()
         invokePlugin('value', valueMap, txp.setValueXPathSuffix())
     }
 
@@ -174,7 +180,7 @@ public class Table extends Plugin {
     def invokePlugin(def pluginName, String column, def cellXPathSuffix = ''){
         def plugin = PluginResolver.resolvePlugin(pluginName, this.callingProperty);
 
-        def attributes = [xpath : getCellXPath("#{${getPropertyName()}}", column) + cellXPathSuffix]
+        def attributes = [xpath : getCellXPath("#{${getPropertyName()}}" as String, column) + cellXPathSuffix]
 		
         antBuilder.plugin(description: getDescription(pluginName, column)) {
             antBuilder.verifyDynamicProperty (name: getPropertyName())
@@ -189,9 +195,10 @@ public class Table extends Plugin {
         // iterate over each key in the map using the key as the column name and value as the value to "apply" in the column
         antBuilder.plugin(description: getDescription(pluginName, valueMap)) {
 			def propName = getPropertyName()
-            antBuilder.verifyDynamicProperty (name: propName)
+
+            antBuilder.verifyDynamicProperty (name: getPropertyName())
             valueMap.each { column, value ->
-				String xPath = getCellXPath("#{${getPropertyName()}}", column) + cellXPathSuffix
+				String xPath = getCellXPath("#{${getPropertyName()}}" as String, column) + cellXPathSuffix
 				if (LOG.isDebugEnabled()) LOG.debug("invokePlugin(${pluginName})  getPropertyName() = ${propName}   xPath=${xPath}")
                 def attributes = [xpath : xPath, value : value]
                 plugin.invoke(antBuilder, attributes)

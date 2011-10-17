@@ -145,9 +145,9 @@ public class TableTest extends AbstractPluginTestCase {
 		// double-check against the selectRow:
 		checkSelectRowEquivalentToRowPosition = { def selectionCriteria ->
 			String position = xPathEvaluator.evaluateXPath(tablePlugin.getRowPositionCheckedXPath(selectionCriteria))
-			if (position > 0) {
+			if (position != '0') {
 				tablePlugin.selectRow = selectionCriteria
-				assert contextStub.webtest.dynamicProperties.get('madcow.table.searchResults') == position
+				assert contextStub.webtest.dynamicProperties.get(tablePlugin.propertyName as String) == position
 			} else {
 				shouldFail { tablePlugin.selectRow = selectionCriteria }
 			}
@@ -169,7 +169,12 @@ public class TableTest extends AbstractPluginTestCase {
         checkColumnPosition.call('coLumn2','2')
     }
 
-	void testColumnPositionXPathNotPresent() {
+	void testColumnPositionUncheckedXPathNotPresent() {
+		checkColumnPosition.call('Purple Monkey Dishwasher', '1')
+		checkColumnPosition.call('coLumn21', '21')
+	}
+
+	void testColumnPositionCheckedXPathNotPresent() {
 		checkColumnCheckedPosition.call('Purple Monkey Dishwasher', COLUMN_NOT_PRESENT_VALUE)
 		checkColumnCheckedPosition.call('coLumn21', COLUMN_NOT_PRESENT_VALUE)
 	}
@@ -280,35 +285,48 @@ public class TableTest extends AbstractPluginTestCase {
 	
 	void testSelectRowDirect() {
 		tablePlugin.selectRow = 'ROW3'
-		assert contextStub.webtest.dynamicProperties.get('madcow.table.searchResults') == '3'
+		assert contextStub.webtest.dynamicProperties.get(tablePlugin.propertyName as String) == '3'
 
 		tablePlugin.selectRow = 'first'
-		assert contextStub.webtest.dynamicProperties.get('madcow.table.searchResults') == '1'
+		assert contextStub.webtest.dynamicProperties.get(tablePlugin.propertyName as String) == '1'
 
 		tablePlugin.selectRow = 'last'
-		assert contextStub.webtest.dynamicProperties.get('madcow.table.searchResults') == '4'
+		assert contextStub.webtest.dynamicProperties.get(tablePlugin.propertyName as String) == '4'
 	}
-
+	
+	// commented out pending fixing of running steps within JUnit
+//	void testSetValue() {
+//		tablePlugin.selectRow = 'first'
+//		assert contextStub.webtest.dynamicProperties.get(tablePlugin.propertyName as String) == '1'
+//
+//		tablePlugin.currentRow.checkValue = [ 'Suburb' : 'WEST END' ]
+//
+//		tablePlugin.selectRow = 'first'
+//		tablePlugin.currentRow.value = [ 'Suburb' : 'NEW VALUE' ]
+//		
+//		tablePlugin.currentRow.checkValue = [ 'Suburb' : 'NEW VALUE' ]
+//	}
+	
 	void testSelectRowSearch() {
 		
 		tablePlugin.selectRow = ['Suburb' : 'WEST END']
-		assert contextStub.webtest.dynamicProperties.get('madcow.table.searchResults') == '3'
+		assert contextStub.webtest.dynamicProperties.get(tablePlugin.propertyName as String) == '3'
 		
 		tablePlugin.selectRow = ['Suburb' : 'BRISBANE']
-		// assert contextStub.webtest.dynamicProperties.get('madcow.table.searchResults') == '2'
+		// assert contextStub.webtest.dynamicProperties.get(tablePlugin.propertyName as String) == '2'
 		// once again returns last occurrence:
-		assert contextStub.webtest.dynamicProperties.get('madcow.table.searchResults') == '4'
+		assert contextStub.webtest.dynamicProperties.get(tablePlugin.propertyName as String) == '4'
 		
 		tablePlugin.selectRow = ['Suburb' : 'BRISBANE', 'State' : 'Queensland']
-		String result = contextStub.webtest.dynamicProperties.get('madcow.table.searchResults')
+		String result = contextStub.webtest.dynamicProperties.get(tablePlugin.propertyName as String)
 		// looks like last all the time:
-		assert contextStub.webtest.dynamicProperties.get('madcow.table.searchResults') == '4'
+		assert contextStub.webtest.dynamicProperties.get(tablePlugin.propertyName as String) == '4'
 
 		tablePlugin.selectRow = ['firstColumn' : '1']
-		assert contextStub.webtest.dynamicProperties.get('madcow.table.searchResults') == '1'
+		assert contextStub.webtest.dynamicProperties.get(tablePlugin.propertyName as String) == '1'
 		
 		tablePlugin.selectRow = ['lastColumn' : '4000']
-		assert contextStub.webtest.dynamicProperties.get('madcow.table.searchResults') == '4'
+		assert contextStub.webtest.dynamicProperties.get(tablePlugin.propertyName as String) == '4'
 	}
 	
 	void testSelectRowNotPresent() {
@@ -335,25 +353,30 @@ public class TableTest extends AbstractPluginTestCase {
 		// checkSelectRowEquivalentToRowPosition.call('ROW3')
 		
 //		tablePlugin.selectRow = 'first'
-//		assert contextStub.webtest.dynamicProperties.get('madcow.table.searchResults') == xPathEvaluator.evaluateXPath(tablePlugin.getFirstRowPositionXPath())
+//		assert contextStub.webtest.dynamicProperties.get(tablePlugin.propertyName as String) == xPathEvaluator.evaluateXPath(tablePlugin.getFirstRowPositionXPath())
 //
 //		tablePlugin.selectRow = 'last'
-//		assert contextStub.webtest.dynamicProperties.get('madcow.table.searchResults') == xPathEvaluator.evaluateXPath(tablePlugin.getLastRowPositionXPath())
+//		assert contextStub.webtest.dynamicProperties.get(tablePlugin.propertyName as String) == xPathEvaluator.evaluateXPath(tablePlugin.getLastRowPositionXPath())
 
 		// NO ALTERNATIVE
 		// tablePlugin.selectRow = 'ROW3'
-		// assert contextStub.webtest.dynamicProperties.get('madcow.table.searchResults') == xPathEvaluator.evaluateXPath(tablePlugin.?????????????())
+		// assert contextStub.webtest.dynamicProperties.get(tablePlugin.propertyName as String) == xPathEvaluator.evaluateXPath(tablePlugin.?????????????())
 	}
 
 	void testSelectRowEquivalentToRowPositionNotPresent() {
 		// NO EQUIVALENCE: groovy.lang.MissingMethodException: No signature of method: com.projectmadcow.plugins.Table.getRowPositionXPath() is applicable for argument types: (java.lang.String) values: [rOw32]
 		// checkSelectRowEquivalentToRowPosition.call('rOw32')
-		shouldFail { checkSelectRowEquivalentToRowPosition.call(['firstColumn' : '4000']) }
-		shouldFail { checkSelectRowEquivalentToRowPosition.call(['Column1' : '4000']) }
-		shouldFail { checkSelectRowEquivalentToRowPosition.call(['Column4' : 'CRAZY VALUE']) }
-		shouldFail { checkSelectRowEquivalentToRowPosition.call(['lastColumn' : 'octopus']) }
-		shouldFail { checkSelectRowEquivalentToRowPosition.call(['Purple Monkey Dishwasher' : '1']) }
-		shouldFail { checkSelectRowEquivalentToRowPosition.call(['State' : 'Queensland', 'Blue Gerbel Clothesdryer' : 'BRISBANE']) }
+		checkSelectRowEquivalentToRowPosition.call(['firstColumn' : '4000'])
+		checkSelectRowEquivalentToRowPosition.call(['Column1' : '4000'])
+		checkSelectRowEquivalentToRowPosition.call(['Column4' : 'CRAZY VALUE'])
+		checkSelectRowEquivalentToRowPosition.call(['lastColumn' : 'octopus'])
+		checkSelectRowEquivalentToRowPosition.call(['Purple Monkey Dishwasher' : '1'])
+		checkSelectRowEquivalentToRowPosition.call(['State' : 'Queensland', 'Blue Gerbel Clothesdryer' : 'BRISBANE'])
+	}
+
+	
+	void testCountRows() {
+		tablePlugin.countRows.equals = 4
 	}
 
 	void testCountRowsPresentEqualsCorrect() {
