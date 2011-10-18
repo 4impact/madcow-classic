@@ -91,8 +91,7 @@ public class AddressTest extends AbstractTestCase {
 
         // use the table.selectRow command to select the first row
         searchTable.table.selectRow = 'first'
-//		searchTable.table.selectRow = 'row32'
-		
+
         searchTable.table.currentRow.verifySelectFieldOptions = ['State' : ['Select One...',
             'Australian Capital Territories',
             'New South Wales',

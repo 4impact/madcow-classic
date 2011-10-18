@@ -21,12 +21,14 @@
 
 package com.projectmadcow.plugins.table
 
+import com.projectmadcow.engine.grass.ParseUtil
+
 class TableCountRowsWithCriteria extends AbstractCount {
 
     private def columnHeadersAndCellValuesMap
 
-    def TableCountRowsWithCriteria(tableXPath, prefixXPath, antBuilder, descriptionPrefix, columnHeadersAndCellValuesMap) {
-        super(tableXPath, prefixXPath, antBuilder, descriptionPrefix)
+    def TableCountRowsWithCriteria(prefixXPath, antBuilder, descriptionPrefix, columnHeadersAndCellValuesMap) {
+        super(prefixXPath, antBuilder, descriptionPrefix)
         this.columnHeadersAndCellValuesMap = columnHeadersAndCellValuesMap
     }
 
@@ -34,10 +36,15 @@ class TableCountRowsWithCriteria extends AbstractCount {
         String xpath = buildRowCountXPath(operator, value)
         antBuilder.countRows(xpath: xpath, description: description)
     }
-	
-	protected String buildRowCountXPath(operator, value) {
-		String xpath = txp.getRowReferenceXPathMapped(prefixXPath, columnHeadersAndCellValuesMap) {p,c -> txp.getColumnPositionXPath(p,c)}
-		return txp.getConstrainedRowCountXPath(xpath, operator, value)
-	}
 
+    protected String buildRowCountXPath(operator, value) {
+        def xpath = "count(${prefixXPath}/tbody/tr"
+        columnHeadersAndCellValuesMap.each { headerText, cellText ->
+            Column column = new Column(prefixXPath, headerText)
+            cellText = ParseUtil.escapeSingleQuotes(cellText)
+            xpath += "/td[position() = (${column.getColumnPositionXPath()}) and (wt:cleanText(.//text()) = ${cellText} or wt:cleanText(.//@value) = ${cellText})]/parent::*"
+        }
+        xpath += ")${operator}${value}"
+        return xpath
+    }
 }

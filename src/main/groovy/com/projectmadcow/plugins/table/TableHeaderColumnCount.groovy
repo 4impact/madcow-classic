@@ -21,18 +21,17 @@
 
 package com.projectmadcow.plugins.table
 
-
 /**
  * @author chris
  */
 public class TableHeaderColumnCount extends AbstractCount {
 
-  def TableHeaderColumnCount(tableXPath, prefixXPath, antBuilder, descriptionPrefix) {
-    super(tableXPath, prefixXPath, antBuilder, descriptionPrefix)
+  def TableHeaderColumnCount(prefixXPath, antBuilder, descriptionPrefix) {
+    super(prefixXPath, antBuilder, descriptionPrefix)
   }
 
   public doCount(operator, value, description) {
-    antBuilder.countColumns(xpath: txp.getColumnCountXPath(prefixXPath, operator, value),
+    antBuilder.countColumns(xpath: "${prefixXPath}/thead/tr[count(th)${operator}${value}]",
                            description: description)
   }
 }

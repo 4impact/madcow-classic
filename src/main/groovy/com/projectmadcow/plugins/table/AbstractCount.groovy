@@ -31,23 +31,16 @@ public abstract class AbstractCount {
     AntBuilder antBuilder
     String prefixXPath
     String descriptionPrefix
-	TableXPath txp
-	
-    def AbstractCount(txp, prefixXPath, antBuilder, descriptionPrefix) {
+
+    def AbstractCount(prefixXPath, antBuilder, descriptionPrefix) {
         this.prefixXPath = prefixXPath
         this.antBuilder = antBuilder
         this.descriptionPrefix = descriptionPrefix
-		this.txp = txp
     }
-
 
     def setEquals(value) {
         doCount("=", value, "${descriptionPrefix}.equals=$value")
     }
-	
-	def setNotEquals(value) {
-		doCount("!=", value, "${descriptionPrefix}.notEquals=$value")
-	}
 
     def setGreaterThan(value) {
         doCount(">", value, "${descriptionPrefix}.greaterThan=$value")

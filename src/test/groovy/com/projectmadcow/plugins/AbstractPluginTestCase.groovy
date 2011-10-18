@@ -24,8 +24,6 @@ package com.projectmadcow.plugins
 import com.canoo.webtest.engine.StepExecutionException
 import com.canoo.webtest.engine.StepFailedException
 import com.canoo.webtest.self.ContextStub
-
-import org.apache.log4j.Logger;
 import org.apache.tools.ant.BuildException
 import org.apache.tools.ant.Project
 import org.apache.tools.ant.Target
@@ -60,13 +58,8 @@ public abstract class AbstractPluginTestCase extends GroovyTestCase {
         antBuilder.taskdef(resource: 'webtest.taskdef')
         antBuilder.taskdef(format: 'xml', resource: 'madcow.taskdef.xml')
     }
-	static final Logger LOG = Logger.getLogger(AbstractPluginTestCase.class)
-	
+
     protected Task findTask(String name) {
-		LOG.info("findTask(${name})  "+ containerTarget.tasks.size() )
-		containerTarget.tasks.each { i ->
-			println "Hello ${i.taskName}"
-		  }
         return (containerTarget.tasks.findAll { task -> task.taskName == name } as Collection<Task>).asList().last()
     }
 
