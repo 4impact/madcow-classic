@@ -26,6 +26,7 @@ import org.apache.tools.ant.BuildException
 import org.apache.tools.ant.Task
 import org.apache.tools.ant.types.Path
 import org.apache.tools.ant.util.ClasspathUtils
+import org.apache.commons.lang.StringUtils
 
 /**
  * DatabaseLoadTask
@@ -36,6 +37,8 @@ public class DatabaseLoadTask extends Task {
 
     static final Logger LOG = Logger.getLogger(DatabaseLoadTask.class)
 
+    private String databaseFileName;
+
     private ClasspathUtils.Delegate cpDelegate
 
     public void init() {
@@ -44,6 +47,10 @@ public class DatabaseLoadTask extends Task {
     }
     
     public void execute() throws BuildException {
+        if (StringUtils.isNotEmpty(databaseFileName)) {
+            System.setProperty('madcow.database.properties.file', databaseFileName);
+            LOG.info("Setting property " + databaseFileName);
+        }
         new DatabaseHelper().loadXmlData(cpDelegate.getClassLoader())
     }
 
@@ -57,5 +64,9 @@ public class DatabaseLoadTask extends Task {
 
     public void setClassname(String fqcn) {
         this.cpDelegate.setClassname(fqcn)
-    }    
+    }
+
+    public void setDatabaseFileName(String databaseFileName) {
+        this.databaseFileName = databaseFileName;
+    }
 }
