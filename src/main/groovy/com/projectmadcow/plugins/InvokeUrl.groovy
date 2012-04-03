@@ -31,7 +31,7 @@ class InvokeUrl extends Plugin {
         }
 
         antBuilder.plugin(description: parameters.description) {
-            antBuilder.selectWebClient(name: "${parameters.value}")
+            antBuilder.selectWebClient(name: "${parameters.value}:${UUID.randomUUID().toString()}:${new Date().time}")
             antBuilder.groovy("step.context.webClient.setAjaxController(new com.gargoylesoftware.htmlunit.NicelyResynchronizingAjaxController())")
             antBuilder.groovy("step.context.webClient.setPageCreator(new com.projectmadcow.extension.htmlunit.pagecreator.MadcowPageCreator())")
             antBuilder.invokeUrl(parameters)
