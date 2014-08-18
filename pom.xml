@@ -100,16 +100,57 @@
                     <target>1.5</target>
                 </configuration>
             </plugin>
+            <!-- THE BELOW ENSURES THAT  ALL THE OTHER MAVEN PLUGINS THAT LOOK FOR SOURCE DIRECTORIES
+                SHOULD ALSO INCLUDE THE GROOVY FOLDERS AS WELL.  -->
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>build-helper-maven-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>add-groovy-source</id>
+                        <!-- before package phase as required prior to building source jars -->
+                        <phase>test</phase>
+                        <goals>
+                            <goal>add-source</goal>
+                        </goals>
+                        <configuration>
+                            <sources>
+                                <source>${basedir}/src/main/groovy</source>
+                            </sources>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>add-groovy-test-source</id>
+                        <!-- before package phase as required prior to building source jars -->
+                        <phase>test</phase>
+                        <goals>
+                            <goal>add-test-source</goal>
+                        </goals>
+                        <configuration>
+                            <sources>
+                                <source>${basedir}/src/test/groovy</source>
+                            </sources>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-source-plugin</artifactId>
                 <version>2.1.2</version>
                 <executions>
                     <execution>
-                        <id>attach-sources</id>
-                        <phase>verify</phase>
+                        <id>create-source-jar</id>
+                        <phase>package</phase>
                         <goals>
                             <goal>jar</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>create-test-source-jar</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>test-jar</goal>
                         </goals>
                     </execution>
                 </executions>
