@@ -1,4 +1,4 @@
-# Madcow Classic [![Project Status](https://stillmaintained.com/4impact/madcow-classic.png)](https://stillmaintained.com/4impact/madcow-classic)
+# Madcow Classic [![Project Status](http://stillmaintained.com/4impact/madcow-classic.png)](http://stillmaintained.com/4impact/madcow-classic)
 
 This project is no longer maintained... 
 
