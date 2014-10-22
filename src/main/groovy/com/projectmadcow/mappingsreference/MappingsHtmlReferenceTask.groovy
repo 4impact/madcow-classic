@@ -126,6 +126,7 @@ class MappingsHtmlReferenceTask extends Task {
         key = key.replace('.htmlId', '')
         key = key.replace('.name', '')
         key = key.replace('.href', '')
+        key = key.replace('.forLabel','')
         key
     }
 
