@@ -257,7 +257,7 @@ class GrassParser {
         boolean parsedMap = false
         expression.each { String key, def value ->
             if ((key instanceof String) || (key instanceof GString)) {
-                String parsedKey = ParseUtil.unquote(parseStringExpression("$key", line, null, null, false))
+                String parsedKey = ParseUtil.unquote(parseStringExpression("$key", line, null, operationCommand, false))
                 if (parsedKey != key) {
                     expression.remove(key)
                     expression.put(parsedKey, value)
@@ -265,14 +265,14 @@ class GrassParser {
                 }
             }
             if ((value instanceof String) || (value instanceof GString)) {
-                String parsedValue = parseStringExpression("$value", line, null, null, false)
+                String parsedValue = parseStringExpression("$value", line, null, operationCommand, false)
                 if (parsedValue != value) {
                     expression[key] = parsedValue
                     parsedMap = true
                 }
 
             } else if (value instanceof List) {
-                def parsedList = parseListExpression(value, line, null, null, false)
+                def parsedList = parseListExpression(value, line, null, operationCommand, false)
                 if (parsedList != value) {
                     expression[key] = parsedList
                     parsedMap = true

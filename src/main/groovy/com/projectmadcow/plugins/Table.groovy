@@ -193,6 +193,10 @@ public class Table extends Plugin {
         }
     }
 
+    def setStore(def valueMap){
+        invokePlugin('store', valueMap)
+    }
+
     def setWaitForText(def valueMap){
         invokePlugin('waitForText', valueMap)
     }
