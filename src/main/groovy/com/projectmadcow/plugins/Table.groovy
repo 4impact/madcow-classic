@@ -25,7 +25,9 @@ import com.projectmadcow.engine.plugin.Plugin
 import com.projectmadcow.engine.plugin.PluginResolver
 import com.projectmadcow.plugins.table.Column
 import com.projectmadcow.plugins.table.TableCountRows
+import com.projectmadcow.plugins.table.TableCountRowsRefresh
 import com.projectmadcow.plugins.table.TableCountRowsWithCriteria
+import com.projectmadcow.plugins.table.TableCountRowsWithCriteriaRefresh
 import com.projectmadcow.plugins.table.TableHeaderColumnCount
 import org.apache.log4j.Logger
 import com.projectmadcow.engine.grass.ParseUtil
@@ -233,6 +235,15 @@ public class Table extends Plugin {
     def countRows(def parameters) {
         def description = getDescription("countRows${parameters}", null, false)
         return new TableCountRowsWithCriteria(getPrefixXPath(), antBuilder, description, parameters)
+    }
+
+    def getCountRowsRefresh() {
+        return new TableCountRowsRefresh(getPrefixXPath(), antBuilder, getDescription('countRows', null, false))
+    }
+
+    def countRowsRefresh(def parameters) {
+        def description = getDescription("countRows${parameters}", null, false)
+        return new TableCountRowsWithCriteriaRefresh(getPrefixXPath(), antBuilder, description, parameters)
     }
 
     protected String getPrefixXPath() {

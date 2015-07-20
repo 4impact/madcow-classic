@@ -45,8 +45,8 @@ public abstract class AbstractWaitFor extends AbstractMadcowStep {
      *          if step was not successful
      */
     public void doExecute() {
-
-        final boolean found = (1..Integer.parseInt(seconds ? seconds : milliseconds)).any {
+        def maxAttempts = Integer.parseInt(seconds ? seconds : milliseconds)
+        final boolean found = (1..maxAttempts).any {
             HtmlElement waitForElement = null
             
             if (name != null)

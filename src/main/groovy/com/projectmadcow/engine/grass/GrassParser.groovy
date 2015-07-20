@@ -47,7 +47,7 @@ class GrassParser {
     protected static final Map IMPORT_COMMAND_DIRECTORIES = ['importTemplate': 'templates',
             'importTest': 'test']
 
-    protected static final List OPERATIONS_THAT_TAKE_MAP_OR_LIST_PARAMETERS = ['countRows']
+    protected static final List OPERATIONS_THAT_TAKE_MAP_OR_LIST_PARAMETERS = ['countRows', 'countRowsRefresh']
 
     protected RuntimeContext runtimeContext
 

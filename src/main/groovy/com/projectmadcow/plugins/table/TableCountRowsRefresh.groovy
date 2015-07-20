@@ -19,26 +19,21 @@
  * under the License.
  */
 
-package com.projectmadcow.plugins
-
-import com.projectmadcow.engine.plugin.Plugin
+package com.projectmadcow.plugins.table
 
 /**
- * @author mcallon
+ * @author chris
  */
-public class WaitUntilExists extends Plugin {
+public class TableCountRowsRefresh extends AbstractCount {
 
-    def invoke(AntBuilder antBuilder, Map pluginParameters) {
-        if (pluginParameters.value?.milliseconds != null) {
-            pluginParameters.milliseconds = pluginParameters.value?.milliseconds
-        }
-        if (pluginParameters.value?.seconds != null) {
-            pluginParameters.seconds = pluginParameters.value?.seconds
-        }
-        if (pluginParameters.value?.milliseconds == null && pluginParameters.value?.seconds == null) {
-            pluginParameters.seconds = "20"
-        }
-        antBuilder.waitForElement(pluginParameters)
+    def TableCountRowsRefresh(prefixXPath, antBuilder, descriptionPrefix) {
+        super(prefixXPath, antBuilder, descriptionPrefix)
     }
+
+    def doCount(operator, value, description) {
+        antBuilder.countRowsRefresh(xpath: "${prefixXPath}/tbody[count(tr)${operator}${value}]",
+                description: description)
+    }
+
 
 }

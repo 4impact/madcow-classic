@@ -44,7 +44,7 @@ class WaitUntilExistsTest extends AbstractPluginTestCase {
 
     void testWaitForByHtmlId() {
         assertStepFailedException({
-            waitUntilExistsPlugin.invoke(antBuilder, [htmlId : 'unknown', milliseconds : '1'])
+            waitUntilExistsPlugin.invoke(antBuilder, [htmlId : 'unknown', value:[milliseconds : '1']])
         }, 'did not appear within timeout for element')
 
         Task pluginTask = findTask(antTaskName)
@@ -53,7 +53,7 @@ class WaitUntilExistsTest extends AbstractPluginTestCase {
 
     void testWaitByName() {
         assertStepFailedException({
-            waitUntilExistsPlugin.invoke(antBuilder, [name : 'unknown', milliseconds : '1'])
+            waitUntilExistsPlugin.invoke(antBuilder, [name : 'unknown', value:[milliseconds : '1']])
         }, 'did not appear within timeout for element')
 
         Task pluginTask = findTask(antTaskName)
@@ -62,7 +62,7 @@ class WaitUntilExistsTest extends AbstractPluginTestCase {
 
     void testWaitForByXPath() {
         assertStepFailedException({
-            waitUntilExistsPlugin.invoke(antBuilder, [xpath : '//input[3]', milliseconds : '1'])
+            waitUntilExistsPlugin.invoke(antBuilder, [xpath : '//input[3]', value:[milliseconds : '1']])
         }, 'did not appear within timeout for element')
 
         Task pluginTask = findTask(antTaskName)
